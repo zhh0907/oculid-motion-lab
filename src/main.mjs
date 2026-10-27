@@ -1,5 +1,6 @@
-import {createEyeView} from './eye-rig.mjs';
-import {Simulation,FPS,targetAt} from './simulation.mjs';
+import {createEyeView} from './eye-rig.mjs?v=anatomical2';
+import {Simulation,FPS,targetAt} from './simulation.mjs?v=anatomical2';
+import {pointerTarget,normalizeRange} from './target-range.mjs?v=anatomical2';
 import {FingerCamera} from '../camera.js?v=review7';
 import {angularError} from '../engine.js';
 const $=id=>document.getElementById(id);
@@ -9,7 +10,8 @@ async function start(){
   const view=createEyeView($('eyeFocus')),bare=createEyeView($('bareEyes'),{bare:true,background:'#e2e7df'});
   const finger=new FingerCamera({enabled:false,ready:true,refresh(){},constraints(){return {};}});
   let playing=!matchMedia('(prefers-reduced-motion: reduce)').matches,acc=0,last=performance.now(),wasTracked=false,pointer=[0,0,.7],fpsStart=last,frames=0;
-  function settings(){return {source:$('source').value,path:$('path').value,depth:+$('depth').value,cameraFov:+$('cameraFov').value,cameraY:+$('camY').value,depthAssumed:true};}
+  function range(){return $('rangePreset').value==='legacy'?null:normalizeRange({horizontal:+$('horizontalRange').value,up:+$('upRange').value,down:+$('downRange').value});}
+  function settings(){return {targetRange:$('source').value==='camera'?null:range(),source:$('source').value,path:$('path').value,depth:+$('depth').value,cameraFov:+$('cameraFov').value,cameraY:+$('camY').value,depthAssumed:true};}
   function reset(){sim.reset();acc=0;wasTracked=false;last=performance.now();}
   function playback(){ $('pause').textContent=playing?'暂停':'继续';$('stateLabel').textContent=playing?'实时双眼模拟':'已暂停';}
   $('pause').onclick=()=>{playing=!playing;acc=0;playback();};$('reset').onclick=reset;
@@ -20,12 +22,18 @@ async function start(){
   $('compare').onchange=()=>{$('comparison').hidden=!$('compare').checked;};
   $('model').onchange=$('pattern').onchange=()=>{sim.select({model:$('model').value,pattern:$('pattern').value});acc=0;};
   $('path').onchange=reset;
+  function rangeChanged(){
+    for(const id of ['horizontalRange','upRange','downRange'])$(id+'Value').textContent=$(id).value+'°';
+    $('rangeControls').hidden=$('rangePreset').value==='legacy';pointer=[0,0,+$('depth').value];reset();
+  }
+  $('rangePreset').onchange=rangeChanged;
+  for(const id of ['horizontalRange','upRange','downRange'])$(id).oninput=rangeChanged;
   $('source').onchange=()=>{
-    const source=$('source').value;finger.stop();$('cameraPanel').hidden=source!=='camera';$('path').disabled=source!=='auto';
-    $('sourceHint').textContent={auto:'慢速左右扫描，包含停留与回中。',pointer:'在上方眼部画面移动鼠标，或按住并拖动。',camera:'开启摄像头后，用一根食指引导注视。'}[source];reset();
+    const source=$('source').value;finger.stop();$('cameraPanel').hidden=source!=='camera';$('path').disabled=source!=='auto';$('rangeSection').hidden=source==='camera';
+    $('sourceHint').textContent={auto:'目标在设定角度内运动，病例仍按原参数受限。',pointer:'在上方眼部画面移动鼠标，或按住并拖动。',camera:'开启摄像头后，用一根食指引导注视。'}[source];reset();
   };
   $('depth').oninput=()=>{$('depthValue').textContent=(+$('depth').value).toFixed(2)+' m';$('cameraDepth').value=$('depth').value;pointer[2]=+$('depth').value;reset();};
-  $('eyeFocus').onpointermove=e=>{if($('source').value!=='pointer')return;const r=$('eyeFocus').getBoundingClientRect();pointer=[(e.clientX-r.left-r.width/2)/r.width*.7,-(e.clientY-r.top-r.height/2)/r.height*.45,+$('depth').value];};
+  $('eyeFocus').onpointermove=e=>{if($('source').value!=='pointer')return;const r=$('eyeFocus').getBoundingClientRect(),u=(e.clientX-r.left-r.width/2)/r.width*2,v=-(e.clientY-r.top-r.height/2)/r.height*2;pointer=range()?pointerTarget(u,v,+$('depth').value,range()):[Math.max(-1,Math.min(1,u))*.35,Math.max(-1,Math.min(1,v))*.225,+$('depth').value];};
   $('eyeFocus').onpointerdown=e=>{$('eyeFocus').setPointerCapture(e.pointerId);$('eyeFocus').onpointermove(e);};
   function appearance(){
     Object.assign(sim.appearance,{openness:+$('openness').value,follow:+$('follow').value,blink:$('autoBlink').checked,pupilMm:+$('pupil').value,skin:$('skin').value,iris:$('iris').value,ptosisLeft:+$('ptosisLeft').value,ptosisRight:+$('ptosisRight').value});
@@ -42,7 +50,7 @@ async function start(){
   function tick(){
     let target;const source=$('source').value;
     if(source==='camera'){if(!finger.tracked){wasTracked=false;return;}if(!wasTracked){sim.reacquire();wasTracked=true;}target=finger.target();}
-    else target=source==='pointer'?pointer:targetAt(sim.time,$('path').value,+$('depth').value);
+    else target=source==='pointer'?pointer:targetAt(sim.time,$('path').value,+$('depth').value,range());
     if(target)sim.step(target);
   }
   function draw(now){
@@ -53,8 +61,8 @@ async function start(){
     $('leftError').textContent=tracked?angularError(f.angles.slice(0,2),f.ideal.slice(0,2)).toFixed(2)+'°':'—';
     $('rightError').textContent=tracked?angularError(f.angles.slice(2),f.ideal.slice(2)).toFixed(2)+'°':'—';$('vergence').textContent=(f.angles[0]-f.angles[2]).toFixed(2)+'°';
     $('visibility').textContent=f.lids.map(l=>Math.round(l.pupilVisibility*100)+'%').join(' / ');
-    $('lidStatus').textContent=f.lids[0].closure>.05?'眨眼中 · 眼球继续运动':'眼睑随动 '+Math.round(sim.appearance.follow*100)+'% · 眼裂 '+Math.round(sim.appearance.openness*100)+'%';
-    $('targetDot').style.left=Math.max(2,Math.min(98,50+Math.atan2(f.target[0],f.target[2])*180/Math.PI/35*46))+'%';$('targetDepth').textContent=f.target[2].toFixed(2)+' m';
+    $('lidStatus').textContent=f.lids[0].closure>.05?({closing:'闭合 · 上睑下移，睑缘向鼻侧滑动',closed:'短暂闭合 · 眼球继续运动',opening:'张开 · 上睑回升，褶皱恢复'}[f.lids[0].blinkPhase]||'眨眼中'):'眼睑随动 '+Math.round(sim.appearance.follow*100)+'% · 眼裂 '+Math.round(sim.appearance.openness*100)+'%';
+    $('targetDot').style.left=Math.max(2,Math.min(98,50+Math.atan2(f.target[0],f.target[2])*180/Math.PI/(range()?.horizontal||35)*46))+'%';$('targetDepth').textContent=f.target[2].toFixed(2)+' m';
     const delta=Math.max(...view.rigs.flatMap((r,i)=>[Math.abs(r.yaw.rotation.y-bare.rigs[i].yaw.rotation.y),Math.abs(r.pitch.rotation.x-bare.rigs[i].pitch.rotation.x)]))*180/Math.PI;
     $('angleDelta').textContent='Δ '+delta.toFixed(6)+'°';
     $('status').textContent=tracked?`t ${f.time.toFixed(2)} s · L (${f.angles[0].toFixed(1)}, ${f.angles[1].toFixed(1)})° · R (${f.angles[2].toFixed(1)}, ${f.angles[3].toFixed(1)})° · yaw / pitch`:'等待食指 · 当前眼位与仿真时钟保持不变';

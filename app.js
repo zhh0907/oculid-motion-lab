@@ -1,5 +1,5 @@
-import {createEyeRig} from './src/eye-rig.mjs';
-import {appearanceFrame} from './src/eyelid-model.mjs';
+import {createEyeRig} from './src/eye-rig.mjs?v=anatomical2';
+import {appearanceFrame,EyelidDynamics} from './src/eyelid-model.mjs?v=anatomical2';
 import {simplifyUI} from './simplify-ui.js?v=simple2';
 import {mountPatientControls,downloadJSON} from './patient-ui.mjs?v=simple2';
 import {MODEL_VERSION,PLANT} from './patient-model.mjs';
@@ -9,6 +9,7 @@ import {rotateCameraRay} from './calibration-math.js';
 import * as T from './vendor/three.module.js';
 import {LearnedModel,desired,ray,angularError,rad} from './engine.js';
 const $=id=>document.getElementById(id);
+const lidDynamics=new EyelidDynamics();
 const calibration=new ScreenCalibration();
 const finger=new FingerCamera(calibration),isCamera=()=>$('source').value==='camera';
 let wasTracked=false;
@@ -72,7 +73,7 @@ eyes.forEach(e=>e.root.traverse(o=>o.layers.enable(2)));scene.children.filter(o=
 let playing=true,frame=0,elapsed=0,acc=0,prevTarget=null,current=null,history=[],exportRows=[],runInfo=null;
 const patients=mountPatientControls({onChange:()=>reset()});
 const record=()=>records[+$('record').value||0],isData=()=>$('source').value==='data';
-function reset(){frame=0;elapsed=0;acc=0;prevTarget=null;current=null;history=[];exportRows=[];runInfo=null;patients.layer.reset();Object.values(learned).forEach(m=>m.reset());}
+function reset(){lidDynamics.reset();frame=0;elapsed=0;acc=0;prevTarget=null;current=null;history=[];exportRows=[];runInfo=null;patients.layer.reset();Object.values(learned).forEach(m=>m.reset());}
 function cameraProvenance(){$('provenance').textContent=calibration.enabled?'RGB fingertip tracking uses this computer’s calibration profile. Extrinsics are manually measured and depth is assumed; the eye-motion models have not been validated on real fingertip tracking.':'RGB fingertip tracking is active. Depth and camera intrinsics are assumed; the eye model was trained on VR target tasks and has not been validated for real fingertip following.';}
 function updateControls(){const data=isData(),cam=isCamera();if(!cam)finger.stop();$('cameraControls').hidden=!cam;$('cameraPanel').hidden=!cam;$('speed').disabled=cam;$('recordControls').hidden=!data;$('syntheticControls').hidden=data||cam;$('speedControls').hidden=cam;$('scrub').hidden=!data;wasTracked=false;for(const id of ['x','y','z','path'])$(id).disabled=data||cam;$('calibrationPanel').hidden=!cam;$('record').disabled=!data;if(!data&&$('mode').value==='gaze')$('mode').value='gru_expanded_520_new';$('scrub').disabled=!data;$('provenance').textContent=data?`GazeBaseVR · ${record().file}. Continuous valid segment on a 250 Hz grid; human recordings include measurement noise.`:'Synthetic trajectories explore generalization; vertical and circular motion have not been validated against human behavior.';if(cam)cameraProvenance();for(const o of $('mode').options){o.hidden=o.value==='gaze'&&!data;o.disabled=data?!Array.isArray(record()[o.value]):o.value==='gaze';}if(data&&!Array.isArray(record()[$('mode').value]))$('mode').value='ideal';reset();calibration.refresh();}
 for(const id of ['record','mode','path'])$(id).onchange=updateControls;
@@ -93,7 +94,7 @@ for(const id of ['x','y','z'])$(id).oninput=()=>{$(id+'v').textContent=(+$(id).v
 $('pause').onclick=()=>{playing=!playing;$('pause').textContent=playing?'Pause':'Resume';};$('reset').onclick=reset;
 $('scrub').oninput=()=>{if(isData()){
  frame=Math.floor(+$('scrub').value/1000*(record().time.length-1));history=[];exportRows=[];runInfo=null;current=null;
- patients.layer.reset();
+ patients.layer.reset();lidDynamics.reset();
  // Reconstruct history-dependent patient state instead of applying a static angle offset.
  if(patients.active)for(let i=0;i<frame;i++)patients.layer.step(record()[$('mode').value][i],1/fps);
  step(false);
@@ -115,8 +116,9 @@ function step(advance=true){let p,e,a,ideal,human=null,t;const mode=$('mode').va
    settings:Object.fromEntries(['path','x','y','z','cameraDepth','cameraFov','cameraSmooth','camY'].map(id=>[id,$(id).value])),
    recording:isData()?record().file:null,calibrationEnabled:calibration.enabled};
  a=patients.layer.step(baseline,1/fps);
- current={p,e,a,baseline,ideal,human,t,patientId:patients.active?.id||null};history.push([t,ideal[0],a[0],human?.[0]]);if(history.length>fps*6)history.shift();if(exportRows.length<fps*120)exportRows.push([t,...p,...a,...ideal,...baseline]);}
-function render(){if(!current)step(false);$('patientRunExport').disabled=!exportRows.length;$('export').disabled=!exportRows.length;const {p,e,a,ideal,t}=current;const lids=appearanceFrame(a,t);target.position.set(...p);target.visible=!isCamera()||!!finger.tracked;
+ const lids=lidDynamics.sample(a,t);
+ current={p,e,a,baseline,ideal,human,t,lids,patientId:patients.active?.id||null};history.push([t,ideal[0],a[0],human?.[0]]);if(history.length>fps*6)history.shift();if(exportRows.length<fps*120)exportRows.push([t,...p,...a,...ideal,...baseline]);}
+function render(){if(!current)step(false);$('patientRunExport').disabled=!exportRows.length;$('export').disabled=!exportRows.length;const {p,e,a,ideal,t}=current;const lids=current.lids||appearanceFrame(a,t);target.position.set(...p);target.visible=!isCamera()||!!finger.tracked;
  for(let i=0;i<2;i++){eyes[i].root.position.set(...e[i]);eyes[i].yaw.rotation.set(0,rad(a[2*i]),0);eyes[i].pitch.rotation.set(-rad(a[2*i+1]),0,0);eyes[i].update(a.slice(2*i,2*i+2),lids[i]);const d=ray(a.slice(2*i,2*i+2)),len=Math.hypot(...p.map((v,j)=>v-e[i][j]))+.08;const points=[new T.Vector3(...e[i]),new T.Vector3(...e[i].map((v,j)=>v+d[j]*len))];lines[i].geometry.setFromPoints(points);}
  chestCamera.position.set(0,-+$('camY').value,0);chestCamera.up.set(0,1,0);chestCamera.lookAt(0,chestCamera.position.y,1);
  if(isCamera()&&calibration.enabled){const c=calibration.profile.camera,d=rotateCameraRay([0,0,1],c),up=rotateCameraRay([0,1,0],c);chestCamera.position.set(c.x,c.y,c.z);chestCamera.up.set(...up);chestCamera.lookAt(c.x+d[0],c.y+d[1],c.z+d[2]);}

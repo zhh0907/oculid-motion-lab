@@ -1,9 +1,13 @@
 {
   "passed": true,
+  "version": "0.2.0",
   "angleDeltaDegrees": 0,
   "desktopAndMobile": true,
   "renderedIris": true,
   "fullClosure": true,
+  "wideGazeAndClosure": true,
+  "rangeControlsAndLegacyMode": true,
+  "cameraMappingUnaffectedByRange": true,
   "threeCases": true,
   "syntheticPointerAndInjectedCamera": true,
   "trackingLossHold": true,

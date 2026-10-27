@@ -1,6 +1,6 @@
 {
   "name": "oculid-motion-lab",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,5 +9,7 @@
     "test:workspace": "node tests/patients-browser.cjs && node tests/demo-browser.cjs",
     "serve": "python -m http.server 8000 --bind 127.0.0.1"
   },
-  "devDependencies": {"playwright":"1.62.1"}
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
 }

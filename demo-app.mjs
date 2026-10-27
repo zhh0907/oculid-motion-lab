@@ -1,5 +1,5 @@
-import {createEyeView} from './src/eye-rig.mjs';
-import {appearanceFrame} from './src/eyelid-model.mjs';
+import {createEyeView} from './src/eye-rig.mjs?v=anatomical2';
+import {EyelidDynamics} from './src/eyelid-model.mjs?v=anatomical2';
 import * as T from './vendor/three.module.js';
 import {FingerCamera} from './camera.js?v=review7';
 import {DEMO_CASES,DEMO_FPS,DEMO_MODEL,DEMO_EYES,DemoSimulation,demoTarget} from './demo-presets.mjs?v=demo1';
@@ -8,8 +8,8 @@ const choices=[...document.querySelectorAll('[data-case]')];
 choices.forEach(b=>b.disabled=true);
 
 function eyeView(id){
-  const view=createEyeView($(id));
-  return (angles,time=0)=>view.draw(angles,appearanceFrame(angles,time));
+  const view=createEyeView($(id)),lids=new EyelidDynamics();
+  return (angles,time=0)=>view.draw(angles,lids.sample(angles,time));
 }
 
 async function start(){

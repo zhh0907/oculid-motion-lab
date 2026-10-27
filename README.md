@@ -6,6 +6,14 @@
 
 ![Oculid eye region and synchronized bare-eye comparison](docs/preview.png)
 
+## 0.2 更新
+
+- 眼睑随动加入时间响应：上看、下看速度不同；眼球立即沿原模型运动，眼睑随后跟进。
+- 眨眼使用快闭慢开曲线和可重复的非等间隔节律，加入鼻侧组织滑动、下睑抬升、褶皱展开及睫毛弯曲。眉毛不会跟着每次眨眼整体下移。
+- 重建眼周与鼻梁连接，消除径向网格造成的圆形接缝和眼角尖锐褶皱；加入湿润睑缘、细微肤色变化和简化角膜反光。
+- 首页默认目标范围扩大到水平 **左右各 42° / 上 30° / 下 42°**。支持独立调整，以及一键切回原版范围。这里只修改目标方向，病例参数、GRU 和食指投影没有增益放大。
+- [本次设计依据与验证](docs/REALISM-v2.zh-CN.md)。宽幅 GRU 行为仍属探索，范围预设不是统一的人体生理限位。
+
 ## 已实现
 
 - 连续三维上下眼睑、垂直注视随动、自动/手动眨眼、单眼上睑覆盖、可调眼裂。
@@ -22,7 +30,7 @@ This is a procedural research prototype. It adds anatomical appearance and eyeli
 | Check | Result |
 | --- | --- |
 | Upstream-generated golden fixture | **3,600 samples, exact angle equality** across 2 GRUs + ideal geometry and 4 patterns |
-| Node tests | **21 passed**, including upstream patient/demo tests, lid closure/bounds, invariance and audited file hashes |
+| Node tests | **27 passed**, including upstream patient/demo tests, lid closure/bounds, invariance and audited file hashes |
 | Homepage browser tests | Rendered iris, exact same-pose comparison, full closure, cases, pointer/camera boundary, tracking loss/recovery, JSON/CSV, reduced motion |
 | Complete workspace and demo | Patient persistence/import/export, all replay controllers, seeking, injected live input and mobile tools passed |
 | Layout | 1440 px desktop and 320/390/844 px mobile viewports checked |
@@ -60,6 +68,8 @@ Node 22+ is recommended. Browser tests use Playwright; the homepage test can sel
 | --- | --- |
 | `src/simulation.mjs` | Target and controller orchestration, synchronized export |
 | `src/eyelid-model.mjs` | Pure deterministic eyelid/blink/visibility math |
+| `src/target-range.mjs` | Angular target excursions; original camera mapping is unchanged |
+| `src/periocular-shape.mjs` | Continuous eyelid/contact and face surfaces |
 | `src/eye-rig.mjs` | Eye, lid and eye-region meshes and materials |
 | `src/main.mjs`, `index.html`, `oculid.css` | New interface |
 | `workspace.html`, `app.js` | Complete inherited workspace with new eye meshes |
