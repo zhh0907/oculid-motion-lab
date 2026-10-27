@@ -1,0 +1,7 @@
+* text=auto
+# Preserve vendored and audited upstream bytes for reproducible hashes.
+*.js -text
+*.mjs -text
+*.json -text
+*.wasm binary
+*.task binary

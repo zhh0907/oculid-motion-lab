@@ -1,0 +1,14 @@
+{
+  "schema": "binocular-replay-files-v1",
+  "files": [
+    "record-01.json",
+    "record-02.json",
+    "record-03.json",
+    "record-04.json",
+    "record-05.json",
+    "record-06.json",
+    "record-07.json",
+    "record-08.json",
+    "record-09.json"
+  ]
+}

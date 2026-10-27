@@ -1,0 +1,3 @@
+# Optional offline calibration only; the web simulator needs no Python ML packages.
+numpy>=1.24,<3
+opencv-python>=4.8,<5

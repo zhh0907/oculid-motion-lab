@@ -1,0 +1,32 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>三个明显的眼动异常演示 · Motion Lab</title><link rel="icon" href="data:,"><link rel="stylesheet" href="demo.css?v=demo1"></head>
+<body><header><div><p class="eyebrow">BINOCULAR MOTION LAB</p><h1>三个固定的眼动异常演示</h1></div><a href="./">完整模拟器 ↗</a></header>
+<main>
+  <div id="caseChoices" class="case-choices" role="group" aria-label="选择一个演示病例">
+    <button type="button" data-case="conjugate" aria-pressed="true"><span>01</span>双眼向左受限</button>
+    <button type="button" data-case="adduction" aria-pressed="false"><span>02</span>左眼内转受限</button>
+    <button type="button" data-case="abduction" aria-pressed="false"><span>03</span>左眼外转受限</button>
+  </div>
+  <p id="caseDescription" class="description">向虚拟人的左侧看时，两眼都明显跟不上；向右看仍能转动。</p>
+  <section class="target-panel" aria-label="当前跟随目标">
+    <div class="target-heading"><strong id="phase">正在加载演示…</strong><span id="inputLabel">自动左右跟随</span></div>
+    <div class="target-track"><span class="center-mark"></span><span id="targetDot"></span></div>
+    <div class="side-labels"><span>虚拟人的右侧</span><span>正中</span><span>虚拟人的左侧</span></div>
+  </section>
+  <div class="eye-pair">
+    <section class="eye-card"><h2>病例眼位 <span id="caseBadge">01 · 双眼向左受限</span></h2><div id="eyeFocus" class="eye-view"><div class="eye-labels"><span>右眼</span><span>左眼</span></div></div></section>
+    <section class="eye-card reference"><h2>正常模型参考 <span>同一个目标、同一显示比例</span></h2><div id="referenceEyes" class="eye-view"><div class="eye-labels"><span>右眼</span><span>左眼</span></div></div></section>
+  </div>
+  <p class="view-note">正面观察：虚拟人的左侧在画面右侧。橙色点表示目标的水平方向。</p>
+  <div class="actions"><button id="pauseDemo" type="button" disabled>暂停</button><button id="restartDemo" type="button" disabled>从头演示</button><button id="cameraStart" type="button" disabled>用手指跟随</button><button id="cameraStop" type="button" hidden disabled>返回自动演示</button></div>
+  <p id="demoStatus" role="status" class="status">正在加载固定模型…</p>
+  <section id="cameraPanel" class="camera-panel" hidden><h2>手指画面 · 未镜像，与目标点同向</h2><div id="cameraPreview"><video id="cameraVideo" autoplay playsinline muted></video><canvas id="cameraOverlay"></canvas></div></section>
+  <p id="cameraStatus" role="status" class="status" hidden></p>
+  <details class="explanation"><summary>这三个病例如何保持明显、稳定？</summary>
+    <p>三例都固定在较强的受限档位：剩余容量 c = 0.12，对应方向驱动容量 C = 45c = 5.4°。同一个正常模型产生参考轨迹，再经过同一套连续响应方程。这里只切换受累的眼和方向，不随机改变症状，也没有新增扫视测试。</p>
+    <p>自动目标缓慢移动到左右约 27°，然后短暂停留。受限方向的眼位趋于约 5.4°，因此差异容易看见；这不是将眼位每帧裁剪到固定角度。垂直运动保留参考模型输出，手指可以自由移动。</p>
+    <p>方向映射有临床眼动表现依据；容量、时间常数和驱动方程是工程近似，尚不能证明三个病例完整符合真实患者的生理机制。单眼内转受限也不等于完整的 INO 模型。本页不指定 NIHSS 分数。</p>
+    <p><a href="demo-notes.html">参数、轨迹检查与医学依据 ↗</a></p>
+  </details>
+</main>
+<input id="cameraFacing" type="hidden" value="user"><input id="cameraDepth" type="hidden" value=".7"><input id="cameraFov" type="hidden" value="60"><input id="cameraSmooth" type="hidden" value="60"><input id="camY" type="hidden" value="0">
+<script type="module" src="demo-app.mjs?v=demo1"></script></body></html>

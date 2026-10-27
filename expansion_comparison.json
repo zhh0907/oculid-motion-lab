@@ -1,0 +1,1960 @@
+{
+  "overall": [
+    {
+      "regime": "baseline",
+      "recipe": "constant",
+      "domain": "External_right_eye",
+      "mean": {
+        "angle_mae_deg": 1.9958798263079995,
+        "velocity_20ms_mae_deg_s": 4.880628295833024
+      },
+      "sd": {
+        "angle_mae_deg": 0.0032873939747232114,
+        "velocity_20ms_mae_deg_s": 0.542457153251316
+      }
+    },
+    {
+      "regime": "baseline",
+      "recipe": "constant",
+      "domain": "VR_R1S1",
+      "mean": {
+        "angle_mae_deg": 1.5611236540627225,
+        "velocity_20ms_mae_deg_s": 10.682544306670971,
+        "horizontal_vergence_mae_deg": 1.427515038292518
+      },
+      "sd": {
+        "angle_mae_deg": 0.005775711577732429,
+        "velocity_20ms_mae_deg_s": 0.012123198197396334,
+        "horizontal_vergence_mae_deg": 0.00662158465248887
+      }
+    },
+    {
+      "regime": "baseline",
+      "recipe": "constant",
+      "domain": "VR_other_sessions",
+      "mean": {
+        "angle_mae_deg": 1.530634256950233,
+        "velocity_20ms_mae_deg_s": 10.549671382643782,
+        "horizontal_vergence_mae_deg": 1.4802013471064266
+      },
+      "sd": {
+        "angle_mae_deg": 0.001947746555474051,
+        "velocity_20ms_mae_deg_s": 0.019837463875837274,
+        "horizontal_vergence_mae_deg": 0.009296185276529808
+      }
+    },
+    {
+      "regime": "baseline",
+      "recipe": "decay",
+      "domain": "External_right_eye",
+      "mean": {
+        "angle_mae_deg": 1.9770858790171466,
+        "velocity_20ms_mae_deg_s": 4.801553672879497
+      },
+      "sd": {
+        "angle_mae_deg": 0.09526137575142529,
+        "velocity_20ms_mae_deg_s": 0.37083560657287973
+      }
+    },
+    {
+      "regime": "baseline",
+      "recipe": "decay",
+      "domain": "VR_R1S1",
+      "mean": {
+        "angle_mae_deg": 1.5557778144240093,
+        "velocity_20ms_mae_deg_s": 10.668575442856806,
+        "horizontal_vergence_mae_deg": 1.4227769367210639
+      },
+      "sd": {
+        "angle_mae_deg": 0.00015081714313278972,
+        "velocity_20ms_mae_deg_s": 0.009992079348211993,
+        "horizontal_vergence_mae_deg": 0.002511336291953107
+      }
+    },
+    {
+      "regime": "baseline",
+      "recipe": "decay",
+      "domain": "VR_other_sessions",
+      "mean": {
+        "angle_mae_deg": 1.52778491468793,
+        "velocity_20ms_mae_deg_s": 10.54323385771323,
+        "horizontal_vergence_mae_deg": 1.4783253018445108
+      },
+      "sd": {
+        "angle_mae_deg": 0.0014857593071978777,
+        "velocity_20ms_mae_deg_s": 0.00948891232227914,
+        "horizontal_vergence_mae_deg": 0.003334593714494727
+      }
+    },
+    {
+      "regime": "expanded",
+      "recipe": "constant",
+      "domain": "External_right_eye",
+      "mean": {
+        "angle_mae_deg": 2.0346907540866352,
+        "velocity_20ms_mae_deg_s": 4.676982319324469
+      },
+      "sd": {
+        "angle_mae_deg": 0.1031358299320591,
+        "velocity_20ms_mae_deg_s": 0.4419325197399621
+      }
+    },
+    {
+      "regime": "expanded",
+      "recipe": "constant",
+      "domain": "VR_R1S1",
+      "mean": {
+        "angle_mae_deg": 1.5626139463678779,
+        "velocity_20ms_mae_deg_s": 10.66551654128908,
+        "horizontal_vergence_mae_deg": 1.4310091341222613
+      },
+      "sd": {
+        "angle_mae_deg": 0.0065297755952735525,
+        "velocity_20ms_mae_deg_s": 0.013007755488726758,
+        "horizontal_vergence_mae_deg": 0.004923230265767328
+      }
+    },
+    {
+      "regime": "expanded",
+      "recipe": "constant",
+      "domain": "VR_other_sessions",
+      "mean": {
+        "angle_mae_deg": 1.5308426700969802,
+        "velocity_20ms_mae_deg_s": 10.519788177546952,
+        "horizontal_vergence_mae_deg": 1.4784096044009611
+      },
+      "sd": {
+        "angle_mae_deg": 0.004574323185998981,
+        "velocity_20ms_mae_deg_s": 0.016320490665588154,
+        "horizontal_vergence_mae_deg": 0.007152026368256184
+      }
+    },
+    {
+      "regime": "expanded",
+      "recipe": "decay",
+      "domain": "External_right_eye",
+      "mean": {
+        "angle_mae_deg": 2.0382342719618047,
+        "velocity_20ms_mae_deg_s": 4.543251144236838
+      },
+      "sd": {
+        "angle_mae_deg": 0.12367895169694006,
+        "velocity_20ms_mae_deg_s": 0.29551234021127554
+      }
+    },
+    {
+      "regime": "expanded",
+      "recipe": "decay",
+      "domain": "VR_R1S1",
+      "mean": {
+        "angle_mae_deg": 1.5548440263469232,
+        "velocity_20ms_mae_deg_s": 10.642102353833478,
+        "horizontal_vergence_mae_deg": 1.4238216610666647
+      },
+      "sd": {
+        "angle_mae_deg": 0.0021216616732257325,
+        "velocity_20ms_mae_deg_s": 0.01718401589153646,
+        "horizontal_vergence_mae_deg": 0.0016504708013185198
+      }
+    },
+    {
+      "regime": "expanded",
+      "recipe": "decay",
+      "domain": "VR_other_sessions",
+      "mean": {
+        "angle_mae_deg": 1.5248077749790292,
+        "velocity_20ms_mae_deg_s": 10.504884781161413,
+        "horizontal_vergence_mae_deg": 1.4780839614778871
+      },
+      "sd": {
+        "angle_mae_deg": 0.0012711646556196278,
+        "velocity_20ms_mae_deg_s": 0.01974689981099469,
+        "horizontal_vergence_mae_deg": 0.0029081482658550443
+      }
+    },
+    {
+      "regime": "mixed",
+      "recipe": "constant",
+      "domain": "External_right_eye",
+      "mean": {
+        "angle_mae_deg": 1.4721179727072335,
+        "velocity_20ms_mae_deg_s": 3.8132868927747654
+      },
+      "sd": {
+        "angle_mae_deg": 0.010977153999335782,
+        "velocity_20ms_mae_deg_s": 0.03509567408514697
+      }
+    },
+    {
+      "regime": "mixed",
+      "recipe": "constant",
+      "domain": "VR_R1S1",
+      "mean": {
+        "angle_mae_deg": 1.5624899929233391,
+        "velocity_20ms_mae_deg_s": 10.691347824367133,
+        "horizontal_vergence_mae_deg": 1.4266055915954443
+      },
+      "sd": {
+        "angle_mae_deg": 0.004298053884316159,
+        "velocity_20ms_mae_deg_s": 0.026629319531514446,
+        "horizontal_vergence_mae_deg": 0.004656487749046935
+      }
+    },
+    {
+      "regime": "mixed",
+      "recipe": "constant",
+      "domain": "VR_other_sessions",
+      "mean": {
+        "angle_mae_deg": 1.5315037893710552,
+        "velocity_20ms_mae_deg_s": 10.546541184942408,
+        "horizontal_vergence_mae_deg": 1.4828552213854465
+      },
+      "sd": {
+        "angle_mae_deg": 0.0010599043279880347,
+        "velocity_20ms_mae_deg_s": 0.013215740354718748,
+        "horizontal_vergence_mae_deg": 0.0026733752936225624
+      }
+    },
+    {
+      "regime": "mixed",
+      "recipe": "decay",
+      "domain": "External_right_eye",
+      "mean": {
+        "angle_mae_deg": 1.475827824427852,
+        "velocity_20ms_mae_deg_s": 3.8222045443884443
+      },
+      "sd": {
+        "angle_mae_deg": 0.0016382107989341794,
+        "velocity_20ms_mae_deg_s": 0.014898390416368723
+      }
+    },
+    {
+      "regime": "mixed",
+      "recipe": "decay",
+      "domain": "VR_R1S1",
+      "mean": {
+        "angle_mae_deg": 1.5591804362494166,
+        "velocity_20ms_mae_deg_s": 10.676811329902847,
+        "horizontal_vergence_mae_deg": 1.4273382056990185
+      },
+      "sd": {
+        "angle_mae_deg": 0.00046301653225133005,
+        "velocity_20ms_mae_deg_s": 0.02196174422620496,
+        "horizontal_vergence_mae_deg": 0.0009957739427839203
+      }
+    },
+    {
+      "regime": "mixed",
+      "recipe": "decay",
+      "domain": "VR_other_sessions",
+      "mean": {
+        "angle_mae_deg": 1.5268326856524252,
+        "velocity_20ms_mae_deg_s": 10.535474815867378,
+        "horizontal_vergence_mae_deg": 1.4752688855233425
+      },
+      "sd": {
+        "angle_mae_deg": 0.0024260157146600847,
+        "velocity_20ms_mae_deg_s": 0.01701888428578011,
+        "horizontal_vergence_mae_deg": 0.0021007427305522104
+      }
+    },
+    {
+      "regime": "pretrain",
+      "recipe": "constant",
+      "domain": "External_right_eye",
+      "mean": {
+        "angle_mae_deg": 1.999979151339736,
+        "velocity_20ms_mae_deg_s": 4.302006878369949
+      },
+      "sd": {
+        "angle_mae_deg": 0.07435800961791636,
+        "velocity_20ms_mae_deg_s": 0.11905591989233466
+      }
+    },
+    {
+      "regime": "pretrain",
+      "recipe": "constant",
+      "domain": "VR_R1S1",
+      "mean": {
+        "angle_mae_deg": 1.562990001823527,
+        "velocity_20ms_mae_deg_s": 10.634630496845121,
+        "horizontal_vergence_mae_deg": 1.425736290909444
+      },
+      "sd": {
+        "angle_mae_deg": 0.005504237425828871,
+        "velocity_20ms_mae_deg_s": 0.015602427842499786,
+        "horizontal_vergence_mae_deg": 0.0018995388569854593
+      }
+    },
+    {
+      "regime": "pretrain",
+      "recipe": "constant",
+      "domain": "VR_other_sessions",
+      "mean": {
+        "angle_mae_deg": 1.5317413342172632,
+        "velocity_20ms_mae_deg_s": 10.493116961483176,
+        "horizontal_vergence_mae_deg": 1.4799838567377293
+      },
+      "sd": {
+        "angle_mae_deg": 0.0031086121105591874,
+        "velocity_20ms_mae_deg_s": 0.012205378116545222,
+        "horizontal_vergence_mae_deg": 0.0036500529840383707
+      }
+    },
+    {
+      "regime": "pretrain",
+      "recipe": "decay",
+      "domain": "External_right_eye",
+      "mean": {
+        "angle_mae_deg": 1.976697420186807,
+        "velocity_20ms_mae_deg_s": 4.347909730126622
+      },
+      "sd": {
+        "angle_mae_deg": 0.08489287449386745,
+        "velocity_20ms_mae_deg_s": 0.16010504082174334
+      }
+    },
+    {
+      "regime": "pretrain",
+      "recipe": "decay",
+      "domain": "VR_R1S1",
+      "mean": {
+        "angle_mae_deg": 1.5573401060330845,
+        "velocity_20ms_mae_deg_s": 10.625794679304287,
+        "horizontal_vergence_mae_deg": 1.4250087757912604
+      },
+      "sd": {
+        "angle_mae_deg": 0.0012514818049871761,
+        "velocity_20ms_mae_deg_s": 0.00890627377673206,
+        "horizontal_vergence_mae_deg": 0.0018245819725330298
+      }
+    },
+    {
+      "regime": "pretrain",
+      "recipe": "decay",
+      "domain": "VR_other_sessions",
+      "mean": {
+        "angle_mae_deg": 1.525789958669521,
+        "velocity_20ms_mae_deg_s": 10.491179821025057,
+        "horizontal_vergence_mae_deg": 1.4763564370700546
+      },
+      "sd": {
+        "angle_mae_deg": 0.00021540995490475676,
+        "velocity_20ms_mae_deg_s": 0.005193042419398648,
+        "horizontal_vergence_mae_deg": 0.000979410406062752
+      }
+    }
+  ],
+  "selected": {
+    "name": "expanded_decay_42",
+    "regime": "expanded",
+    "recipe": "decay",
+    "seed": 42,
+    "best_epoch": 520,
+    "best_score": 0.9806935606912492
+  },
+  "selected_comparison": [
+    {
+      "domain": "VR_R1S1",
+      "metric": "angle_mae_deg",
+      "reference": 1.5794016764507495,
+      "selected": 1.554970978860515,
+      "improvement_pct": 1.5468324463942178,
+      "ci95_delta": [
+        -0.030101560920386444,
+        -0.01898994589584466
+      ]
+    },
+    {
+      "domain": "VR_R1S1",
+      "metric": "velocity_20ms_mae_deg_s",
+      "reference": 10.863378983250922,
+      "selected": 10.62728564087958,
+      "improvement_pct": 2.173295645262393,
+      "ci95_delta": [
+        -0.2570723175059694,
+        -0.215444899506215
+      ]
+    },
+    {
+      "domain": "VR_R1S1",
+      "metric": "horizontal_vergence_mae_deg",
+      "reference": 1.439501468683129,
+      "selected": 1.4249924852603106,
+      "improvement_pct": 1.0079172365201703,
+      "ci95_delta": [
+        -0.022748344146167714,
+        -0.0064715274830012244
+      ]
+    },
+    {
+      "domain": "VR_other_sessions",
+      "metric": "angle_mae_deg",
+      "reference": 1.5446297940156426,
+      "selected": 1.5242164999167265,
+      "improvement_pct": 1.321565476595319,
+      "ci95_delta": [
+        -0.026222180144314627,
+        -0.014674141031098488
+      ]
+    },
+    {
+      "domain": "VR_other_sessions",
+      "metric": "velocity_20ms_mae_deg_s",
+      "reference": 10.715312995715466,
+      "selected": 10.495738093459611,
+      "improvement_pct": 2.0491692808567783,
+      "ci95_delta": [
+        -0.23963971699944922,
+        -0.19979303073604499
+      ]
+    },
+    {
+      "domain": "VR_other_sessions",
+      "metric": "horizontal_vergence_mae_deg",
+      "reference": 1.484946570904292,
+      "selected": 1.4748904367340192,
+      "improvement_pct": 0.6772051174978521,
+      "ci95_delta": [
+        -0.021105834834547713,
+        0.00010081249130571064
+      ]
+    },
+    {
+      "domain": "External_right_eye",
+      "metric": "angle_mae_deg",
+      "reference": 2.2465231669631733,
+      "selected": 1.8958832795597231,
+      "improvement_pct": 15.608113575674428,
+      "ci95_delta": [
+        -0.4368455074874782,
+        -0.23601831096298054
+      ]
+    },
+    {
+      "domain": "External_right_eye",
+      "metric": "velocity_20ms_mae_deg_s",
+      "reference": 4.24914052682369,
+      "selected": 4.278752241921325,
+      "improvement_pct": -0.6968871683744898,
+      "ci95_delta": [
+        0.0019011953980285767,
+        0.05520934213886086
+      ]
+    }
+  ],
+  "training_elapsed_seconds": 14920.813467264175,
+  "paired_intervals": [
+    {
+      "a": "expanded_constant",
+      "b": "baseline_constant",
+      "domain": "VR_R1S1",
+      "metric": "angle_mae_deg",
+      "n_subjects": 62,
+      "delta": 0.0014902923051551304,
+      "ci95": [
+        -0.002168418393708835,
+        0.005006521998313917
+      ],
+      "seed_deltas": {
+        "42": -0.005285678927042391,
+        "43": 0.010983886476940003,
+        "44": -0.0012273306344322231
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "expanded_constant",
+      "b": "baseline_constant",
+      "domain": "VR_R1S1",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 62,
+      "delta": -0.01702776538189263,
+      "ci95": [
+        -0.03049250501858294,
+        -0.00268759839892732
+      ],
+      "seed_deltas": {
+        "42": -0.0350332560987068,
+        "43": 0.008311427789466317,
+        "44": -0.024361467836437403
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "expanded_constant",
+      "b": "baseline_constant",
+      "domain": "VR_R1S1",
+      "metric": "horizontal_vergence_mae_deg",
+      "n_subjects": 62,
+      "delta": 0.0034940958297439454,
+      "ci95": [
+        -0.004852454709079633,
+        0.011791204510369736
+      ],
+      "seed_deltas": {
+        "42": -0.004126704295510621,
+        "43": 0.01170919201668,
+        "44": 0.0028997997680624546
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "expanded_constant",
+      "b": "baseline_constant",
+      "domain": "VR_other_sessions",
+      "metric": "angle_mae_deg",
+      "n_subjects": 62,
+      "delta": 0.00020841314674731548,
+      "ci95": [
+        -0.0037139239426742052,
+        0.004116262947182916
+      ],
+      "seed_deltas": {
+        "42": -0.004001873481668083,
+        "43": 0.005081511789082696,
+        "44": -0.00045439886717266626
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "expanded_constant",
+      "b": "baseline_constant",
+      "domain": "VR_other_sessions",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 62,
+      "delta": -0.029883205096831324,
+      "ci95": [
+        -0.04491546469217351,
+        -0.015142237556480415
+      ],
+      "seed_deltas": {
+        "42": -0.062483132466362085,
+        "43": 0.008182561185419816,
+        "44": -0.03534904400955172
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "expanded_constant",
+      "b": "baseline_constant",
+      "domain": "VR_other_sessions",
+      "metric": "horizontal_vergence_mae_deg",
+      "n_subjects": 62,
+      "delta": -0.0017917427054656826,
+      "ci95": [
+        -0.009871057116678216,
+        0.006360218738822084
+      ],
+      "seed_deltas": {
+        "42": 0.0003220526775943329,
+        "43": -0.0016733082124569855,
+        "44": -0.004023972581534395
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "expanded_constant",
+      "b": "baseline_constant",
+      "domain": "External_right_eye",
+      "metric": "angle_mae_deg",
+      "n_subjects": 3,
+      "delta": 0.03881092777863531,
+      "ci95": [
+        -0.01428217616798618,
+        0.09215647862477579
+      ],
+      "seed_deltas": {
+        "42": -0.07060494030928943,
+        "43": 0.12517935743126532,
+        "44": 0.06185836621393004
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "expanded_constant",
+      "b": "baseline_constant",
+      "domain": "External_right_eye",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 3,
+      "delta": -0.2036459765085561,
+      "ci95": [
+        -0.2551374836988168,
+        -0.14897733676466376
+      ],
+      "seed_deltas": {
+        "42": -0.03783930288901027,
+        "43": -0.25016842167126807,
+        "44": -0.32293020496538993
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "mixed_constant",
+      "b": "baseline_constant",
+      "domain": "VR_R1S1",
+      "metric": "angle_mae_deg",
+      "n_subjects": 62,
+      "delta": 0.001366338860616357,
+      "ci95": [
+        -0.0036747050266007636,
+        0.00623616262853637
+      ],
+      "seed_deltas": {
+        "42": -0.00041020839666321634,
+        "43": 0.002638168029018861,
+        "44": 0.0018710569494934284
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "mixed_constant",
+      "b": "baseline_constant",
+      "domain": "VR_R1S1",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 62,
+      "delta": 0.008803517696161469,
+      "ci95": [
+        -0.004851853787196296,
+        0.022164841316025
+      ],
+      "seed_deltas": {
+        "42": 0.03195395355586017,
+        "43": 0.021328184421764897,
+        "44": -0.026871584889140657
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "mixed_constant",
+      "b": "baseline_constant",
+      "domain": "VR_R1S1",
+      "metric": "horizontal_vergence_mae_deg",
+      "n_subjects": 62,
+      "delta": -0.0009094466970732371,
+      "ci95": [
+        -0.009260273778089884,
+        0.0073328975246587606
+      ],
+      "seed_deltas": {
+        "42": -0.003601286607575688,
+        "43": 0.0017752393235264325,
+        "44": -0.0009022928071704567
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "mixed_constant",
+      "b": "baseline_constant",
+      "domain": "VR_other_sessions",
+      "metric": "angle_mae_deg",
+      "n_subjects": 62,
+      "delta": 0.0008695324208220858,
+      "ci95": [
+        -0.004077511483838519,
+        0.005887008622932523
+      ],
+      "seed_deltas": {
+        "42": -0.0019489875585958637,
+        "43": 0.000562339317752623,
+        "44": 0.003995245503309496
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "mixed_constant",
+      "b": "baseline_constant",
+      "domain": "VR_other_sessions",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 62,
+      "delta": -0.0031301977013772097,
+      "ci95": [
+        -0.014794896271350055,
+        0.008671372989948082
+      ],
+      "seed_deltas": {
+        "42": -0.013998566045660707,
+        "43": 0.02244682072999248,
+        "44": -0.017838847788463404
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "mixed_constant",
+      "b": "baseline_constant",
+      "domain": "VR_other_sessions",
+      "metric": "horizontal_vergence_mae_deg",
+      "n_subjects": 62,
+      "delta": 0.0026538742790197544,
+      "ci95": [
+        -0.004636055063495565,
+        0.010230636973101835
+      ],
+      "seed_deltas": {
+        "42": 0.008270980418911951,
+        "43": 0.007590005954970844,
+        "44": -0.007899363536823533
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "mixed_constant",
+      "b": "baseline_constant",
+      "domain": "External_right_eye",
+      "metric": "angle_mae_deg",
+      "n_subjects": 3,
+      "delta": -0.5237618536007663,
+      "ci95": [
+        -0.7868118714712983,
+        -0.037084590875697966
+      ],
+      "seed_deltas": {
+        "42": -0.5105682885199089,
+        "43": -0.5251039371360701,
+        "44": -0.5356133351463201
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "mixed_constant",
+      "b": "baseline_constant",
+      "domain": "External_right_eye",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 3,
+      "delta": -1.0673414030582589,
+      "ci95": [
+        -1.1961934195985429,
+        -0.9128163423672232
+      ],
+      "seed_deltas": {
+        "42": -0.535545053320648,
+        "43": -1.5527876212705223,
+        "44": -1.1136915345836058
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "pretrain_constant",
+      "b": "baseline_constant",
+      "domain": "VR_R1S1",
+      "metric": "angle_mae_deg",
+      "n_subjects": 62,
+      "delta": 0.001866347760804261,
+      "ci95": [
+        -0.0013763967625838342,
+        0.005075079703477518
+      ],
+      "seed_deltas": {
+        "42": 0.0015239130969605923,
+        "43": 0.0009468739032495812,
+        "44": 0.00312825628220261
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "pretrain_constant",
+      "b": "baseline_constant",
+      "domain": "VR_R1S1",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 62,
+      "delta": -0.04791380982585204,
+      "ci95": [
+        -0.05802332685596018,
+        -0.03811332747340425
+      ],
+      "seed_deltas": {
+        "42": -0.06966965874315761,
+        "43": -0.022729722710881705,
+        "44": -0.0513420480235168
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "pretrain_constant",
+      "b": "baseline_constant",
+      "domain": "VR_R1S1",
+      "metric": "horizontal_vergence_mae_deg",
+      "n_subjects": 62,
+      "delta": -0.0017787473830736898,
+      "ci95": [
+        -0.008303734121214455,
+        0.0045958216501268455
+      ],
+      "seed_deltas": {
+        "42": -0.0075540775438029135,
+        "43": 0.001614742661681633,
+        "44": 0.0006030927329002095
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "pretrain_constant",
+      "b": "baseline_constant",
+      "domain": "VR_other_sessions",
+      "metric": "angle_mae_deg",
+      "n_subjects": 62,
+      "delta": 0.0011070772670303596,
+      "ci95": [
+        -0.0015409257712497041,
+        0.003667327491070044
+      ],
+      "seed_deltas": {
+        "42": 0.0023935090427558794,
+        "43": -0.002506990968813346,
+        "44": 0.003434713727148545
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "pretrain_constant",
+      "b": "baseline_constant",
+      "domain": "VR_other_sessions",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 62,
+      "delta": -0.05655442116060692,
+      "ci95": [
+        -0.0664188591748321,
+        -0.04639204950251136
+      ],
+      "seed_deltas": {
+        "42": -0.08730805310772989,
+        "43": -0.039531854609164974,
+        "44": -0.042823355764925915
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "pretrain_constant",
+      "b": "baseline_constant",
+      "domain": "VR_other_sessions",
+      "metric": "horizontal_vergence_mae_deg",
+      "n_subjects": 62,
+      "delta": -0.00021749036869732398,
+      "ci95": [
+        -0.005243576364601507,
+        0.004786114727690282
+      ],
+      "seed_deltas": {
+        "42": 0.005483947692886255,
+        "43": 0.006074677241469562,
+        "44": -0.012211096040447789
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "pretrain_constant",
+      "b": "baseline_constant",
+      "domain": "External_right_eye",
+      "metric": "angle_mae_deg",
+      "n_subjects": 3,
+      "delta": 0.0040993250317361675,
+      "ci95": [
+        -0.029534453262617905,
+        0.03167401765934145
+      ],
+      "seed_deltas": {
+        "42": 0.08934305530045528,
+        "43": -0.0623597688513291,
+        "44": -0.01468531135391767
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "pretrain_constant",
+      "b": "baseline_constant",
+      "domain": "External_right_eye",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 3,
+      "delta": -0.5786214174630745,
+      "ci95": [
+        -0.6582853362146553,
+        -0.5347468437570514
+      ],
+      "seed_deltas": {
+        "42": 0.09949358917531488,
+        "43": -1.1057829622459783,
+        "44": -0.72957487931856
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "expanded_decay",
+      "b": "baseline_decay",
+      "domain": "VR_R1S1",
+      "metric": "angle_mae_deg",
+      "n_subjects": 62,
+      "delta": -0.0009337880770860979,
+      "ci95": [
+        -0.0036193154371439544,
+        0.0017596348836411361
+      ],
+      "seed_deltas": {
+        "42": -0.000980945438578985,
+        "43": 0.0012054198642191655,
+        "44": -0.003025838656898474
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "expanded_decay",
+      "b": "baseline_decay",
+      "domain": "VR_R1S1",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 62,
+      "delta": -0.0264730890233289,
+      "ci95": [
+        -0.03932673206540665,
+        -0.013468774119447392
+      ],
+      "seed_deltas": {
+        "42": -0.03207135300792593,
+        "43": -0.006235314607940185,
+        "44": -0.041112599454120574
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "expanded_decay",
+      "b": "baseline_decay",
+      "domain": "VR_R1S1",
+      "metric": "horizontal_vergence_mae_deg",
+      "n_subjects": 62,
+      "delta": 0.0010447243456010874,
+      "ci95": [
+        -0.0049189675312280735,
+        0.00713085440824605
+      ],
+      "seed_deltas": {
+        "42": -0.0005280387110788968,
+        "43": 0.003946623790101218,
+        "44": -0.0002844120422190589
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "expanded_decay",
+      "b": "baseline_decay",
+      "domain": "VR_other_sessions",
+      "metric": "angle_mae_deg",
+      "n_subjects": 62,
+      "delta": -0.002977139708900844,
+      "ci95": [
+        -0.005429770707213927,
+        -0.000569702314906246
+      ],
+      "seed_deltas": {
+        "42": -0.001864002633097636,
+        "43": -0.0025396969738120576,
+        "44": -0.004527719519792838
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "expanded_decay",
+      "b": "baseline_decay",
+      "domain": "VR_other_sessions",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 62,
+      "delta": -0.03834907655181832,
+      "ci95": [
+        -0.05062757313231044,
+        -0.026189751185819864
+      ],
+      "seed_deltas": {
+        "42": -0.04162018166578284,
+        "43": -0.010615809642557554,
+        "44": -0.06281123834711458
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "expanded_decay",
+      "b": "baseline_decay",
+      "domain": "VR_other_sessions",
+      "metric": "horizontal_vergence_mae_deg",
+      "n_subjects": 62,
+      "delta": -0.0002413403666239434,
+      "ci95": [
+        -0.006668799538293643,
+        0.005992949543735009
+      ],
+      "seed_deltas": {
+        "42": -0.0003858652343395724,
+        "43": -0.0031046465506975244,
+        "44": 0.0027664906851652665
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "expanded_decay",
+      "b": "baseline_decay",
+      "domain": "External_right_eye",
+      "metric": "angle_mae_deg",
+      "n_subjects": 3,
+      "delta": 0.06114839294465776,
+      "ci95": [
+        0.018669644186338836,
+        0.08941264879987498
+      ],
+      "seed_deltas": {
+        "42": -0.17170500437222688,
+        "43": 0.22178918291071748,
+        "44": 0.13336100029548267
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "expanded_decay",
+      "b": "baseline_decay",
+      "domain": "External_right_eye",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 3,
+      "delta": -0.25830252864265774,
+      "ci95": [
+        -0.28891491083290816,
+        -0.2229033087495281
+      ],
+      "seed_deltas": {
+        "42": -0.0967703443196779,
+        "43": -0.1150542518654607,
+        "44": -0.5630829897428345
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "mixed_decay",
+      "b": "baseline_decay",
+      "domain": "VR_R1S1",
+      "metric": "angle_mae_deg",
+      "n_subjects": 62,
+      "delta": 0.003402621825407149,
+      "ci95": [
+        -0.00047407456530140237,
+        0.007184464864699457
+      ],
+      "seed_deltas": {
+        "42": 0.0027257813385930664,
+        "43": 0.0038954379967122378,
+        "44": 0.003586646140916148
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "mixed_decay",
+      "b": "baseline_decay",
+      "domain": "VR_R1S1",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 62,
+      "delta": 0.008235887046041043,
+      "ci95": [
+        -0.005457838961701197,
+        0.02124191691871411
+      ],
+      "seed_deltas": {
+        "42": 0.024486614896036332,
+        "43": 0.027219854796266606,
+        "44": -0.02699880855417981
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "mixed_decay",
+      "b": "baseline_decay",
+      "domain": "VR_R1S1",
+      "metric": "horizontal_vergence_mae_deg",
+      "n_subjects": 62,
+      "delta": 0.0045612689779548025,
+      "ci95": [
+        -0.005064493425149753,
+        0.014418124309696878
+      ],
+      "seed_deltas": {
+        "42": 0.0026096670921588964,
+        "43": 0.005628411438406706,
+        "44": 0.005445728403298809
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "mixed_decay",
+      "b": "baseline_decay",
+      "domain": "VR_other_sessions",
+      "metric": "angle_mae_deg",
+      "n_subjects": 62,
+      "delta": -0.0009522290355047241,
+      "ci95": [
+        -0.004494259141775571,
+        0.0026768329497478052
+      ],
+      "seed_deltas": {
+        "42": -0.0019831156433087554,
+        "43": -8.264040503570153e-05,
+        "44": -0.0007909310581697165
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "mixed_decay",
+      "b": "baseline_decay",
+      "domain": "VR_other_sessions",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 62,
+      "delta": -0.007759041845851246,
+      "ci95": [
+        -0.021402594030950725,
+        0.006100197999685798
+      ],
+      "seed_deltas": {
+        "42": -0.001033464359291797,
+        "43": 0.013890346556502106,
+        "44": -0.03613400773476405
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "mixed_decay",
+      "b": "baseline_decay",
+      "domain": "VR_other_sessions",
+      "metric": "horizontal_vergence_mae_deg",
+      "n_subjects": 62,
+      "delta": -0.003056416321168213,
+      "ci95": [
+        -0.012006263038916004,
+        0.005688657877870697
+      ],
+      "seed_deltas": {
+        "42": -0.0019442722454238977,
+        "43": -0.004384221578762294,
+        "44": -0.002840755139318445
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "mixed_decay",
+      "b": "baseline_decay",
+      "domain": "External_right_eye",
+      "metric": "angle_mae_deg",
+      "n_subjects": 3,
+      "delta": -0.5012580545892947,
+      "ci95": [
+        -0.7357398929842535,
+        -0.035904427008923566
+      ],
+      "seed_deltas": {
+        "42": -0.5921305582658087,
+        "43": -0.4032830327822334,
+        "44": -0.5083605727198421
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "mixed_decay",
+      "b": "baseline_decay",
+      "domain": "External_right_eye",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 3,
+      "delta": -0.9793491284910526,
+      "ci95": [
+        -1.06291550025482,
+        -0.8453153524683602
+      ],
+      "seed_deltas": {
+        "42": -0.5685756224830243,
+        "43": -1.1405415782452455,
+        "44": -1.2289301847448886
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "pretrain_decay",
+      "b": "baseline_decay",
+      "domain": "VR_R1S1",
+      "metric": "angle_mae_deg",
+      "n_subjects": 62,
+      "delta": 0.0015622916090749714,
+      "ci95": [
+        -0.0020080559726146107,
+        0.0051597451579185015
+      ],
+      "seed_deltas": {
+        "42": 0.002515933575614306,
+        "43": 0.0002997681330774894,
+        "44": 0.001871173118533119
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "pretrain_decay",
+      "b": "baseline_decay",
+      "domain": "VR_R1S1",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 62,
+      "delta": -0.04278076355251762,
+      "ci95": [
+        -0.05157734077866236,
+        -0.03405663504406735
+      ],
+      "seed_deltas": {
+        "42": -0.04368825492124628,
+        "43": -0.03476226089196113,
+        "44": -0.04989177484434546
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "pretrain_decay",
+      "b": "baseline_decay",
+      "domain": "VR_R1S1",
+      "metric": "horizontal_vergence_mae_deg",
+      "n_subjects": 62,
+      "delta": 0.002231839070196741,
+      "ci95": [
+        -0.004805178406083237,
+        0.009519014471668473
+      ],
+      "seed_deltas": {
+        "42": -0.0002490223055448826,
+        "43": 0.00609584811739482,
+        "44": 0.0008486913987402854
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "pretrain_decay",
+      "b": "baseline_decay",
+      "domain": "VR_other_sessions",
+      "metric": "angle_mae_deg",
+      "n_subjects": 62,
+      "delta": -0.0019949560184088695,
+      "ci95": [
+        -0.005340429980590201,
+        0.0012707435482217386
+      ],
+      "seed_deltas": {
+        "42": -5.256568788988388e-05,
+        "43": -0.0031982663488733134,
+        "44": -0.0027340360184634122
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "pretrain_decay",
+      "b": "baseline_decay",
+      "domain": "VR_other_sessions",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 62,
+      "delta": -0.052054036688173454,
+      "ci95": [
+        -0.06111271889516766,
+        -0.04319630309716843
+      ],
+      "seed_deltas": {
+        "42": -0.051915308903446374,
+        "43": -0.04260286919454503,
+        "44": -0.06164393196652895
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "pretrain_decay",
+      "b": "baseline_decay",
+      "domain": "VR_other_sessions",
+      "metric": "horizontal_vergence_mae_deg",
+      "n_subjects": 62,
+      "delta": -0.0019688647744563297,
+      "ci95": [
+        -0.009179992040829844,
+        0.005226803064293627
+      ],
+      "seed_deltas": {
+        "42": 0.000603047532952775,
+        "43": -0.006179287274392435,
+        "44": -0.00033035458192932687
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "pretrain_decay",
+      "b": "baseline_decay",
+      "domain": "External_right_eye",
+      "metric": "angle_mae_deg",
+      "n_subjects": 3,
+      "delta": -0.00038845883033970216,
+      "ci95": [
+        -0.04408666048792812,
+        0.02929691294986118
+      ],
+      "seed_deltas": {
+        "42": -0.007629776862462394,
+        "43": 0.012572457436108131,
+        "44": -0.006108057064664847
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "pretrain_decay",
+      "b": "baseline_decay",
+      "domain": "External_right_eye",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 3,
+      "delta": -0.45364394275287473,
+      "ci95": [
+        -0.4863760591569897,
+        -0.42453595973652664
+      ],
+      "seed_deltas": {
+        "42": 0.1569180627606205,
+        "43": -0.7118724007629559,
+        "44": -0.8059774902562888
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "baseline_decay",
+      "b": "baseline_constant",
+      "domain": "VR_R1S1",
+      "metric": "angle_mae_deg",
+      "n_subjects": 62,
+      "delta": -0.005345839638713063,
+      "ci95": [
+        -0.007573977806389761,
+        -0.0031178844451871233
+      ],
+      "seed_deltas": {
+        "42": -0.011823013673742395,
+        "43": -0.0025273448949997995,
+        "44": -0.0016871603473969906
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "baseline_decay",
+      "b": "baseline_constant",
+      "domain": "VR_R1S1",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 62,
+      "delta": -0.013968863814167131,
+      "ci95": [
+        -0.021543849415562838,
+        -0.00644977149483083
+      ],
+      "seed_deltas": {
+        "42": -0.02719700060480953,
+        "43": -0.001748451429351732,
+        "44": -0.012961139408340134
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "baseline_decay",
+      "b": "baseline_constant",
+      "domain": "VR_R1S1",
+      "metric": "horizontal_vergence_mae_deg",
+      "n_subjects": 62,
+      "delta": -0.004738101571454027,
+      "ci95": [
+        -0.006532990829306189,
+        -0.0029360582640570996
+      ],
+      "seed_deltas": {
+        "42": -0.009616981627171417,
+        "43": -0.003630433889284859,
+        "44": -0.0009668891979058033
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "baseline_decay",
+      "b": "baseline_constant",
+      "domain": "VR_other_sessions",
+      "metric": "angle_mae_deg",
+      "n_subjects": 62,
+      "delta": -0.002849342262303082,
+      "ci95": [
+        -0.005056592837152242,
+        -0.0006610223371911203
+      ],
+      "seed_deltas": {
+        "42": -0.006266284274006362,
+        "43": -0.002234011383716055,
+        "44": -4.773112918682679e-05
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "baseline_decay",
+      "b": "baseline_constant",
+      "domain": "VR_other_sessions",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 62,
+      "delta": -0.006437524930552735,
+      "ci95": [
+        -0.01268380967572439,
+        6.860722982736312e-06
+      ],
+      "seed_deltas": {
+        "42": -0.03236582193486357,
+        "43": 0.008106014400646592,
+        "44": 0.00494723274255878
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "baseline_decay",
+      "b": "baseline_constant",
+      "domain": "VR_other_sessions",
+      "metric": "horizontal_vergence_mae_deg",
+      "n_subjects": 62,
+      "delta": -0.0018760452619158777,
+      "ci95": [
+        -0.0035804982824138806,
+        -0.00014344250028925132
+      ],
+      "seed_deltas": {
+        "42": 0.003148854049607058,
+        "43": 0.0037740006826258105,
+        "44": -0.0125509905179805
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "baseline_decay",
+      "b": "baseline_constant",
+      "domain": "External_right_eye",
+      "metric": "angle_mae_deg",
+      "n_subjects": 3,
+      "delta": -0.018793947290853128,
+      "ci95": [
+        -0.03756566513223388,
+        0.0038471931455575556
+      ],
+      "seed_deltas": {
+        "42": 0.07501513181818724,
+        "43": -0.1214582387215118,
+        "44": -0.009938734969234808
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "baseline_decay",
+      "b": "baseline_constant",
+      "domain": "External_right_eye",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 3,
+      "delta": -0.079074622953527,
+      "ci95": [
+        -0.12010576605001184,
+        -0.05244872134829256
+      ],
+      "seed_deltas": {
+        "42": 0.053027775597068505,
+        "43": -0.42865926865813986,
+        "44": 0.13840762420049035
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "expanded_decay",
+      "b": "expanded_constant",
+      "domain": "VR_R1S1",
+      "metric": "angle_mae_deg",
+      "n_subjects": 62,
+      "delta": -0.007769920020954289,
+      "ci95": [
+        -0.010031012613897276,
+        -0.005472771962617898
+      ],
+      "seed_deltas": {
+        "42": -0.0075182801852789905,
+        "43": -0.012305811507720638,
+        "44": -0.003485668369863241
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "expanded_decay",
+      "b": "expanded_constant",
+      "domain": "VR_R1S1",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 62,
+      "delta": -0.023414187455603398,
+      "ci95": [
+        -0.030446869745650907,
+        -0.01643109449085883
+      ],
+      "seed_deltas": {
+        "42": -0.024235097514028657,
+        "43": -0.016295193826758234,
+        "44": -0.029712271026023303
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "expanded_decay",
+      "b": "expanded_constant",
+      "domain": "VR_R1S1",
+      "metric": "horizontal_vergence_mae_deg",
+      "n_subjects": 62,
+      "delta": -0.007187473055596883,
+      "ci95": [
+        -0.011694704566077069,
+        -0.002664233547218891
+      ],
+      "seed_deltas": {
+        "42": -0.006018316042739694,
+        "43": -0.01139300211586364,
+        "44": -0.004151101008187317
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "expanded_decay",
+      "b": "expanded_constant",
+      "domain": "VR_other_sessions",
+      "metric": "angle_mae_deg",
+      "n_subjects": 62,
+      "delta": -0.00603489511795124,
+      "ci95": [
+        -0.00841182846790411,
+        -0.003598103846480847
+      ],
+      "seed_deltas": {
+        "42": -0.004128413425435915,
+        "43": -0.00985522014661081,
+        "44": -0.004121051781806998
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "expanded_decay",
+      "b": "expanded_constant",
+      "domain": "VR_other_sessions",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 62,
+      "delta": -0.01490339638553973,
+      "ci95": [
+        -0.02257844209065971,
+        -0.00712644892348521
+      ],
+      "seed_deltas": {
+        "42": -0.01150287113428433,
+        "43": -0.010692356427330778,
+        "44": -0.022514961595004084
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "expanded_decay",
+      "b": "expanded_constant",
+      "domain": "VR_other_sessions",
+      "metric": "horizontal_vergence_mae_deg",
+      "n_subjects": 62,
+      "delta": -0.0003256429230741385,
+      "ci95": [
+        -0.004373242153570496,
+        0.003837830389406038
+      ],
+      "seed_deltas": {
+        "42": 0.0024409361376731527,
+        "43": 0.002342662344385271,
+        "44": -0.0057605272512808395
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "expanded_decay",
+      "b": "expanded_constant",
+      "domain": "External_right_eye",
+      "metric": "angle_mae_deg",
+      "n_subjects": 3,
+      "delta": 0.0035435178751693154,
+      "ci95": [
+        -0.0007612601635907564,
+        0.010288450468441956
+      ],
+      "seed_deltas": {
+        "42": -0.026084932244750208,
+        "43": -0.024848413242059664,
+        "44": 0.06156389911231782
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "expanded_decay",
+      "b": "expanded_constant",
+      "domain": "External_right_eye",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 3,
+      "delta": -0.13373117508762863,
+      "ci95": [
+        -0.15388319318410323,
+        -0.12093563874562581
+      ],
+      "seed_deltas": {
+        "42": -0.005903265833599125,
+        "43": -0.2935450988523325,
+        "44": -0.1017451605769543
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "mixed_decay",
+      "b": "mixed_constant",
+      "domain": "VR_R1S1",
+      "metric": "angle_mae_deg",
+      "n_subjects": 62,
+      "delta": -0.0033095566739222686,
+      "ci95": [
+        -0.006872733684941256,
+        0.0002881179702856622
+      ],
+      "seed_deltas": {
+        "42": -0.008687023938486114,
+        "43": -0.0012700749273064226,
+        "44": 2.8428844025728932e-05
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "mixed_decay",
+      "b": "mixed_constant",
+      "domain": "VR_R1S1",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 62,
+      "delta": -0.01453649446428756,
+      "ci95": [
+        -0.022798444015568468,
+        -0.00649034422745126
+      ],
+      "seed_deltas": {
+        "42": -0.034664339264633366,
+        "43": 0.0041432189451499745,
+        "44": -0.013088363073379286
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "mixed_decay",
+      "b": "mixed_constant",
+      "domain": "VR_R1S1",
+      "metric": "horizontal_vergence_mae_deg",
+      "n_subjects": 62,
+      "delta": 0.0007326141035740141,
+      "ci95": [
+        -0.007510185646270596,
+        0.00920957733115454
+      ],
+      "seed_deltas": {
+        "42": -0.0034060279274368338,
+        "43": 0.0002227382255954143,
+        "44": 0.005381132012563462
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "mixed_decay",
+      "b": "mixed_constant",
+      "domain": "VR_other_sessions",
+      "metric": "angle_mae_deg",
+      "n_subjects": 62,
+      "delta": -0.004671103718629891,
+      "ci95": [
+        -0.007652272654361807,
+        -0.0016792880397998684
+      ],
+      "seed_deltas": {
+        "42": -0.006300412358719254,
+        "43": -0.00287899110650438,
+        "44": -0.00483390769066604
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "mixed_decay",
+      "b": "mixed_constant",
+      "domain": "VR_other_sessions",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 62,
+      "delta": -0.011066369075026773,
+      "ci95": [
+        -0.017846260444861713,
+        -0.004338069800828349
+      ],
+      "seed_deltas": {
+        "42": -0.019400720248494666,
+        "43": -0.00045045977284377986,
+        "44": -0.01334792720374187
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "mixed_decay",
+      "b": "mixed_constant",
+      "domain": "VR_other_sessions",
+      "metric": "horizontal_vergence_mae_deg",
+      "n_subjects": 62,
+      "delta": -0.007586335862103844,
+      "ci95": [
+        -0.015621408764908385,
+        0.0004579371210613685
+      ],
+      "seed_deltas": {
+        "42": -0.007066398614728791,
+        "43": -0.008200226851107328,
+        "44": -0.007492382120475414
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "mixed_decay",
+      "b": "mixed_constant",
+      "domain": "External_right_eye",
+      "metric": "angle_mae_deg",
+      "n_subjects": 3,
+      "delta": 0.003709851720618477,
+      "ci95": [
+        -0.007404115205287387,
+        0.013506313354810858
+      ],
+      "seed_deltas": {
+        "42": -0.006547137927712665,
+        "43": 0.0003626656323248619,
+        "44": 0.017314027457243236
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "mixed_decay",
+      "b": "mixed_constant",
+      "domain": "External_right_eye",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 3,
+      "delta": 0.008917651613678856,
+      "ci95": [
+        0.0028316084365863268,
+        0.013172153293710872
+      ],
+      "seed_deltas": {
+        "42": 0.0199972064346922,
+        "43": -0.01641322563286322,
+        "44": 0.02316897403920759
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "pretrain_decay",
+      "b": "pretrain_constant",
+      "domain": "VR_R1S1",
+      "metric": "angle_mae_deg",
+      "n_subjects": 62,
+      "delta": -0.005649895790442352,
+      "ci95": [
+        -0.007860138451607991,
+        -0.003452567965125016
+      ],
+      "seed_deltas": {
+        "42": -0.010830993195088682,
+        "43": -0.003174450665171891,
+        "44": -0.0029442435110664817
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "pretrain_decay",
+      "b": "pretrain_constant",
+      "domain": "VR_R1S1",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 62,
+      "delta": -0.008835817540832718,
+      "ci95": [
+        -0.014248121400679395,
+        -0.0033826968607257144
+      ],
+      "seed_deltas": {
+        "42": -0.0012155967828981977,
+        "43": -0.013780989610431161,
+        "44": -0.011510866229168791
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "pretrain_decay",
+      "b": "pretrain_constant",
+      "domain": "VR_R1S1",
+      "metric": "horizontal_vergence_mae_deg",
+      "n_subjects": 62,
+      "delta": -0.0007275151181835959,
+      "ci95": [
+        -0.004887751616365777,
+        0.0034833410199256593
+      ],
+      "seed_deltas": {
+        "42": -0.0023119263889133873,
+        "43": 0.0008506715664283272,
+        "44": -0.0007212905320657274
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "pretrain_decay",
+      "b": "pretrain_constant",
+      "domain": "VR_other_sessions",
+      "metric": "angle_mae_deg",
+      "n_subjects": 62,
+      "delta": -0.005951375547742312,
+      "ci95": [
+        -0.00871648312549862,
+        -0.00317268475126101
+      ],
+      "seed_deltas": {
+        "42": -0.008712359004652125,
+        "43": -0.002925286763776023,
+        "44": -0.0062164808747987845
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "pretrain_decay",
+      "b": "pretrain_constant",
+      "domain": "VR_other_sessions",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 62,
+      "delta": -0.0019371404581192606,
+      "ci95": [
+        -0.00754256648395867,
+        0.0035517524082651027
+      ],
+      "seed_deltas": {
+        "42": 0.00302692226941994,
+        "43": 0.005034999815266539,
+        "44": -0.013873343459044262
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "pretrain_decay",
+      "b": "pretrain_constant",
+      "domain": "VR_other_sessions",
+      "metric": "horizontal_vergence_mae_deg",
+      "n_subjects": 62,
+      "delta": -0.003627419667674883,
+      "ci95": [
+        -0.007268384145765337,
+        4.6969328368134404e-05
+      ],
+      "seed_deltas": {
+        "42": -0.0017320461103264215,
+        "43": -0.008479963833236187,
+        "44": -0.0006702490594620393
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "pretrain_decay",
+      "b": "pretrain_constant",
+      "domain": "External_right_eye",
+      "metric": "angle_mae_deg",
+      "n_subjects": 3,
+      "delta": -0.023281731152929003,
+      "ci95": [
+        -0.03994276984171415,
+        0.007313153494120428
+      ],
+      "seed_deltas": {
+        "42": -0.021957700344730435,
+        "43": -0.04652601243407458,
+        "44": -0.0013614806799819856
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    },
+    {
+      "a": "pretrain_decay",
+      "b": "pretrain_constant",
+      "domain": "External_right_eye",
+      "metric": "velocity_20ms_mae_deg_s",
+      "n_subjects": 3,
+      "delta": 0.045902851756672684,
+      "ci95": [
+        0.04036354170411623,
+        0.051803511007653714
+      ],
+      "seed_deltas": {
+        "42": 0.11045224918237413,
+        "43": -0.03474870717511758,
+        "44": 0.0620050132627615
+      },
+      "interpretation": "Negative favors A. Subject bootstrap conditional on 3 fixed training seeds; exploratory, no multiplicity adjustment. External N=3 is descriptive only."
+    }
+  ],
+  "data": {
+    "original_samples": {
+      "train": 21038245,
+      "val": 4504168,
+      "test": 4570408
+    },
+    "expanded_samples": {
+      "train": 52159607,
+      "val": 11220133,
+      "test": 10617203
+    },
+    "original_files": 1221,
+    "expanded_files": 3012,
+    "split_counts": {
+      "train": 284,
+      "val": 61,
+      "test": 62
+    },
+    "external_records": [
+      {
+        "subject": "88878fe6",
+        "split": "test",
+        "samples": 158725
+      },
+      {
+        "subject": "d2c0afa4",
+        "split": "test",
+        "samples": 227453
+      },
+      {
+        "subject": "eb8c52e6",
+        "split": "test",
+        "samples": 193447
+      },
+      {
+        "subject": "06b8d2d3",
+        "split": "train",
+        "samples": 196471
+      },
+      {
+        "subject": "21db28aa",
+        "split": "train",
+        "samples": 132245
+      },
+      {
+        "subject": "68471e16",
+        "split": "train",
+        "samples": 221096
+      },
+      {
+        "subject": "6cde27b5",
+        "split": "train",
+        "samples": 204125
+      },
+      {
+        "subject": "7d248f8f",
+        "split": "train",
+        "samples": 236696
+      },
+      {
+        "subject": "cf910821",
+        "split": "val",
+        "samples": 238159
+      },
+      {
+        "subject": "f7bb2338",
+        "split": "val",
+        "samples": 162978
+      }
+    ]
+  }
+}

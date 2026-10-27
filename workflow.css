@@ -1,0 +1,38 @@
+/* Main workflow: choose a patient, start the camera, watch the eyes. */
+body:not(.app-mode) main{grid-template-columns:320px minmax(0,1fr);max-width:1680px;margin:auto}
+body:not(.app-mode) #settings{max-height:calc(100dvh - 115px);overflow:auto;scrollbar-width:thin;padding:18px}
+header .badge,.mobile-nav{display:none}
+header h1 small{display:none}
+#patientControls{border:0;margin:0;padding:0}
+.patient-active{margin:0 0 10px;font-size:13px;line-height:1.4}
+.patient-fields{display:grid;grid-template-columns:1fr 90px;gap:12px}
+.patient-fields>div{min-width:0}
+.patient-fields label{min-height:28px;margin-bottom:2px}
+.patient-navigation button{font-size:11px;padding:7px 4px}
+#patientApply,#patientGenerate,#cameraStart{background:#246951;border-color:#408f77}
+#patientApply{flex:0 0 95px}
+#patientGeneratePanel,#patientFiles{border-top:1px solid #293e4b;padding-top:12px;margin:14px 0 0}
+#patientGeneratePanel>summary,#patientFiles>summary{font-size:13px;font-weight:600;cursor:pointer;color:#a9dace}
+#patientSeedPanel{margin:8px 0 0;font-size:11px}
+.patient-disclaimer{font-size:10px;line-height:1.5;color:#91a2b8;margin:12px 0 0}
+#patientMessage:empty{display:none}
+#patientFiles{font-size:12px}
+#patientFiles button{margin:6px 0}
+#patientFiles pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px}
+#patientFiles .help{overflow-wrap:anywhere}
+#patientFiles details{margin:12px 0}
+#advancedControls{font-size:12px}
+.session-actions{margin-top:10px}
+body:not(.app-mode) #comparisonPanels{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-content:start;align-items:stretch;min-width:0}
+body:not(.app-mode) #eyeFocus,body:not(.app-mode) #cameraPanel{height:clamp(330px,58vh,580px);margin:0!important;min-width:0}
+body:not(.app-mode) #cameraPanel{display:flex;flex-direction:column;padding:14px}
+body:not(.app-mode) #cameraPreview{width:100%!important;flex:1;min-height:0!important}
+body:not(.app-mode) #cameraVideo,body:not(.app-mode) #cameraOverlay{position:absolute!important;inset:0;width:100%!important;height:100%!important;object-fit:contain}
+body:not(.app-mode) #cameraPanel>.muted{display:none}
+body:not(.app-mode) #comparisonPanels>.secondary-tools,body:not(.app-mode) #scrub{grid-column:1/-1;margin:0}
+body:not(.app-mode) .eyeHint{font-size:10px;max-width:85%}
+body.app-mode #sceneDetails{display:none}
+.drawer-pane #advancedControls{margin-top:8px}
+.drawer-pane #patientControls .patient-navigation button{font-size:12px}
+@media(min-width:901px) and (max-width:1150px){body:not(.app-mode) #comparisonPanels{grid-template-columns:1fr}body:not(.app-mode) #eyeFocus,body:not(.app-mode) #cameraPanel{height:300px}}
+@media(max-width:900px){body:not(.app-mode) main{grid-template-columns:1fr}body:not(.app-mode) #settings{max-height:none}}

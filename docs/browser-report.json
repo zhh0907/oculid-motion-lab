@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "angleDeltaDegrees": 0,
+  "desktopAndMobile": true,
+  "renderedIris": true,
+  "fullClosure": true,
+  "threeCases": true,
+  "syntheticPointerAndInjectedCamera": true,
+  "trackingLossHold": true,
+  "exportJSONCSV": true,
+  "reducedMotion": true,
+  "physicalCameraTested": false,
+  "errors": []
+}

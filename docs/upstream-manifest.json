@@ -1,0 +1,28 @@
+{
+  "source": "https://github.com/zhh0907/binocular-motion-lab",
+  "baseCommit": "30373b0665f315876e68e5e529fd255c0d8c3ff2",
+  "snapshot": "2026-10-27 current local working tree including three-case demo",
+  "sha256": {
+    "engine.js": "8763adffae8e1b5067bb834ce4a72d04622cf25710397263bf2e70fc9d51d687",
+    "models-selected.json": "0c192b43314b927e0f51f08bd3cda43ac9532aa0a208740accbde02817c802b6",
+    "patient-model.mjs": "7a48e00bf4d0f89794f1639c951a3a119977ecb484fbb799840210950f30c7e3",
+    "camera.js": "1b3006ffa9689dfda2c641311008fc6def032b4f6f720790efac683afa3c9391",
+    "camera-math.js": "f2c42d5070b4480bc6e7b9bef244f2052d0ca0d916fe0b66b904a0efda5be8c1",
+    "camera-orientation.js": "2bcf1f7eb0a6b9c918a4db24a71c680e304b20a2ae6c7506c9a319aaaa5ff700",
+    "calibration-math.js": "338a3e066f68aa69ad4948ae7af61a42ba09bef7906b0007955d070a0630214e",
+    "hand-worker.js": "376bca361e0d8f4e6b493e1d9efccccbbd4fac11621fa27e4b9c413321935d1e",
+    "demo-presets.mjs": "d75b782d2ebe633e947fb61ba33d8b6725da4a375ab57a900061608941825d01"
+  },
+  "storageNamespaceOnly": {
+    "calibration.js": {
+      "upstreamSha256": "75cea92210b3a23ce54b66acf7f76c90b7be4f40320634106359d69717cf0207",
+      "from": "binocular-screen-calibration-v1",
+      "to": "oculid-screen-calibration-v1"
+    },
+    "patient-ui.mjs": {
+      "upstreamSha256": "95ed9cecbfd8f516d70153e0e8bf969621d7dcc10692a3ab292db8a97f3aaaa4",
+      "from": "binocular-motion-patients-v1",
+      "to": "oculid-motion-patients-v1"
+    }
+  }
+}

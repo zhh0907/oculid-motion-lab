@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Virtual patients · Binocular Motion Lab</title>
+<style>body{max-width:900px;margin:32px auto;padding:0 20px;font:16px/1.7 system-ui;background:#0b121a;color:#dce5f1}a,h2{color:#87dec9}pre{overflow:auto;background:#192b3b;padding:14px;border-radius:8px}code{overflow-wrap:anywhere}table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:10px;border:1px solid #354258;text-align:left}.table{overflow:auto}li{margin:8px 0}</style></head>
+<body><a href="./">← Open simulator</a><h1>Fixed, reproducible virtual patients</h1>
+<p>This version generates abnormal horizontal movement candidates for clinician review. It assigns no NIHSS scores and does not establish a diagnosis. There is no added saccade examination.</p>
+<h2>Generate 30 patients and activate a number</h2>
+<ol><li>Open <b>Patient & settings → Setup</b> on mobile, or the settings sidebar on desktop.</li>
+<li>Choose <b>Both eyes · One gaze direction</b>, <b>One eye · Inward movement</b>, or <b>One eye · Outward movement</b>. Choose the limited gaze direction for the first template or the affected eye for the others.</li>
+<li>Enter <b>30</b>. Keep or enter a batch seed, then click <b>Generate patients</b>. The first batch creates P000001–P000030 and activates its first patient. Subsequent batches append new IDs without modifying existing configurations.</li>
+<li>Enter <b>17</b> or <b>P000017</b> and click <b>Use patient</b> (or press Enter). The current run restarts, including normal-controller and patient state. The camera stays active. Previous/Next selects adjacent saved patients.</li>
+<li>Move your finger freely. Every valid input passes through the patient layer, including diagonal and depth changes. Only the specified horizontal drive channels are affected; pitch remains the normal controller output. These off-horizontal behaviors are exploratory, not clinically validated.</li>
+<li>Use <b>Normal</b> for an exact bypass. Restart, pause, camera loss and source changes do not resample patient parameters.</li></ol>
+<p>Left/right always means the simulated person's anatomy. A front view or mirrored preview can reverse the on-screen direction. The simulation uses +yaw toward the person's right; it does not infer anatomical side from the displayed camera image.</p>
+<h2>What is random, and what stays fixed?</h2>
+<p>Template and side are selected by you. Residual capacity c is sampled from [0.12, 0.88], split into three equal-width strata. Counts differ by at most one; a batch of 30 has ten in each stratum. Values are random within strata and their order is shuffled so an ID does not encode capacity. The response multiplier is fixed at 1 in v1. There is no per-frame random disease noise.</p>
+<p>These are engineering exploration intervals, not measured patient distributions or NIHSS severity classes. The same model version, template, side, count and seed reproduce the same parameter sequence. IDs additionally depend on the existing library's next number. A patient number is meaningful within its library; library identity is included in exports.</p>
+<h2>Save, restore and reproduce</h2>
+<p>The library and active ID are saved to this browser's local storage. Refresh restores them. A new browser, origin, private session or cleared site data does not share this storage. Use <b>Download patient library</b> to back up all configurations. Import into an empty browser restores the same library and IDs. Import into the same library merges missing IDs and rejects conflicting configurations. A different, nonempty library is not silently overwritten or renumbered.</p>
+<p>Use one tab to edit a library. If another tab changes saved storage, this tab refuses to overwrite it and asks you to export and reload. When browser storage is unavailable/full, a visible message explains that the current library is only in memory.</p>
+<p>Fixed patient parameters do not make different hand motions identical. Exact replay requires the same reference-angle sequence, time steps and initial state. <b>Download current run</b> contains all of these, plus the model version, initial source settings and target positions. CSV includes patient/library IDs, normal reference and altered output angles; use the JSON for full replay. Both exports keep at most the first 120 simulation seconds of the current run, and do not include video. Tracking gaps freeze the simulation clock and state; run time is simulation time, not elapsed camera wall time. Source/model/calibration changes, restart, patient activation and dataset seeking begin a new export segment; download before those actions.</p>
+<h2>The mathematical middle layer</h2>
+<p>The upstream controller supplies a normal reference angle r. For each affected horizontal eye axis, the layer maintains actual angle q, starting at zero. The requested drive combines reference feed-forward and proportional correction from the actual output:</p>
+<pre>u = r + k (r − q)                 k = 2
+C = 45 c                         angle-equivalent drive capacity
+
+If d u &gt; 0:  u_delivered = d C tanh(d u / C)
+Otherwise:   u_delivered = u
+
+τ dq/dt = u_delivered − q         τ = 0.12 seconds</pre>
+<p>d is the impaired drive direction: −1 for anatomical left and +1 for right. Drive is expressed in angle-equivalent units after normalizing passive restoring stiffness. This is an overdamped, spring/viscous response proxy, not a measured muscle-force or neuron model. The tanh function smoothly saturates drive; no fixed angle clipping is applied. Finite proportional feedback avoids unbounded integral compensation. Affected axes have additional response dynamics in both movement directions, even though only one signed drive is saturated.</p>
+<p>At equilibrium the delivered drive balances restoring load. A stronger target request can still change eye position, but with diminishing response. Opposite-direction recovery depends on state and requested drive: the effect is not restricted to a target's left/right half-plane. The model does not represent tissue geometry, neural inhibition, central adaptation, convergence-specific pathways, or all consequences of real lesions.</p>
+<p>Implementation uses substeps h ≤ 0.002 s and updates q ← q + (1 − exp(−h/τ))(u_delivered − q), recomputing drive each substep. This is a numerical approximation to the feedback equation. The normal controller runs at the bundled model's sampling rate (currently 250 Hz), independently of browser display refresh. Unaffected axes pass through exactly. Disabling the layer is an exact identity mapping.</p>
+<div class="table"><table><thead><tr><th>Template</th><th>Left selection</th><th>Right selection</th></tr></thead><tbody>
+<tr><td>Common directional limitation</td><td>Both yaw channels, d = −1</td><td>Both yaw channels, d = +1</td></tr>
+<tr><td>Single-eye inward limitation</td><td>Left eye yaw, d = +1</td><td>Right eye yaw, d = −1</td></tr>
+<tr><td>Single-eye outward limitation</td><td>Left eye yaw, d = −1</td><td>Right eye yaw, d = +1</td></tr>
+</tbody></table></div>
+<h2>Medical rationale and engineering assumptions</h2>
+<p>The anatomical patterns are motivated by conjugate gaze pathways, MLF-related adduction impairment, and abducens nerve-related abduction impairment. They are movement templates, not lesion diagnoses. Brainstem injury may also produce nystagmus and additional signs absent from this first version.</p>
+<ul><li><a href="https://www.neurology.org/doi/10.1212/01.wnl.0000291013.26249.74">Pearls and oy-sters of localization in ophthalmoparesis</a>: anatomical distinction between nuclear, internuclear and peripheral patterns.</li>
+<li><a href="https://pubmed.ncbi.nlm.nih.gov/40708955/">Choi et al., 2025: Horizontal gaze-evoked nystagmus in pontine gaze palsy</a>: partial/complete horizontal gaze palsy and associated gaze-holding abnormalities.</li>
+<li><a href="https://pubmed.ncbi.nlm.nih.gov/31325992/">Jacobs et al., 2019: model-based INO study</a>: gain/delay modeling in MS-related saccades; this does not validate our stroke-following parameter values.</li>
+<li><a href="https://www.ninds.nih.gov/sites/default/files/2025-03/KnowStroke_NIHStrokeScale_March2025_508c.pdf">Official NIHSS instructions</a>: horizontal gaze assessment, including whether deviation can be overcome. A finger-following clip alone may not support a unique score.</li></ul>
+<p><b>The capacity interval, 45-degree equivalent drive scale, 0.12-second response constant, feedback gain 2, fixed response multiplier, tanh mapping and balanced sampling are engineering choices. None is a validated clinical cutoff or population distribution.</b> Clinicians should independently judge plausibility, evidence sufficiency and (when justified) score. Real eye-motion data are needed to calibrate parameter values. Score balance is not guaranteed by parameter balance, and benefit to a classifier requires evaluation on independent real patients.</p>
+<h2>Verification</h2><p>Run <code>node --test tests/patients.test.mjs</code> for deterministic sampling, import validation, anatomical mapping, dynamics and replay checks. Run <code>node tests/patients-browser.cjs</code> with Playwright and Chrome for UI, storage, downloads, injected fingertip tracking, replay seeking and mobile layout checks. Physical camera operation and clinical validity are not established by these tests.</p>
+<p><a href="./PATIENT_MODEL.zh-CN.md">中文数学与实现说明</a></p>
+</body></html>

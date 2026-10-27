@@ -1,0 +1,19 @@
+Third-party notices
+Three.js: MIT; see vendor/THREE-LICENSE.txt.
+MediaPipe Tasks Vision 0.10.32: Apache 2.0; see vendor/mediapipe/LICENSE.
+Official model source, version and SHA256: vendor/mediapipe/*PROVENANCE.json.
+SDK and model documentation: https://ai.google.dev/edge/mediapipe/solutions/vision
+Bundled unmodified vendor code and model assets are governed by their respective licenses.
+Research app by Honghao Zhao. No clinical or hardware accuracy guarantee.
+
+GazeBaseVR: Dillon Lohr, Samantha Aziz, Lee Friedman, Oleg V. Komogortsev.
+https://doi.org/10.6084/m9.figshare.21308391
+CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
+Bundled recordings are selected, filtered and resampled excerpts. Models are trained derivatives.
+No endorsement by the dataset authors is implied.
+
+Oculid additions (2026): original procedural eye-region geometry, iris shader,
+eyelid behavior, UI and tests. No UnityEyes/RIT-Eyes/AniEyelid code, textures,
+scans or learned assets are included. Research links are references only.
+Upstream application: https://github.com/zhh0907/binocular-motion-lab
+Audit: docs/upstream-manifest.json.
