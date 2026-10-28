@@ -1,10 +1,13 @@
-# Verification record — 2026-10-27
+# Verification record — 2026-10-28
 
-Environment: Version 0.3.0. Windows, Node 24.15.0, installed Google Chrome through Playwright 1.62.1. Browser input is synthetic or injected at the existing fingertip boundary. No person/camera was recorded.
+Environment: Version 0.4.0. Windows, Node 24.15.0, installed Google Chrome through Playwright 1.62.1. Browser input is synthetic or injected at the existing fingertip boundary. No person/camera was recorded.
 
 ## Results
 
-- `npm test`: 28/28 passed. This includes the original patient and three-case suites.
+- Homepage patient/trajectory integration: 30 balanced profiles; ID recall, refresh persistence, unchanged profile after controller change, portable library import and conflict rejection, shared workspace storage, arbitrary 3D targets, three chart views, independent clearing, pause/tracking loss/reacquisition, and JSON/CSV provenance pass. [Report](patients-browser-report.json).
+- Unit checks include six correctly sided examples, deterministic custom-patient replay, stale/corrupt/unavailable storage protection, and continued bounded chart history after the 120-second export buffer fills.
+
+- `npm test`: 34/34 passed. This includes the original patient and three-case suites.
 - `node tests/oculid-browser.cjs`: passed; [machine-readable report](browser-report.json).
 - `npm run test:workspace`: both inherited browser suites passed with the new eye meshes.
 - Wide-target checks: UI-controlled 50° gaze, full closure at that angle, legacy toggle and camera bypass pass. Pure geometry checks cover ±55° yaw, −50° / +40° pitch, contact clearance and continuous outer boundaries.

@@ -6,6 +6,14 @@
 
 ![Oculid eye region and synchronized bare-eye comparison](docs/preview.png)
 
+## 0.4 更新：患者库与实时轨迹
+
+- 首页整合原模拟器的三种受限模板，支持左右侧明显示例、批量均衡随机生成、固定编号调用，以及患者库 JSON 导入/导出。
+- 生成后参数固定：换输入轨迹、控制器或眼睑外观都不重新抽样；首页与完整工作台共享本系统的浏览器患者库。
+- 眼部画面下方实时显示水平/时间、垂直/时间及水平/垂直二维眼位。实线为当前眼位，虚线为同输入下的正常模型参考。
+- 最近 20 秒滚动显示，暂停或食指丢失时冻结；120 秒导出缓存满后图表仍继续。清图不影响患者或记录。
+- [操作、坐标和复现说明](docs/PATIENTS-AND-TRACES.zh-CN.md)。患者只生成候选运动，不预设 NIHSS 分数。
+
 ## 0.3 更新：眼角与皮肤
 
 - 用连接上下睑的连续组织面替换眼角小球，区分鼻侧的泪阜/半月皱襞近似和颞侧的皮肤连接；闭眼时随眼裂闭合。
@@ -26,7 +34,7 @@
 
 - 连续三维上下眼睑、垂直注视随动、自动/手动眨眼、单眼上睑覆盖、可调眼裂。
 - 程序化虹膜、可调瞳孔、简化角膜高光、眼周皮肤、睫毛及眉毛。
-- 原有两种 GRU、几何参考、正常及三种固定受限运动情境。
+- 原有两种 GRU、几何参考、正常、三种模板的左右侧明显示例，以及可编号调用的固定患者。
 - 自动水平/垂直/圆周/阶跃/远近目标、鼠标/触控和本地摄像头食指跟随。
 - 新旧外观共享相同角度，支持逐帧同步对照；最多 120 秒 JSON/CSV 数据导出。
 - 完整工作台保留原工程的病例库、数据回放、移动端工具栏、屏幕/相机标定与历史导出格式。
@@ -38,7 +46,7 @@ This is a procedural research prototype. It adds anatomical appearance and eyeli
 | Check | Result |
 | --- | --- |
 | Upstream-generated golden fixture | **3,600 samples, exact angle equality** across 2 GRUs + ideal geometry and 4 patterns |
-| Node tests | **28 passed**, including upstream patient/demo tests, lid closure/bounds, invariance and audited file hashes |
+| Node tests | **34 passed**, including upstream patient/demo tests, lid closure/bounds, invariance and audited file hashes |
 | Homepage browser tests | Rendered iris, exact same-pose comparison, full closure, cases, pointer/camera boundary, tracking loss/recovery, JSON/CSV, reduced motion |
 | Complete workspace and demo | Patient persistence/import/export, all replay controllers, seeking, injected live input and mobile tools passed |
 | Layout | 1440 px desktop and 320/390/844 px mobile viewports checked |

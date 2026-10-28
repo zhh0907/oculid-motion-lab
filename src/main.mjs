@@ -1,8 +1,10 @@
 import {createEyeView} from './eye-rig.mjs?v=canthus3';
-import {Simulation,FPS,targetAt} from './simulation.mjs?v=canthus3';
+import {Simulation,FPS,targetAt} from './simulation.mjs?v=patients4';
 import {pointerTarget,normalizeRange} from './target-range.mjs?v=canthus3';
 import {FingerCamera} from '../camera.js?v=review7';
 import {angularError} from '../engine.js';
+import {mountPatientPanel} from './patient-panel.mjs?v=patients4';
+import {TrajectoryPlot} from './trajectory-plot.mjs?v=patients4';
 const $=id=>document.getElementById(id);
 async function start(){
   const response=await fetch('./models-selected.json');if(!response.ok)throw Error('模型加载失败');
@@ -12,7 +14,10 @@ async function start(){
   let playing=!matchMedia('(prefers-reduced-motion: reduce)').matches,acc=0,last=performance.now(),wasTracked=false,pointer=[0,0,.7],fpsStart=last,frames=0;
   function range(){return $('rangePreset').value==='legacy'?null:normalizeRange({horizontal:+$('horizontalRange').value,up:+$('upRange').value,down:+$('downRange').value});}
   function settings(){return {targetRange:$('source').value==='camera'?null:range(),source:$('source').value,path:$('path').value,depth:+$('depth').value,cameraFov:+$('cameraFov').value,cameraY:+$('camY').value,depthAssumed:true};}
-  function reset(){sim.reset();acc=0;wasTracked=false;last=performance.now();}
+  function changed(){acc=0;wasTracked=false;last=performance.now();}
+  function reset(){sim.reset();changed();}
+  const patients=mountPatientPanel(sim,changed);
+  const trace=new TrajectoryPlot($('motionTrace'),$('traceView'),$('traceClear'),sim.trace);
   function playback(){ $('pause').textContent=playing?'暂停':'继续';$('stateLabel').textContent=playing?'实时双眼模拟':'已暂停';}
   $('pause').onclick=()=>{playing=!playing;acc=0;playback();};$('reset').onclick=reset;
   function blink(){sim.blink();if(!playing){playing=true;playback();}}
@@ -20,7 +25,7 @@ async function start(){
   window.addEventListener('keydown',e=>{if(e.key.toLowerCase()==='b'&&!/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)){e.preventDefault();blink();}});
   $('fullscreen').onclick=()=>{const p=document.fullscreenElement?document.exitFullscreen():$('eyeFocus').requestFullscreen();p?.catch(()=>{$('status').textContent='此浏览器不支持全屏，请使用浏览器缩放。';});};
   $('compare').onchange=()=>{$('comparison').hidden=!$('compare').checked;};
-  $('model').onchange=$('pattern').onchange=()=>{sim.select({model:$('model').value,pattern:$('pattern').value});acc=0;};
+  $('model').onchange=()=>{sim.select({model:$('model').value});changed();};
   $('path').onchange=reset;
   function rangeChanged(){
     for(const id of ['horizontalRange','upRange','downRange'])$(id+'Value').textContent=$(id).value+'°';
@@ -44,8 +49,8 @@ async function start(){
   function download(text,type,extension){const url=URL.createObjectURL(new Blob([text],{type})),link=document.createElement('a');link.href=url;link.download='oculid-run.'+extension;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
   $('exportJson').onclick=()=>download(JSON.stringify(sim.export(settings()),null,2),'application/json','json');
   $('exportCsv').onclick=()=>{
-    const header='time_s,target_x_m,target_y_m,target_z_m,left_yaw_deg,left_pitch_deg,right_yaw_deg,right_pitch_deg,reference_left_yaw,reference_left_pitch,reference_right_yaw,reference_right_pitch,blink_closure,left_upper_m,left_lower_m,right_upper_m,right_lower_m,left_pupil_visible,right_pupil_visible';
-    const rows=sim.rows.map(r=>[r.time,...r.target,...r.angles,...r.baseline,r.lids[0].closure,r.lids[0].upper,r.lids[0].lower,r.lids[1].upper,r.lids[1].lower,...r.lids.map(l=>l.pupilVisibility)].join(','));download([header,...rows].join('\n'),'text/csv','csv');
+    const header='time_s,target_x_m,target_y_m,target_z_m,left_yaw_deg,left_pitch_deg,right_yaw_deg,right_pitch_deg,reference_left_yaw,reference_left_pitch,reference_right_yaw,reference_right_pitch,blink_closure,left_upper_m,left_lower_m,right_upper_m,right_lower_m,left_pupil_visible,right_pupil_visible,patient_id,patient_library_id,patient_template,patient_side';
+    const rows=sim.rows.map(r=>[r.time,...r.target,...r.angles,...r.baseline,r.lids[0].closure,r.lids[0].upper,r.lids[0].lower,r.lids[1].upper,r.lids[1].lower,...r.lids.map(l=>l.pupilVisibility),sim.patient?.id||'',sim.libraryId||'',sim.patient?.template||'',sim.patient?.side||''].join(','));download([header,...rows].join('\n'),'text/csv','csv');
   };
   function tick(){
     let target;const source=$('source').value;
@@ -57,6 +62,7 @@ async function start(){
     const dt=Math.min((now-last)/1000,.08);last=now;
     if(playing){acc+=dt;while(acc>=1/FPS){tick();acc-=1/FPS;}}
     const f=sim.frame();view.draw(f.angles,f.lids,sim.appearance);if($('compare').checked)bare.draw(f.angles,f.lids,sim.appearance);
+    trace.draw(sim.trace,now);$('traceTime').textContent=f.time.toFixed(2)+' s';
     const tracked=$('source').value!=='camera'||finger.tracked;
     $('leftError').textContent=tracked?angularError(f.angles.slice(0,2),f.ideal.slice(0,2)).toFixed(2)+'°':'—';
     $('rightError').textContent=tracked?angularError(f.angles.slice(2),f.ideal.slice(2)).toFixed(2)+'°':'—';$('vergence').textContent=(f.angles[0]-f.angles[2]).toFixed(2)+'°';
@@ -71,6 +77,6 @@ async function start(){
     requestAnimationFrame(draw);
   }
   for(const id of ['pause','reset','blink'])$(id).disabled=false;playback();requestAnimationFrame(draw);
-  window.oculid={sim,view,bare,finger,reset,settings,get playing(){return playing;}};
+  window.oculid={sim,view,bare,finger,patients,trace,reset,settings,get playing(){return playing;}};
 }
 start().catch(error=>{$('status').textContent='启动失败：'+error.message;console.error(error);});

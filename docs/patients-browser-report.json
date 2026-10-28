@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "thirtyBalancedPatients": true,
+  "numberRecallAndPersistence": true,
+  "modelChangePreservesPatient": true,
+  "workspaceSharesLibrary": true,
+  "portableImportAndConflicts": true,
+  "arbitrary3DTargets": true,
+  "threeTraceViews": true,
+  "independentClear": true,
+  "pauseAndTrackingLoss": true,
+  "reacquisitionGap": true,
+  "patientRunExports": true,
+  "mobileWidths": [
+    320,
+    390,
+    844
+  ],
+  "physicalCameraTested": false,
+  "errors": []
+}
