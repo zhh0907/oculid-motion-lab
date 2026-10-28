@@ -15,7 +15,7 @@ let browser;
   const invariants=await page.evaluate(()=>{
     const f=oculid.sim.frame();return {pose:oculid.view.rigs.flatMap(r=>[r.yaw.rotation.y*180/Math.PI,-r.pitch.rotation.x*180/Math.PI]),angles:f.angles,
       compare:oculid.bare.rigs.flatMap(r=>[r.yaw.rotation.y,r.pitch.rotation.x]),realistic:oculid.view.rigs.flatMap(r=>[r.yaw.rotation.y,r.pitch.rotation.x]),
-      finite:oculid.view.rigs.every(r=>[...r.skinGeometry.attributes.position.array].every(Number.isFinite)),triangles:oculid.view.renderer.info.render.triangles};
+      finite:oculid.view.rigs.every(r=>[r.skinGeometry,...r.cornerGeometries].every(g=>[...g.attributes.position.array].every(Number.isFinite))),triangles:oculid.view.renderer.info.render.triangles};
   });
   assert.deepEqual(invariants.compare,invariants.realistic);assert.ok(invariants.pose.every((v,i)=>Math.abs(v-invariants.angles[i])<1e-12));assert.ok(invariants.finite);assert.ok(invariants.triangles>1000);
   // Compare real rendered pixels, so a back-facing/missing iris fails the check.
@@ -59,5 +59,5 @@ let browser;
   await page.selectOption('#source','auto');await page.selectOption('#model','gru_expanded_520');
   for(const [width,height]of [[390,844],[320,740],[844,390]]){await page.setViewportSize({width,height});await page.waitForTimeout(80);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));await page.screenshot({path:path.join(out,`mobile-${width}.png`),fullPage:true});}
   const reduced=await browser.newContext({reducedMotion:'reduce'}),rp=await reduced.newPage();await rp.goto(url);await rp.waitForFunction(()=>!!window.oculid);assert.equal(await rp.evaluate(()=>oculid.playing),false);await reduced.close();
-  assert.deepEqual(errors,[]);const report={passed:true,version:'0.2.0',angleDeltaDegrees:0,desktopAndMobile:true,renderedIris:true,fullClosure:true,wideGazeAndClosure:true,rangeControlsAndLegacyMode:true,cameraMappingUnaffectedByRange:true,threeCases:true,syntheticPointerAndInjectedCamera:true,trackingLossHold:true,exportJSONCSV:true,reducedMotion:true,physicalCameraTested:false,errors};fs.writeFileSync(path.join(out,'browser-report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
+  assert.deepEqual(errors,[]);const report={passed:true,version:'0.3.0',angleDeltaDegrees:0,desktopAndMobile:true,renderedIris:true,fullClosure:true,wideGazeAndClosure:true,rangeControlsAndLegacyMode:true,cameraMappingUnaffectedByRange:true,threeCases:true,syntheticPointerAndInjectedCamera:true,trackingLossHold:true,exportJSONCSV:true,reducedMotion:true,physicalCameraTested:false,errors};fs.writeFileSync(path.join(out,'browser-report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
 }finally{await browser?.close();await new Promise(r=>server.close(r));}})().catch(e=>{console.error(e);process.exitCode=1;});

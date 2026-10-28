@@ -1,6 +1,6 @@
-import {createEyeView} from './eye-rig.mjs?v=anatomical2';
-import {Simulation,FPS,targetAt} from './simulation.mjs?v=anatomical2';
-import {pointerTarget,normalizeRange} from './target-range.mjs?v=anatomical2';
+import {createEyeView} from './eye-rig.mjs?v=canthus3';
+import {Simulation,FPS,targetAt} from './simulation.mjs?v=canthus3';
+import {pointerTarget,normalizeRange} from './target-range.mjs?v=canthus3';
 import {FingerCamera} from '../camera.js?v=review7';
 import {angularError} from '../engine.js';
 const $=id=>document.getElementById(id);

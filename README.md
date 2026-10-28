@@ -6,6 +6,14 @@
 
 ![Oculid eye region and synchronized bare-eye comparison](docs/preview.png)
 
+## 0.3 更新：眼角与皮肤
+
+- 用连接上下睑的连续组织面替换眼角小球，区分鼻侧的泪阜/半月皱襞近似和颞侧的皮肤连接；闭眼时随眼裂闭合。
+- 增加固定的多尺度皮肤纹理、毛孔、细纹和局部肤色，改善眼睑折痕、湿润睑缘及眼白接触阴影。
+- 睫毛改为渐细的曲线网格，眉毛增加分层密度。修复外圈接缝的小黑点及闭眼后的白色高光线。
+- 几何瞳孔可见比例纳入眼角遮挡；所有眼动控制器和病例参数保持兼容。
+- [本轮实现与验证边界](docs/REALISM-v3.zh-CN.md)。这是程序化外观改进，仍未达到真人扫描级写实。
+
 ## 0.2 更新
 
 - 眼睑随动加入时间响应：上看、下看速度不同；眼球立即沿原模型运动，眼睑随后跟进。
@@ -30,7 +38,7 @@ This is a procedural research prototype. It adds anatomical appearance and eyeli
 | Check | Result |
 | --- | --- |
 | Upstream-generated golden fixture | **3,600 samples, exact angle equality** across 2 GRUs + ideal geometry and 4 patterns |
-| Node tests | **27 passed**, including upstream patient/demo tests, lid closure/bounds, invariance and audited file hashes |
+| Node tests | **28 passed**, including upstream patient/demo tests, lid closure/bounds, invariance and audited file hashes |
 | Homepage browser tests | Rendered iris, exact same-pose comparison, full closure, cases, pointer/camera boundary, tracking loss/recovery, JSON/CSV, reduced motion |
 | Complete workspace and demo | Patient persistence/import/export, all replay controllers, seeking, injected live input and mobile tools passed |
 | Layout | 1440 px desktop and 320/390/844 px mobile viewports checked |

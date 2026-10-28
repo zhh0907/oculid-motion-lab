@@ -1,8 +1,15 @@
 // Metres, seconds, degrees. Eyelids are downstream of gaze: no feedback to motion.
-export const LID_VERSION = 'anatomical-lids-v2';
+export const LID_VERSION = 'anatomical-lids-v3';
 export const DEFAULT_APPEARANCE = Object.freeze({openness:1,follow:1,blink:true,blinkPeriod:4.6,ptosisLeft:0,ptosisRight:0,pupilMm:4.6,skin:'#b98e79',iris:'#6c7148'});
 export const EYE_RADIUS=.0124;
 export const HALF_WIDTH=.0132;
+export const CANTHUS_WIDTH=Object.freeze({nasal:.0028,temporal:.0015});
+export function canthusInnerX(v,nasal=true){return HALF_WIDTH-CANTHUS_WIDTH[nasal?'nasal':'temporal']*(1-.18*Math.sin(Math.PI*v));}
+export function insideCanthus(x,y,state){
+  const b=lidBounds(x,state),gap=b.upper-b.lower;
+  if(gap<=0||y<=b.lower||y>=b.upper)return false;
+  return Math.abs(x)>=canthusInnerX((y-b.lower)/gap,x*state.side>0);
+}
 export const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const rad=x=>x*Math.PI/180;
 const smooth=x=>{x=clamp(x,0,1);return x*x*(3-2*x);};
@@ -76,7 +83,7 @@ export function pupilVisibility(yaw,pitch,state,pupilMm=4.6){
     const r=radius*Math.sqrt((ring+.5)/6),theta=i/32*Math.PI*2;
     const [x,y,z]=rotateEyePoint([r*Math.cos(theta),r*Math.sin(theta),Math.sqrt(.01255**2-r*r)],yaw,pitch);
     const b=lidBounds(x,state);total++;
-    if(z>0&&Math.abs(x)<state.halfWidth&&y>b.lower&&y<b.upper)visible++;
+    if(z>0&&Math.abs(x)<state.halfWidth&&y>b.lower&&y<b.upper&&!insideCanthus(x,y,state))visible++;
   }return visible/total;
 }
 export function appearanceFrame(angles,time,options={},manualTime=-Infinity,followAngles=angles){

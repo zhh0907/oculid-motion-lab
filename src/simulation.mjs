@@ -1,8 +1,8 @@
 import {LearnedModel,desired} from '../engine.js';
 import {PatientLayer} from '../patient-model.mjs';
 import {DEMO_CASES,DEMO_EYES,demoTarget} from '../demo-presets.mjs';
-import {appearanceFrame,EyelidDynamics,DEFAULT_APPEARANCE,LID_VERSION} from './eyelid-model.mjs?v=anatomical2';
-import {normalizeRange,angularTarget} from './target-range.mjs?v=anatomical2';
+import {appearanceFrame,EyelidDynamics,DEFAULT_APPEARANCE,LID_VERSION} from './eyelid-model.mjs?v=canthus3';
+import {normalizeRange,angularTarget} from './target-range.mjs?v=canthus3';
 export const FPS=250;
 export function targetAt(time,path='horizontal',depth=.7,range=null){
   if(range&&path!=='depth'){
