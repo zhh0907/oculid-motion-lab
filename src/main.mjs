@@ -5,6 +5,7 @@ import {FingerCamera} from '../camera.js?v=review7';
 import {angularError} from '../engine.js';
 import {mountPatientPanel} from './patient-panel.mjs?v=patients4';
 import {TrajectoryPlot} from './trajectory-plot.mjs?v=patients4';
+import {EyePositionRails} from './eye-position-rails.mjs?v=rails5';
 const $=id=>document.getElementById(id);
 async function start(){
   const response=await fetch('./models-selected.json');if(!response.ok)throw Error('模型加载失败');
@@ -18,6 +19,7 @@ async function start(){
   function reset(){sim.reset();changed();}
   const patients=mountPatientPanel(sim,changed);
   const trace=new TrajectoryPlot($('motionTrace'),$('traceView'),$('traceClear'),sim.trace);
+  const rails=new EyePositionRails($('eyePositionRails'));
   function playback(){ $('pause').textContent=playing?'暂停':'继续';$('stateLabel').textContent=playing?'实时双眼模拟':'已暂停';}
   $('pause').onclick=()=>{playing=!playing;acc=0;playback();};$('reset').onclick=reset;
   function blink(){sim.blink();if(!playing){playing=true;playback();}}
@@ -64,6 +66,7 @@ async function start(){
     const f=sim.frame();view.draw(f.angles,f.lids,sim.appearance);if($('compare').checked)bare.draw(f.angles,f.lids,sim.appearance);
     trace.draw(sim.trace,now);$('traceTime').textContent=f.time.toFixed(2)+' s';
     const tracked=$('source').value!=='camera'||finger.tracked;
+    rails.update(f,{playing,tracked});
     $('leftError').textContent=tracked?angularError(f.angles.slice(0,2),f.ideal.slice(0,2)).toFixed(2)+'°':'—';
     $('rightError').textContent=tracked?angularError(f.angles.slice(2),f.ideal.slice(2)).toFixed(2)+'°':'—';$('vergence').textContent=(f.angles[0]-f.angles[2]).toFixed(2)+'°';
     $('visibility').textContent=f.lids.map(l=>Math.round(l.pupilVisibility*100)+'%').join(' / ');
@@ -77,6 +80,6 @@ async function start(){
     requestAnimationFrame(draw);
   }
   for(const id of ['pause','reset','blink'])$(id).disabled=false;playback();requestAnimationFrame(draw);
-  window.oculid={sim,view,bare,finger,patients,trace,reset,settings,get playing(){return playing;}};
+  window.oculid={sim,view,bare,finger,patients,trace,rails,reset,settings,get playing(){return playing;}};
 }
 start().catch(error=>{$('status').textContent='启动失败：'+error.message;console.error(error);});

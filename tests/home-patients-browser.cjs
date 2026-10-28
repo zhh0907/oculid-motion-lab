@@ -28,6 +28,9 @@ let browser;
  await page.waitForFunction(()=>oculid.trace.lastDraw?.count>700);
  const current=await page.evaluate(()=>({frame:oculid.sim.current,latest:oculid.trace.lastDraw.latest,run:oculid.sim.export()}));
  assert.ok(current.frame.angles.some((v,i)=>Math.abs(v-current.frame.baseline[i])>1));assert.equal(current.run.patientLibraryId,library.libraryId);
+ const projected=await page.evaluate(()=>oculid.rails.state);
+ for(let i=0;i<2;i++){const angle=current.frame.angles[2*i]*Math.PI/180,pitch=current.frame.angles[2*i+1]*Math.PI/180;assert.ok(Math.abs(projected[i].position-Math.sin(angle)*Math.cos(pitch)*.01255/.0132)<1e-12);}
+ await page.locator('#eyePositionRails').screenshot({path:path.join(out,'eye-rails.png')});
  assert.equal(current.latest.time,current.run.samples.find(s=>s.time===current.latest.time).time);
  assert.deepEqual(current.latest.angles,current.run.samples.find(s=>s.time===current.latest.time).angles);
  await page.locator('.trajectory-card').screenshot({path:path.join(out,'horizontal.png')});
@@ -41,9 +44,10 @@ let browser;
  // Actual playback advances the chart; pause holds it. Camera loss holds both clocks.
  await page.selectOption('#source','camera');await page.evaluate(()=>{window.qaTracked=true;Object.defineProperty(oculid.finger,'tracked',{get:()=>qaTracked});oculid.finger.target=()=>[.4,.12,.7];});
  await page.click('#pause');await page.waitForFunction(()=>oculid.trace.lastDraw?.count>8);await page.click('#pause');
- const held=await page.evaluate(()=>oculid.sim.trace.revision);await page.waitForTimeout(120);assert.equal(await page.evaluate(()=>oculid.sim.trace.revision),held);
- await page.click('#pause');await page.evaluate(()=>{qaTracked=false;});await page.waitForTimeout(80);const lost=await page.evaluate(()=>({time:oculid.sim.time,revision:oculid.sim.trace.revision}));
- await page.waitForTimeout(120);assert.deepEqual(await page.evaluate(()=>({time:oculid.sim.time,revision:oculid.sim.trace.revision})),lost);
+ const heldRails=await page.evaluate(()=>oculid.rails.state);
+ const held=await page.evaluate(()=>oculid.sim.trace.revision);await page.waitForTimeout(120);assert.equal(await page.evaluate(()=>oculid.sim.trace.revision),held);assert.deepEqual(await page.evaluate(()=>oculid.rails.state),heldRails);
+ await page.click('#pause');await page.evaluate(()=>{qaTracked=false;});await page.waitForTimeout(80);const lost=await page.evaluate(()=>({time:oculid.sim.time,revision:oculid.sim.trace.revision}));const lostRails=await page.evaluate(()=>oculid.rails.state);
+ await page.waitForTimeout(120);assert.deepEqual(await page.evaluate(()=>({time:oculid.sim.time,revision:oculid.sim.trace.revision})),lost);assert.deepEqual(await page.evaluate(()=>oculid.rails.state),lostRails);assert.match(await page.locator('#railsStatus').innerText(),/等待食指/);
  const segment=await page.evaluate(()=>oculid.sim.trace.samples().at(-1).segment);await page.evaluate(()=>{qaTracked=true;});await page.waitForFunction(s=>oculid.sim.trace.samples().at(-1)?.segment>s,segment);await page.click('#pause');
  assert.deepEqual(await page.evaluate(()=>oculid.sim.patient),patient);
  const [runDownload]=await Promise.all([page.waitForEvent('download'),page.click('#exportJson')]);await runDownload.saveAs(path.join(out,'run.json'));
@@ -63,10 +67,19 @@ let browser;
  for(const [width,height]of [[390,844],[320,740],[844,390]]){
    await page.setViewportSize({width,height});await page.waitForTimeout(100);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
    await page.locator('.trajectory-card').screenshot({path:path.join(out,`chart-${width}.png`)});
+   await page.locator('#eyePositionRails').screenshot({path:path.join(out,`rails-${width}.png`)});
    await page.selectOption('#traceView','xy');await page.waitForFunction(()=>oculid.trace.lastDraw?.mode==='xy');
    await page.locator('.trajectory-card').screenshot({path:path.join(out,`xy-${width}.png`)});await page.selectOption('#traceView','horizontal');
  }
  await page.click('#patientNormal');assert.equal(await page.evaluate(()=>oculid.sim.patient),null);assert.equal(await page.evaluate(()=>oculid.sim.trace.length),0);
- assert.deepEqual(errors,[]);const report={passed:true,thirtyBalancedPatients:true,numberRecallAndPersistence:true,modelChangePreservesPatient:true,workspaceSharesLibrary:true,portableImportAndConflicts:true,arbitrary3DTargets:true,threeTraceViews:true,independentClear:true,pauseAndTrackingLoss:true,reacquisitionGap:true,patientRunExports:true,mobileWidths:[320,390,844],physicalCameraTested:false,errors};
+ // Obvious unilateral impairment leaves one eye marker behind its normal reference.
+ await page.setViewportSize({width:1440,height:1100});await page.selectOption('#pattern','abduction');await page.selectOption('#patternSide','left');
+ await page.evaluate(()=>{oculid.sim.appearance.blink=false;for(let i=0;i<800;i++)oculid.sim.step([-.7,0,.7]);});
+ await page.waitForFunction(()=>oculid.rails.state[0].position<-.05);
+ const limited=await page.evaluate(()=>oculid.rails.state);assert.ok(Math.abs(limited[0].position)<.12);assert.ok(limited[0].reference<-.6);assert.equal(limited[1].position,limited[1].reference);
+ await page.locator('#eyePositionRails').screenshot({path:path.join(out,'rails-limited.png')});
+ await page.evaluate(()=>{oculid.sim.manualTime=oculid.sim.current.time-.1;});await page.waitForFunction(()=>document.querySelectorAll('.rail-marker.is-occluded').length===2);
+ assert.deepEqual(await page.evaluate(()=>oculid.rails.state.map(s=>s.position)),limited.map(s=>s.position));
+ assert.deepEqual(errors,[]);const report={passed:true,thirtyBalancedPatients:true,numberRecallAndPersistence:true,modelChangePreservesPatient:true,workspaceSharesLibrary:true,portableImportAndConflicts:true,arbitrary3DTargets:true,threeTraceViews:true,liveEyeRails:true,railGeometryMatchesEyes:true,unilateralRailLimitation:true,occlusionIndication:true,independentClear:true,pauseAndTrackingLoss:true,reacquisitionGap:true,patientRunExports:true,mobileWidths:[320,390,844],physicalCameraTested:false,errors};
  fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
 }finally{await browser?.close();await new Promise(r=>server.close(r));}})().catch(e=>{console.error(e);process.exitCode=1;});
