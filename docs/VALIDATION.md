@@ -4,6 +4,8 @@ Environment: Version 0.5.0. Windows, Node 24.15.0, installed Google Chrome throu
 
 ## Results
 
+- Version 0.5.1 simplifies the rails to plain dots and fewer labels. The existing homepage/patient browser integration suite passed, including rail positions, pause/occlusion, and 320/390/844 px layouts. Motion mathematics is unchanged.
+
 - Live eye-position rails: the projected positions match the simulated eye geometry; the limited-eye marker remains near centre while the other eye and normal reference move; pause/tracking-loss holds and eyelid-occlusion styling pass. Both rails remain readable in desktop and stacked mobile layouts.
 
 - Homepage patient/trajectory integration: 30 balanced profiles; ID recall, refresh persistence, unchanged profile after controller change, portable library import and conflict rejection, shared workspace storage, arbitrary 3D targets, three chart views, independent clearing, pause/tracking loss/reacquisition, and JSON/CSV provenance pass. [Report](patients-browser-report.json).

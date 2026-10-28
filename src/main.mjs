@@ -5,7 +5,7 @@ import {FingerCamera} from '../camera.js?v=review7';
 import {angularError} from '../engine.js';
 import {mountPatientPanel} from './patient-panel.mjs?v=patients4';
 import {TrajectoryPlot} from './trajectory-plot.mjs?v=patients4';
-import {EyePositionRails} from './eye-position-rails.mjs?v=rails5';
+import {EyePositionRails} from './eye-position-rails.mjs?v=rails-simple1';
 const $=id=>document.getElementById(id);
 async function start(){
   const response=await fetch('./models-selected.json');if(!response.ok)throw Error('模型加载失败');

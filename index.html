@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Oculid Motion Lab · 眼睑与双眼运动</title><meta name="description" content="带眼睑的双眼运动模拟：自然眨眼、注视随动、原模型同步对照与本地食指追踪。"><link rel="icon" href="data:,"><link rel="stylesheet" href="./oculid.css?v=rails5"></head>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Oculid Motion Lab · 眼睑与双眼运动</title><meta name="description" content="带眼睑的双眼运动模拟：自然眨眼、注视随动、原模型同步对照与本地食指追踪。"><link rel="icon" href="data:,"><link rel="stylesheet" href="./oculid.css?v=rails-simple1"></head>
 <body>
 <header class="masthead"><a class="brand" href="./"><span class="brand-mark">◉</span><span>OCULID <b>MOTION LAB</b></span></a><nav><a href="./workspace.html">完整工作台 ↗</a><a href="./research.html">设计与依据</a><a href="https://github.com/zhh0907/oculid-motion-lab">GitHub ↗</a></nav></header>
 <main class="layout"><section class="workbench">
-<div class="intro"><div><p class="eyebrow">BINOCULAR MOTION · WITH EYELIDS</p><h1>让注视，有真实的眼睑。</h1><p class="subtitle">沿用原有双眼运动模型，观察眼睑随动、眨眼与遮挡。</p></div><span class="version">RESEARCH / 0.5</span></div>
+<div class="intro"><div><p class="eyebrow">BINOCULAR MOTION · WITH EYELIDS</p><h1>让注视，有真实的眼睑。</h1><p class="subtitle">沿用原有双眼运动模型，观察眼睑随动、眨眼与遮挡。</p></div><span class="version">RESEARCH / 0.5.1</span></div>
 <div class="stage-card"><div class="stage-top"><span><i class="live-dot"></i> <span id="stateLabel">正在加载模型</span> · <span id="activePatientBadge">正常参考</span></span><span id="renderFps">— fps</span></div>
 <div id="eyeFocus" class="eye-stage"><span class="eye-label left-label">L 通道</span><span class="eye-label right-label">R 通道</span><div class="stage-bottom"><span>眼球 + 眼睑</span><span id="lidStatus">自然眨眼 · 注视随动</span></div></div>
 <div class="target-track"><span>目标</span><div><i id="targetDot"></i></div><span id="targetDepth">0.70 m</span></div>
@@ -31,4 +31,4 @@
 </aside></main>
 <footer>OCULID MOTION LAB <span>Built on Binocular Motion Lab · Honghao Zhao</span><a href="./research.html">方法与验证边界 ↗</a></footer>
 <div hidden><input id="cameraDepth" value=".7"><input id="cameraFov" value="60"><input id="camY" value=".30"><input id="cameraSmooth" value="60"></div>
-<script type="module" src="./src/main.mjs?v=rails5"></script></body></html>
+<script type="module" src="./src/main.mjs?v=rails-simple1"></script></body></html>
