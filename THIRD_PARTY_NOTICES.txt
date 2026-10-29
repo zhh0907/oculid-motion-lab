@@ -18,7 +18,7 @@ scans or learned assets are included. Research links are references only.
 Upstream application: https://github.com/zhh0907/binocular-motion-lab
 Audit: docs/upstream-manifest.json.
 
-Version 0.6/0.7 face geometry:
+Version 0.6–0.8 face geometry:
 Infinite, 3D Head Scan by Lee Perry-Smith, based on work at www.triplegangers.com.
 Creative Commons Attribution 3.0 Unported: https://creativecommons.org/licenses/by/3.0/
 Source: https://github.com/mrdoob/three.js/tree/r180/examples/models/gltf/LeePerrySmith
@@ -28,3 +28,6 @@ The scan is rescaled, subdivided, cut at the sockets and welded to animated lids
 Version 0.7 uses procedural skin; its runtime does not load the original colour image.
 The unmodified colour image remains as a historical v0.6 reference asset.
 No disease or patient status of the scanned person is implied.
+
+Version 0.8 adds authored male/female shape presets derived from this base scan.
+The female preset is a geometric adaptation, not a separate scanned identity.

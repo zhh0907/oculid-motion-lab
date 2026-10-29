@@ -33,8 +33,8 @@ export class TrajectoryPlot {
       const xtick=this.extent<=40?20:40;
       for(let v=Math.ceil(-this.extent/xtick)*xtick;v<=this.extent;v+=xtick){grid(x(v),top,x(v),bottom,v===0);ctx.textAlign='center';ctx.fillText(`${v}°`,x(v),bottom+19);}
     }else for(let t=Math.ceil(start/5)*5;t<=end;t+=5){grid(x(t),top,x(t),bottom);ctx.textAlign=t===start?'left':t===end?'right':'center';ctx.fillText(`${t.toFixed(0)} s`,x(t),h-16);}
-    ctx.textAlign='left';ctx.fillStyle='#536e60';ctx.fillText(xy?'垂直角度 ↑':vertical?'垂直角度':'水平角度',left,14);
-    ctx.textAlign='right';ctx.fillText(xy?'水平角度 →':'仿真时间 →',right,h-2);ctx.textAlign='left';
+    ctx.textAlign='left';ctx.fillStyle='#536e60';ctx.fillText(xy?'Vertical angle ↑':vertical?'Vertical angle':'Horizontal angle',left,14);
+    ctx.textAlign='right';ctx.fillText(xy?'Horizontal angle →':'Simulation time →',right,h-2);ctx.textAlign='left';
     ctx.save();ctx.beginPath();ctx.rect(left,top,right-left,bottom-top);ctx.clip();
     // Dashed normal reference first, then patient traces and current-position dots.
     for(const field of ['baseline','angles'])for(let eye=0;eye<2;eye++){
@@ -53,13 +53,13 @@ export class TrajectoryPlot {
       const latest=rows.at(-1);
       for(let eye=0;eye<2;eye++){
         const sx=eye?right+52:18;
-        ctx.fillStyle=colours[eye];ctx.font='12px "Segoe UI",sans-serif';ctx.fillText(`${eye?'R':'L'} 眼 · 当前`,sx,80);
+        ctx.fillStyle=colours[eye];ctx.font='12px "Segoe UI",sans-serif';ctx.fillText(`${eye?'R':'L'} eye · Current`,sx,80);
         ctx.font='16px "Segoe UI",sans-serif';ctx.fillText(`${latest.angles[eye*2].toFixed(1)}° / ${latest.angles[eye*2+1].toFixed(1)}°`,sx,108);
-        ctx.font='11px "Segoe UI",sans-serif';ctx.fillStyle='#6b8075';ctx.fillText('正常参考 · 水平 / 垂直',sx,143);
+        ctx.font='11px "Segoe UI",sans-serif';ctx.fillStyle='#6b8075';ctx.fillText('Reference · H / V',sx,143);
         ctx.fillText(`${latest.baseline[eye*2].toFixed(1)}° / ${latest.baseline[eye*2+1].toFixed(1)}°`,sx,165);
       }
     }
-    if(!rows.length){ctx.fillStyle='#7c8c81';ctx.textAlign='center';ctx.fillText('运动开始后显示轨迹',cx,cy-12);ctx.textAlign='left';}
+    if(!rows.length){ctx.fillStyle='#7c8c81';ctx.textAlign='center';ctx.fillText('Start motion to see traces',cx,cy-12);ctx.textAlign='left';}
     this.lastDraw={mode,count:rows.length,start,end,extent:this.extent,latest:rows.at(-1)||null};
   }
 }

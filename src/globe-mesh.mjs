@@ -1,5 +1,5 @@
 import * as T from '../vendor/three.module.js';
-import {DEFAULT_APPEARANCE,EYE_RADIUS} from './eyelid-model.mjs?v=volume7';
+import {DEFAULT_APPEARANCE,EYE_RADIUS} from './eyelid-model.mjs?v=faces8';
 import {IRIS_DEPTH,IRIS_RADIUS,CORNEA_RADIUS,CORNEA_CENTRE} from './eye-anatomy.mjs';
 import {socketUniforms,updateSocket,shadeSclera} from './ocular-shading.mjs?v=canthus3';
 

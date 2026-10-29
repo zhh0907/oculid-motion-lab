@@ -1,7 +1,7 @@
 import {IRIS_DEPTH} from './eye-anatomy.mjs';
 // Metres, seconds, degrees. Eyelids are downstream of gaze: no feedback to motion.
 export const LID_VERSION = 'volumetric-lids-v7';
-export const DEFAULT_APPEARANCE = Object.freeze({openness:1,follow:1,blink:true,blinkPeriod:4.6,ptosisLeft:0,ptosisRight:0,pupilMm:4.6,skin:'#b98e79',iris:'#503b2c'});
+export const DEFAULT_APPEARANCE = Object.freeze({faceType:'male',openness:1,follow:1,blink:true,blinkPeriod:4.6,ptosisLeft:0,ptosisRight:0,pupilMm:4.6,skin:'#b98e79',iris:'#503b2c'});
 export const EYE_RADIUS=.0124;
 export const HALF_WIDTH=.0132;
 export const CANTHUS_WIDTH=Object.freeze({nasal:.0028,temporal:.0015});

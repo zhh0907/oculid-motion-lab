@@ -1,6 +1,6 @@
-import {PatientBank} from './patient-bank.mjs?v=patients4';
-const titles={conjugate:'双眼同向受限',adduction:'单眼内转受限',abduction:'单眼外转受限'};
-const sides={left:'左',right:'右'};
+import {PatientBank} from './patient-bank.mjs?v=faces8';
+const titles={conjugate:'Conjugate gaze limitation',adduction:'One-eye adduction limitation',abduction:'One-eye abduction limitation'};
+const sides={left:'Left',right:'Right'};
 export function mountPatientPanel(sim,onChange){
   const $=id=>document.getElementById(id);
   // Access itself may throw when browser storage has been disabled.
@@ -10,9 +10,9 @@ export function mountPatientPanel(sim,onChange){
   function render(){
     const active=bank.active,profile=sim.patient;
     $('patternSide').disabled=$('pattern').value==='normal';
-    $('patternSideLabel').textContent=$('pattern').value==='conjugate'?'受限方向':'受累眼';
+    $('patternSideLabel').textContent=$('pattern').value==='conjugate'?'Limited direction':'Affected eye';
     $('patientLookup').hidden=!bank.library.patients.length;
-    $('patientCountLabel').textContent=`患者库 · ${bank.library.patients.length} 人`;
+    $('patientCountLabel').textContent=`Patient library · ${bank.library.patients.length}`;
     $('patientGenerate').disabled=bank.corrupt||$('pattern').value==='normal';
     $('patientExport').disabled=bank.corrupt||!bank.library.patients.length;
     $('patientApply').disabled=bank.corrupt||!bank.library.patients.length;
@@ -20,8 +20,8 @@ export function mountPatientPanel(sim,onChange){
     $('patientPrevious').disabled=bank.corrupt||index<=0;
     $('patientNext').disabled=bank.corrupt||index>=bank.library.patients.length-1||!bank.library.patients.length;
     $('patientStorage').textContent=bank.warning;$('patientStorage').hidden=!bank.warning;
-    $('patientActive').textContent=profile?`${active?active.id:'明显示例'} · ${titles[profile.template]} · ${sides[profile.side]}${profile.template==='conjugate'?'向':'眼'}`:'正常参考 · 无异常运动层';
-    $('activePatientBadge').textContent=active?active.id:profile?'明显示例':'正常参考';
+    $('patientActive').textContent=profile?`${active?active.id:'Example'} · ${titles[profile.template]} · ${sides[profile.side]}${profile.template==='conjugate'?' direction':' eye'}`:'Normal reference · No limitation';
+    $('activePatientBadge').textContent=active?active.id:profile?'Example':'Normal reference';
     if(active)$('patientNumber').value=active.id;
     $('patientIds').replaceChildren(...bank.library.patients.map(p=>{const o=document.createElement('option');o.value=p.id;return o;}));
   }
@@ -36,7 +36,7 @@ export function mountPatientPanel(sim,onChange){
   $('patientNormal').onclick=()=>{$('pattern').value='normal';preset();};
   $('patientGenerate').onclick=()=>attempt(()=>{
     const added=bank.generate({template:$('pattern').value,side:$('patternSide').value,count:Number($('patientCount').value),seed:$('patientSeed').value.trim()||crypto.randomUUID()});
-    useActive();$('patientGeneratePanel').open=false;message(`已生成 ${added[0].id}–${added.at(-1).id}，参数已固定。`);
+    useActive();$('patientGeneratePanel').open=false;message(`Created ${added[0].id}–${added.at(-1).id} with fixed parameters.`);
   });
   $('patientApply').onclick=()=>attempt(()=>{bank.activate($('patientNumber').value);useActive();message('');});
   $('patientNumber').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('patientApply').click();}});
@@ -51,8 +51,8 @@ export function mountPatientPanel(sim,onChange){
   $('patientImport').onchange=async()=>{
     const file=$('patientImport').files?.[0];if(!file)return;
     try{
-      if(file.size>5*1024*1024)throw Error('患者库文件需小于 5 MiB。');
-      bank.import(JSON.parse(await file.text()));useActive();message(`已导入 ${bank.library.patients.length} 位患者，可输入编号调用。`);
+      if(file.size>5*1024*1024)throw Error('Patient library must be smaller than 5 MiB.');
+      bank.import(JSON.parse(await file.text()));useActive();message(`Imported ${bank.library.patients.length} patients. Enter an ID to recall one.`);
     }catch(error){message(error.message,true);}finally{$('patientImport').value='';}
   };
   if(bank.active){sim.selectPatient(bank.active,bank.library.libraryId);$('pattern').value=bank.active.template;$('patternSide').value=bank.active.side;}

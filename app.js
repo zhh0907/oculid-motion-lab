@@ -1,5 +1,5 @@
-import {createEyeRig,createHeadSkin} from './src/eye-rig.mjs?v=volume7';
-import {appearanceFrame,EyelidDynamics} from './src/eyelid-model.mjs?v=volume7';
+import {createEyeRig,createHeadSkin} from './src/eye-rig.mjs?v=faces8';
+import {appearanceFrame,EyelidDynamics} from './src/eyelid-model.mjs?v=faces8';
 import {simplifyUI} from './simplify-ui.js?v=simple2';
 import {mountPatientControls,downloadJSON} from './patient-ui.mjs?v=simple2';
 import {MODEL_VERSION,PLANT} from './patient-model.mjs';
@@ -119,7 +119,7 @@ function step(advance=true){let p,e,a,ideal,human=null,t;const mode=$('mode').va
  const lids=lidDynamics.sample(a,t);
  current={p,e,a,baseline,ideal,human,t,lids,patientId:patients.active?.id||null};history.push([t,ideal[0],a[0],human?.[0]]);if(history.length>fps*6)history.shift();if(exportRows.length<fps*120)exportRows.push([t,...p,...a,...ideal,...baseline]);}
 function render(){if(!current)step(false);$('patientRunExport').disabled=!exportRows.length;$('export').disabled=!exportRows.length;const {p,e,a,ideal,t}=current;const lids=current.lids||appearanceFrame(a,t);target.position.set(...p);target.visible=!isCamera()||!!finger.tracked;
- head.group.position.set(...e[0].map((v,j)=>(v+e[1][j])/2));head.group.scale.x=(e[1][0]-e[0][0])/.064;head.update(lids);
+ head.group.position.set(...e[0].map((v,j)=>(v+e[1][j])/2));head.group.scale.x=(e[1][0]-e[0][0])/.064;head.update(lids,{faceType:$('faceType').value});
  for(let i=0;i<2;i++){eyes[i].root.position.set(...e[i]);eyes[i].yaw.rotation.set(0,rad(a[2*i]),0);eyes[i].pitch.rotation.set(-rad(a[2*i+1]),0,0);eyes[i].update(a.slice(2*i,2*i+2),lids[i]);const d=ray(a.slice(2*i,2*i+2)),len=Math.hypot(...p.map((v,j)=>v-e[i][j]))+.08;const points=[new T.Vector3(...e[i]),new T.Vector3(...e[i].map((v,j)=>v+d[j]*len))];lines[i].geometry.setFromPoints(points);}
  chestCamera.position.set(0,-+$('camY').value,0);chestCamera.up.set(0,1,0);chestCamera.lookAt(0,chestCamera.position.y,1);
  if(isCamera()&&calibration.enabled){const c=calibration.profile.camera,d=rotateCameraRay([0,0,1],c),up=rotateCameraRay([0,1,0],c);chestCamera.position.set(c.x,c.y,c.z);chestCamera.up.set(...up);chestCamera.lookAt(c.x+d[0],c.y+d[1],c.z+d[2]);}

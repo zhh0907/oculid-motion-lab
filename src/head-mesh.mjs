@@ -1,8 +1,9 @@
 import * as T from '../vendor/three.module.js';
 import {decodeHeadGLB,buildHeadTopology} from './head-topology.mjs';
 import {attachedLidPoint,lidEdge,volumeCanthus} from './lid-volume.mjs';
-import {DEFAULT_APPEARANCE,lidState,skinZ} from './eyelid-model.mjs?v=volume7';
-import {skinMaterial,skinTint,skinTone} from './skin-material.mjs?v=volume7';
+import {DEFAULT_APPEARANCE,lidState,skinZ} from './eyelid-model.mjs?v=faces8';
+import {skinMaterial,skinTint,skinTone} from './skin-material.mjs?v=faces8';
+import {morphHeadPoint,FACE_PROFILE_VERSION} from './face-profiles.mjs';
 
 const response=await fetch(new URL('../vendor/face/LeePerrySmith.glb',import.meta.url));
 if(!response.ok)throw Error('3D head mesh unavailable');
@@ -52,12 +53,15 @@ export function createHeadSkin(){
       const cm=new T.Mesh(cg,new T.MeshPhysicalMaterial({color:nasal?'#b47c70':'#b98e79',roughness:.48,clearcoat:.2,side:T.DoubleSide}));cm.name='3D canthus';group.add(cm);corners.push({mesh:cm,eye:patch.eye,nasal});cornerGeometries.push(cg);
     }
   }
-  let previous='',mode='skin',brows=[],browMesh=null,restReady=false;
+  let previous='',mode='skin',brows=[],browMesh=null,restReady=false,basePositions=null,femaleOffsets=null,faceType='male';
   const lashSpecs=data.patches.flatMap(p=>[[p.eye,true,70],[p.eye,false,32]]),lashGeometry=tubeHairGeometry(204),lashMesh=new T.Mesh(lashGeometry,new T.MeshStandardMaterial({color:'#382b25',roughness:.9,side:T.DoubleSide}));group.add(lashMesh);
   function update(states,appearance={}){
     const o={...DEFAULT_APPEARANCE,...appearance};material.color.copy(skinTone(o.skin));
     for(const corner of corners)if(mode==='skin')corner.mesh.material.color.set(corner.nasal?'#b47c70':o.skin);
-    const signature=JSON.stringify(states.map(s=>[s.restUpper,s.restLower,s.closure,s.apexShift,s.globeYaw,s.globePitch]));if(signature===previous)return;previous=signature;
+    faceType=o.faceType==='female'?'female':'male';
+    const signature=JSON.stringify([faceType,states.map(s=>[s.restUpper,s.restLower,s.closure,s.apexShift,s.globeYaw,s.globePitch])]);if(signature===previous)return;previous=signature;
+    // Always deform from the canonical mesh, never from the previous profile.
+    if(basePositions)p.array.set(basePositions);
     for(const patch of data.patches){const state=states[patch.eye];
       if(!patch.rest){
         const neutral=lidState(0,0,{},patch.eye),n=patch.count,r=patch.rings;
@@ -101,6 +105,7 @@ export function createHeadSkin(){
       // Wrap microscopic detail around the skull rather than stretching a
       // frontal projection into horizontal bands at the temples and ears.
       uv.set([Math.atan2(x,p.getZ(i)+.065)*2,y/.04],i*2);
+      if(faceType==='female'&&femaleOffsets)p.setXYZ(i,x+femaleOffsets[i*3],y+femaleOffsets[i*3+1],p.getZ(i)+femaleOffsets[i*3+2]);
     }
     for(const a of ['position','uv','color'])g.attributes[a].needsUpdate=true;g.computeVertexNormals();g.computeBoundingSphere();
     for(const {mesh:cm,eye,nasal}of corners){const s=states[eye];cm.visible=s.closure<.99&&s.restUpper>s.restLower;
@@ -114,7 +119,7 @@ export function createHeadSkin(){
     }
     lashGeometry.attributes.position.needsUpdate=true;lashGeometry.computeVertexNormals();lashGeometry.computeBoundingSphere();
     if(browMesh){const normals=g.attributes.normal;
-      for(let i=0;i<brows.length;i++){const b=brows[i],root=[0,0,0],n=[0,0,0];for(let j=0;j<3;j++)for(let d=0;d<3;d++){root[d]+=p.array[b.ids[j]*3+d]*b.weights[j];n[d]+=normals.array[b.ids[j]*3+d]*b.weights[j];}for(let d=0;d<3;d++)root[d]+=.00012*n[d];hair(browMesh.geometry,i,root,...b.direction,b.width);}
+      for(let i=0;i<brows.length;i++){const b=brows[i],root=[0,0,0],n=[0,0,0];for(let j=0;j<3;j++)for(let d=0;d<3;d++){root[d]+=p.array[b.ids[j]*3+d]*b.weights[j];n[d]+=normals.array[b.ids[j]*3+d]*b.weights[j];}for(let d=0;d<3;d++)root[d]+=.00012*n[d];hair(browMesh.geometry,i,root,...b.direction.map(v=>v*(faceType==='female'?.78:1)),b.width*(faceType==='female'?.68:1));}
       browMesh.geometry.attributes.position.needsUpdate=true;browMesh.geometry.computeVertexNormals();browMesh.geometry.computeBoundingSphere();
     }
   }
@@ -148,8 +153,11 @@ export function createHeadSkin(){
     brows.push({...binding,direction:[-side*length*(.18+.7*f),length*(1-.82*f),.00018],width:.000040+.000018*(.5+.5*Math.sin(i*2.7))});
   }
   browMesh=new T.Mesh(tubeHairGeometry(brows.length),new T.MeshStandardMaterial({color:'#382c25',roughness:1,side:T.DoubleSide}));browMesh.name='Individual 3D eyebrow hairs';group.add(browMesh);restReady=true;previous='';update(neutral);
+  basePositions=p.array.slice();
+  femaleOffsets=new Float32Array(basePositions.length);
+  for(let i=0;i<p.count;i++){const start=i*3,xyz=Array.from(basePositions.slice(start,start+3)),morphed=morphHeadPoint(...xyz,'female');for(let d=0;d<3;d++)femaleOffsets[start+d]=morphed[d]-xyz[d];}
   for(const {mesh:cm}of corners)cm.userData.skinMaterial=cm.material;
   for(const mm of margins)mm.userData.skinMaterial=mm.material;
   function setMode(value){mode=value;mesh.material=value==='skin'?material:clay;clay.wireframe=value==='wire';for(const h of [browMesh,lashMesh])h.visible=value==='skin';for(const cm of [...corners.map(c=>c.mesh),...margins])cm.material=value==='skin'?cm.userData.skinMaterial:clay;}
-  return {group,mesh,geometry:g,data,cornerGeometries,update,setMode,get mode(){return mode;},inspection:{sharedBoundaryVertices:data.patches.map(p=>p.count),photographicFaceTexture:false,eyelidThicknessMetres:.00085,eyebrowHairs:brows.length}};
+  return {group,mesh,geometry:g,data,cornerGeometries,update,setMode,get mode(){return mode;},get faceType(){return faceType;},inspection:{sharedBoundaryVertices:data.patches.map(p=>p.count),photographicFaceTexture:false,eyelidThicknessMetres:.00085,eyebrowHairs:brows.length,faceProfileVersion:FACE_PROFILE_VERSION}};
 }

@@ -1,6 +1,11 @@
 {
   "passed": true,
-  "version": "0.7.0",
+  "version": "0.8.0",
+  "englishInterface": true,
+  "twoDistinct3DFaceShapes": true,
+  "reversibleShapeSwitch": true,
+  "shapeSwitchPreservesMotion": true,
+  "faceTimelineExport": true,
   "fiveSkinPresets": true,
   "noColourPicker": true,
   "patientPreserved": true,
@@ -18,7 +23,8 @@
       ],
       "photographicFaceTexture": false,
       "eyelidThicknessMetres": 0.00085,
-      "eyebrowHairs": 1300
+      "eyebrowHairs": 1300,
+      "faceProfileVersion": "head-shapes-v1"
     },
     "eyes": [
       {

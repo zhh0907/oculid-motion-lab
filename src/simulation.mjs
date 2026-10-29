@@ -1,9 +1,10 @@
 import {LearnedModel,desired} from '../engine.js';
 import {PatientLayer,validatePatient,MODEL_VERSION} from '../patient-model.mjs';
 import {DEMO_CASES,DEMO_EYES,demoTarget} from '../demo-presets.mjs';
-import {appearanceFrame,EyelidDynamics,DEFAULT_APPEARANCE,LID_VERSION} from './eyelid-model.mjs?v=volume7';
+import {appearanceFrame,EyelidDynamics,DEFAULT_APPEARANCE,LID_VERSION} from './eyelid-model.mjs?v=faces8';
 import {normalizeRange,angularTarget} from './target-range.mjs?v=canthus3';
 import {TrajectoryHistory} from './trajectory-data.mjs?v=patients4';
+import {FACE_TYPES,FACE_PROFILE_VERSION} from './face-profiles.mjs';
 export const FPS=250;
 export function targetAt(time,path='horizontal',depth=.7,range=null){
   if(range&&path!=='depth'){
@@ -23,7 +24,14 @@ export function targetAt(time,path='horizontal',depth=.7,range=null){
 }
 export class Simulation{
   constructor(bundle){if(bundle.fps!==FPS)throw Error('Expected upstream 250 Hz model');this.bundle=bundle;this.modelKey='gru_expanded_520';this.caseKey='normal';this.caseSide='left';this.patientProfile=null;this.libraryId=null;this.appearance={...DEFAULT_APPEARANCE};this.trace=new TrajectoryHistory();this.reset();}
-  reset(){this.model=this.modelKey==='ideal'?null:new LearnedModel(this.bundle.models[this.modelKey]);this.patient=this.patientProfile;this.layer=new PatientLayer(this.patient);this.initialLayerState=this.layer.snapshot();this.lidDynamics=new EyelidDynamics();this.time=0;this.previous=null;this.current=null;this.rows=[];this.manualTime=-Infinity;this.manualBlinks=[];this.trace.clear();}
+  reset(){this.model=this.modelKey==='ideal'?null:new LearnedModel(this.bundle.models[this.modelKey]);this.patient=this.patientProfile;this.layer=new PatientLayer(this.patient);this.initialLayerState=this.layer.snapshot();this.lidDynamics=new EyelidDynamics();this.time=0;this.previous=null;this.current=null;this.rows=[];this.manualTime=-Infinity;this.manualBlinks=[];this.faceChanges=[{time:0,faceType:this.appearance.faceType||'male'}];this.trace.clear();}
+  setFaceType(type){
+    if(!FACE_TYPES.includes(type))throw Error('Unknown face shape');
+    if(this.appearance.faceType===type)return;
+    this.appearance.faceType=type;
+    const event={time:this.time,faceType:type};
+    if(this.faceChanges.at(-1).time===this.time)this.faceChanges[this.faceChanges.length-1]=event;else this.faceChanges.push(event);
+  }
   select({model=this.modelKey,pattern,side=this.caseSide}={}){
     if(model!=='ideal'&&!this.bundle.models[model])throw Error('Unknown model');
     if(!['left','right'].includes(side))throw Error('Unknown side');
@@ -52,5 +60,5 @@ export class Simulation{
     this.current={time:this.time,target:[...target],ideal,baseline,angles,lids};if(this.rows.length<FPS*120)this.rows.push(this.current);this.trace.push(this.current);this.time+=1/FPS;return this.current;
   }
   frame(){const c=this.current;return c?{...c,lids:appearanceFrame(c.angles,c.time,this.appearance,this.manualTime,this.lidDynamics.followAngles)}:{time:0,target:[0,0,.7],angles:[0,0,0,0],ideal:[0,0,0,0],baseline:[0,0,0,0],lids:appearanceFrame([0,0,0,0],0,this.appearance)};}
-  export(settings={}){return {schema:'oculid-run-v1',lidVersion:LID_VERSION,fps:FPS,coordinates:'metres; degrees; [left yaw,left pitch,right yaw,right pitch]; +Z forward; +yaw subject-right; +pitch up; no torsion',model:this.modelKey,pattern:this.caseKey,patient:this.patient,patientLibraryId:this.libraryId,patientModelVersion:MODEL_VERSION,patientInitialState:this.initialLayerState,appearance:{...this.appearance},manualBlinks:[...this.manualBlinks],settings,visibilityDefinition:'front orthographic sampled pupil fraction; not a tracker confidence',limitSeconds:120,bufferFull:this.rows.length>=FPS*120,samples:this.rows};}
+  export(settings={}){return {schema:'oculid-run-v1',lidVersion:LID_VERSION,fps:FPS,coordinates:'metres; degrees; [left yaw,left pitch,right yaw,right pitch]; +Z forward; +yaw subject-right; +pitch up; no torsion',model:this.modelKey,pattern:this.caseKey,patient:this.patient,patientLibraryId:this.libraryId,patientModelVersion:MODEL_VERSION,patientInitialState:this.initialLayerState,appearance:{...this.appearance},faceProfileVersion:FACE_PROFILE_VERSION,faceChanges:this.faceChanges.map(e=>({...e})),manualBlinks:[...this.manualBlinks],settings,visibilityDefinition:'front orthographic sampled pupil fraction; not a tracker confidence',limitSeconds:120,bufferFull:this.rows.length>=FPS*120,samples:this.rows};}
 }

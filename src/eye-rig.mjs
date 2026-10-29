@@ -1,6 +1,6 @@
 import * as T from '../vendor/three.module.js';
-import {createGlobeRig} from './globe-mesh.mjs?v=volume7';
-import {createHeadSkin} from './head-mesh.mjs?v=volume7';
+import {createGlobeRig} from './globe-mesh.mjs?v=faces8';
+import {createHeadSkin} from './head-mesh.mjs?v=faces8';
 export {createHeadSkin};
 export const createEyeRig=createGlobeRig;
 function studioEnvironment(renderer){
@@ -24,7 +24,7 @@ export function createEyeView(host,{bare=false,background='#192627'}={}){
     key.shadow.bias=-.00010;key.shadow.normalBias=.00015;key.shadow.radius=4;key.shadow.blurSamples=8;
   }
   const environment=studioEnvironment(renderer);scene.environment=environment.texture;scene.environmentIntensity=.25;
-  renderer.domElement.setAttribute('role','img');renderer.domElement.setAttribute('aria-label',bare?'同步三维眼球对照':'一体化三维头部、动态眼睑与分层眼球，可旋转观察');
+  renderer.domElement.setAttribute('role','img');renderer.domElement.setAttribute('aria-label',bare?'Synchronized 3D eye-only reference':'Connected 3D head, animated eyelids and layered eyes; drag to rotate');
   const camera=new T.PerspectiveCamera(18,1,.005,3),target=new T.Vector3(0,-.018,-.025);
   const orbit={yaw:bare?0:.28,pitch:.04,distance:.43,enabled:!bare},pointers=new Map();
   function orient(){camera.position.set(target.x+orbit.distance*Math.sin(orbit.yaw)*Math.cos(orbit.pitch),target.y+orbit.distance*Math.sin(orbit.pitch),target.z+orbit.distance*Math.cos(orbit.yaw)*Math.cos(orbit.pitch));camera.lookAt(target);}
@@ -32,7 +32,7 @@ export function createEyeView(host,{bare=false,background='#192627'}={}){
   const rigs=[0,1].map(i=>{const r=createGlobeRig(i,{bare});r.root.position.x=i?.032:-.032;scene.add(r.root);return r;});
   const head=bare?null:createHeadSkin();if(head){scene.add(head.group);rigs.forEach((r,i)=>{r.skinGeometry=head.geometry;r.cornerGeometries=head.cornerGeometries.slice(i*2,i*2+2);});}
   const canvas=renderer.domElement;
-  if(!bare){canvas.tabIndex=0;canvas.title='拖动或方向键旋转；滚轮或 +/- 缩放';}
+  if(!bare){canvas.tabIndex=0;canvas.title='Drag or use arrow keys to rotate; scroll or +/- to zoom';}
   canvas.addEventListener('pointerdown',e=>{if(!orbit.enabled)return;e.preventDefault();e.stopPropagation();pointers.set(e.pointerId,[e.clientX,e.clientY]);canvas.setPointerCapture(e.pointerId);});
   canvas.addEventListener('pointermove',e=>{if(!orbit.enabled)return;const previous=pointers.get(e.pointerId);if(!previous)return;e.preventDefault();e.stopPropagation();orbit.yaw=Math.max(-1.45,Math.min(1.45,orbit.yaw+(e.clientX-previous[0])*.007));orbit.pitch=Math.max(-.45,Math.min(.55,orbit.pitch+(e.clientY-previous[1])*.006));pointers.set(e.pointerId,[e.clientX,e.clientY]);orient();});
   for(const event of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(event,e=>pointers.delete(e.pointerId));

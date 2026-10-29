@@ -62,4 +62,12 @@ All graph values are angles in degrees: +yaw is subject-right, +pitch is up. Tim
 
 ## Connected head (0.7)
 
-The homepage, complete workspace and three-case demo all use the connected head and layered eye meshes. The workspace positions the head at the eye midpoint and scales its horizontal attachment to replay eye separation. Homepage appearance exports identify `connected-head-v7`. See [geometry, dimensions, licensing and limitations](VOLUME-v7.zh-CN.md). The original scan colour image is retained only as a historical asset; the runtime fetches the GLB geometry, not the image or the old projected attachment field.
+The homepage, complete workspace and three-case demo all use the connected head and layered eye meshes. The workspace positions the head at the eye midpoint and scales its horizontal attachment to replay eye separation. Homepage appearance exports identify `connected-head-v8`. See [geometry, dimensions, licensing and limitations](VOLUME-v7.zh-CN.md). The original scan colour image is retained only as a historical asset; the runtime fetches the GLB geometry, not the image or the old projected attachment field.
+
+## Face presets and English UI (0.8)
+
+`src/face-profiles.mjs` defines two authored shapes derived from the same base scan. The female shape uses smooth spatial deformation fields for jaw/chin width, lower-face height, nasal projection, cheek volume, lips, brow and forehead. A protected zone around each eye has exactly zero displacement. `head-mesh.mjs` precomputes a vertex displacement array once, then adds it to the canonical animated surface. Each update starts from canonical positions, so repeated switching cannot accumulate deformation. Eyebrow roots remain bound to the deformed triangles. Eyeballs, gaze angles, apertures and fixed patient parameters are unchanged.
+
+The homepage `Simulation.setFaceType()` changes appearance without calling reset. `faceChanges` starts with the initial type at time zero; later events use the next simulation sample time. Changes at the same time are coalesced. JSON includes `faceProfileVersion` and the copied timeline; `appearance.faceType` is the current choice. A normal run reset starts a fresh timeline with that choice. CSV remains motion-only and does not encode facial appearance. The demo and workspace expose the same two appearance options without changing their simulation state or legacy export schemas.
+
+English is the default UI language across the homepage, full workspace, demo and linked help pages. The inherited demo's internal Chinese phase identifiers are mapped to English display text without modifying its audited target or patient logic. Historical research Markdown remains in its original language.

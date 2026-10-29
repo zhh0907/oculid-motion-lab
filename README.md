@@ -6,6 +6,14 @@
 
 ![一体化三维头部与动态眼球](docs/volume-head.png)
 
+## 0.8: English interface and two face shapes
+
+- English controls, patient messages, status text, chart labels, demo and methods pages.
+- **Face shape → Male / Female** changes the 3D jaw, chin, nose, cheeks and brow contour. Both are authored variants of the same licensed base mesh, not two independent scans.
+- Face changes preserve the current patient, simulation state and trace history. Run JSON records the shape version and timestamped `faceChanges`.
+- Both presets work in the homepage, full workspace and three-case demo. Skin tone remains independent.
+- [Shape implementation and reproduction](docs/FACE-SHAPES.md).
+
 ## 0.7 更新：一体化三维头部与分层眼球
 
 - 移除运行时人脸照片贴图；扫描头部网格与动态眼睑共用边界顶点，并增加有厚度的睑缘、立体眼角和细管毛发。
@@ -68,7 +76,7 @@ This is a research prototype combining a licensed reference face scan with proce
 | Check | Result |
 | --- | --- |
 | Upstream-generated golden fixture | **3,600 samples, exact angle equality** across 2 GRUs + ideal geometry and 4 patterns |
-| Node tests | **38 passed**, including upstream patient/demo tests, lid closure/bounds, invariance and audited file hashes |
+| Node tests | **40 passed**, including upstream patient/demo tests, lid closure/bounds, invariance and audited file hashes |
 | Homepage browser tests | Rendered iris, exact same-pose comparison, full closure, cases, pointer/camera boundary, tracking loss/recovery, JSON/CSV, reduced motion |
 | Complete workspace and demo | Patient persistence/import/export, all replay controllers, seeking, injected live input and mobile tools passed |
 | Layout | 1440 px desktop and 320/390/844 px mobile viewports checked |
@@ -84,7 +92,7 @@ python -m http.server 8000 --bind 127.0.0.1
 
 Open `http://localhost:8000/`. No npm build, API key, runtime CDN, or backend is required. Keep `vendor/`, `recordings/` and all model JSON files in place. Camera access needs localhost or HTTPS.
 
-The homepage is the new Chinese control surface. `workspace.html` provides the inherited English research workspace; `demo.html` provides the three fixed cases with eyelids. Changing homepage options begins a new recording. The manual blink button or **B** key starts a blink; pause stops simulation time. Disabling comparison hides only its view.
+The homepage uses English controls. `workspace.html` provides the inherited English research workspace; `demo.html` provides the three fixed cases with eyelids. Changing homepage options begins a new recording. The manual blink button or **B** key starts a blink; pause stops simulation time. Disabling comparison hides only its view.
 
 The homepage uses the original assumed-plane camera mapping. Use the complete workspace when measured camera/screen calibration or human-data replay is needed. Patient and calibration storage have independent Oculid keys, so this project does not overwrite the original site's saved settings. Transfer them explicitly via JSON export/import.
 

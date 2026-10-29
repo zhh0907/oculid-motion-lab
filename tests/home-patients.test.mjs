@@ -41,13 +41,13 @@ test('homepage bank restores workspace storage, appends immutable profiles and i
   const c=new PatientBank(memory(),'empty');c.import(JSON.parse(JSON.stringify(b.library)));c.activate('17');assert.deepEqual(c.active,a.active);
   const before=c.library,conflict=JSON.parse(JSON.stringify(before));conflict.patients[0].capacity+=.00001;
   assert.throws(()=>c.import(conflict),/Conflicting/);assert.equal(c.library,before);
-  assert.throws(()=>c.activate('999999'),/找不到/);assert.deepEqual(c.active,a.active);
+  assert.throws(()=>c.activate('999999'),/not found/);assert.deepEqual(c.active,a.active);
 });
 
 test('unavailable, corrupt and stale storage preserve recoverable patient data',()=>{
   const storage=memory(),a=new PatientBank(storage,'bank');a.generate(options);
   const stale=new PatientBank(storage,'stale');a.generate({...options,seed:'next'});const saved=storage.getItem(PATIENT_STORAGE_KEY);
-  stale.generate({...options,seed:'different'});assert.equal(storage.getItem(PATIENT_STORAGE_KEY),saved);assert.match(stale.warning,/另一页面/);
+  stale.generate({...options,seed:'different'});assert.equal(storage.getItem(PATIENT_STORAGE_KEY),saved);assert.match(stale.warning,/Another tab/);
   storage.setItem(PATIENT_STORAGE_KEY,'{broken');const corrupt=new PatientBank(storage,'fallback');assert.equal(corrupt.corrupt,true);
   assert.throws(()=>corrupt.generate(options));corrupt.activate(null);assert.equal(storage.getItem(PATIENT_STORAGE_KEY),'{broken');
   corrupt.import(a.library);assert.equal(corrupt.corrupt,false);assert.deepEqual(corrupt.library,a.library);

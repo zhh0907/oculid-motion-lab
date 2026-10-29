@@ -1,8 +1,10 @@
 # Verification record — 2026-10-29
 
-Environment: Version 0.7.0. Windows, Node 24.15.0, installed Google Chrome through Playwright 1.62.1. Browser input is synthetic or injected at the existing fingertip boundary. No person/camera was recorded.
+Environment: Version 0.8.0. Windows, Node 24.15.0, installed Google Chrome through Playwright 1.62.1. Browser input is synthetic or injected at the existing fingertip boundary. No person/camera was recorded.
 
 ## Results
+
+- Version 0.8: both authored face profiles change geometry, retain protected eye openings and restore their exact vertices after repeated switching. Tests preserve patient state, sample count, clock, trace revision and the complete gaze sequence, and verify timestamped face-shape export. English UI and both preset options are checked in the browser. Female frontal, side, wide-gaze and fully closed views were inspected. The original 3,600 angle outputs remain exactly equal.
 
 - Version 0.7: connected head/lid topology, shared boundary edges and finite eye geometry pass. The browser verifies actual drag rotation, frontal reset, clay/wireframe modes, fixed patient and simulation time during inspection, stable boundary coordinates through motion, no facial-photo requests, wide gaze/full closure, five skin presets and 320/390 px layouts. Frontal, 63-degree side, full-head, clay, wireframe and closed-eye screenshots were inspected. [Current appearance report](face-report.json).
 - Current runtime: 42,780 connected skin vertices; 196/184 shared socket-boundary vertices. Layered eyes use a recessed annular iris and independent convex cornea. All five browser suites passed after integration. A local 180-frame desktop headless Chrome sample had a 22.2 ms median frame interval; no mobile hardware benchmark was performed.
@@ -16,7 +18,7 @@ Environment: Version 0.7.0. Windows, Node 24.15.0, installed Google Chrome throu
 - Homepage patient/trajectory integration: 30 balanced profiles; ID recall, refresh persistence, unchanged profile after controller change, portable library import and conflict rejection, shared workspace storage, arbitrary 3D targets, three chart views, independent clearing, pause/tracking loss/reacquisition, and JSON/CSV provenance pass. [Report](patients-browser-report.json).
 - Unit checks include six correctly sided examples, deterministic custom-patient replay, stale/corrupt/unavailable storage protection, and continued bounded chart history after the 120-second export buffer fills.
 
-- `npm test`: 38/38 passed. This includes the original patient and three-case suites.
+- `npm test`: 40/40 passed. This includes the original patient and three-case suites.
 - `node tests/oculid-browser.cjs`: passed; [machine-readable report](browser-report.json).
 - `npm run test:workspace`: both inherited browser suites passed with the new eye meshes.
 - Wide-target checks: UI-controlled 50° gaze, full closure at that angle, legacy toggle and camera bypass pass. Pure geometry checks cover ±55° yaw, −50° / +40° pitch, contact clearance and continuous outer boundaries.

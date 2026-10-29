@@ -1,35 +1,36 @@
-import {createEyeView} from './eye-rig.mjs?v=volume7';
-import {Simulation,FPS,targetAt} from './simulation.mjs?v=volume7';
+import {createEyeView} from './eye-rig.mjs?v=faces8';
+import {Simulation,FPS,targetAt} from './simulation.mjs?v=faces8';
 import {pointerTarget,normalizeRange} from './target-range.mjs?v=canthus3';
 import {FingerCamera} from '../camera.js?v=review7';
 import {angularError} from '../engine.js';
-import {mountPatientPanel} from './patient-panel.mjs?v=patients4';
-import {TrajectoryPlot} from './trajectory-plot.mjs?v=patients4';
-import {EyePositionRails} from './eye-position-rails.mjs?v=volume7';
+import {mountPatientPanel} from './patient-panel.mjs?v=faces8';
+import {TrajectoryPlot} from './trajectory-plot.mjs?v=faces8';
+import {EyePositionRails} from './eye-position-rails.mjs?v=faces8';
 const $=id=>document.getElementById(id);
 async function start(){
-  const response=await fetch('./models-selected.json');if(!response.ok)throw Error('模型加载失败');
+  const response=await fetch('./models-selected.json');if(!response.ok)throw Error('Model could not be loaded');
   const sim=new Simulation(await response.json());
   const view=createEyeView($('eyeFocus')),bare=createEyeView($('bareEyes'),{bare:true,background:'#e2e7df'});
   const finger=new FingerCamera({enabled:false,ready:true,refresh(){},constraints(){return {};}});
   let playing=!matchMedia('(prefers-reduced-motion: reduce)').matches,acc=0,last=performance.now(),wasTracked=false,pointer=[0,0,.7],fpsStart=last,frames=0;
   function range(){return $('rangePreset').value==='legacy'?null:normalizeRange({horizontal:+$('horizontalRange').value,up:+$('upRange').value,down:+$('downRange').value});}
-  function settings(){return {targetRange:$('source').value==='camera'?null:range(),source:$('source').value,path:$('path').value,depth:+$('depth').value,cameraFov:+$('cameraFov').value,cameraY:+$('camY').value,depthAssumed:true,appearanceRenderer:'connected-head-v7'};}
+  function settings(){return {targetRange:$('source').value==='camera'?null:range(),source:$('source').value,path:$('path').value,depth:+$('depth').value,cameraFov:+$('cameraFov').value,cameraY:+$('camY').value,depthAssumed:true,appearanceRenderer:'connected-head-v8'};}
   function changed(){acc=0;wasTracked=false;last=performance.now();}
   function reset(){sim.reset();changed();}
   const patients=mountPatientPanel(sim,changed);
-  function orbitControls(enabled){view.setOrbit(enabled);$('orbitToggle').setAttribute('aria-pressed',String(enabled));$('viewHint').textContent=enabled?'拖动旋转 · 滚轮缩放':'指引注视 · 可切换旋转观察';}
+  function orbitControls(enabled){view.setOrbit(enabled);$('orbitToggle').setAttribute('aria-pressed',String(enabled));$('viewHint').textContent=enabled?'Drag to rotate · Scroll to zoom':'Guide the gaze · Enable rotation to inspect';}
   $('orbitToggle').onclick=()=>orbitControls(!view.orbit.enabled);
   $('frontView').onclick=()=>{view.setView(0,0,.43);orbitControls(false);};
   $('surfaceView').onchange=()=>view.setMode($('surfaceView').value);
+  $('faceType').onchange=()=>sim.setFaceType($('faceType').value);
   const trace=new TrajectoryPlot($('motionTrace'),$('traceView'),$('traceClear'),sim.trace);
   const rails=new EyePositionRails($('eyePositionRails'));
-  function playback(){ $('pause').textContent=playing?'暂停':'继续';$('stateLabel').textContent=playing?'实时双眼模拟':'已暂停';}
+  function playback(){ $('pause').textContent=playing?'Pause':'Resume';$('stateLabel').textContent=playing?'Live binocular simulation':'Paused';}
   $('pause').onclick=()=>{playing=!playing;acc=0;playback();};$('reset').onclick=reset;
   function blink(){sim.blink();if(!playing){playing=true;playback();}}
   $('blink').onclick=blink;
   window.addEventListener('keydown',e=>{if(e.key.toLowerCase()==='b'&&!/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)){e.preventDefault();blink();}});
-  $('fullscreen').onclick=()=>{const p=document.fullscreenElement?document.exitFullscreen():$('eyeFocus').requestFullscreen();p?.catch(()=>{$('status').textContent='此浏览器不支持全屏，请使用浏览器缩放。';});};
+  $('fullscreen').onclick=()=>{const p=document.fullscreenElement?document.exitFullscreen():$('eyeFocus').requestFullscreen();p?.catch(()=>{$('status').textContent='Fullscreen is unavailable. Use browser zoom instead.';});};
   $('compare').onchange=()=>{$('comparison').hidden=!$('compare').checked;};
   $('model').onchange=()=>{sim.select({model:$('model').value});changed();};
   $('path').onchange=reset;
@@ -41,7 +42,7 @@ async function start(){
   for(const id of ['horizontalRange','upRange','downRange'])$(id).oninput=rangeChanged;
   $('source').onchange=()=>{
     const source=$('source').value;if(source==='pointer')orbitControls(false);finger.stop();$('cameraPanel').hidden=source!=='camera';$('path').disabled=source!=='auto';$('rangeSection').hidden=source==='camera';
-    $('sourceHint').textContent={auto:'目标在设定角度内运动，病例仍按原参数受限。',pointer:'在上方眼部画面移动鼠标，或按住并拖动。',camera:'开启摄像头后，用一根食指引导注视。'}[source];reset();
+    $('sourceHint').textContent={auto:'The target follows the selected range; patient parameters stay fixed.',pointer:'Move the pointer over the face, or touch and drag.',camera:'Start the camera and guide the gaze with one index finger.'}[source];reset();
   };
   $('depth').oninput=()=>{$('depthValue').textContent=(+$('depth').value).toFixed(2)+' m';$('cameraDepth').value=$('depth').value;pointer[2]=+$('depth').value;reset();};
   $('eyeFocus').onpointermove=e=>{if($('source').value!=='pointer'||view.orbit.enabled)return;const r=$('eyeFocus').getBoundingClientRect(),u=(e.clientX-r.left-r.width/2)/r.width*2,v=-(e.clientY-r.top-r.height/2)/r.height*2;pointer=range()?pointerTarget(u,v,+$('depth').value,range()):[Math.max(-1,Math.min(1,u))*.35,Math.max(-1,Math.min(1,v))*.225,+$('depth').value];};
@@ -74,16 +75,16 @@ async function start(){
     $('leftError').textContent=tracked?angularError(f.angles.slice(0,2),f.ideal.slice(0,2)).toFixed(2)+'°':'—';
     $('rightError').textContent=tracked?angularError(f.angles.slice(2),f.ideal.slice(2)).toFixed(2)+'°':'—';$('vergence').textContent=(f.angles[0]-f.angles[2]).toFixed(2)+'°';
     $('visibility').textContent=f.lids.map(l=>Math.round(l.pupilVisibility*100)+'%').join(' / ');
-    $('lidStatus').textContent=f.lids[0].closure>.05?({closing:'闭合 · 上睑下移，睑缘向鼻侧滑动',closed:'短暂闭合 · 眼球继续运动',opening:'张开 · 上睑回升，褶皱恢复'}[f.lids[0].blinkPhase]||'眨眼中'):'眼睑随动 '+Math.round(sim.appearance.follow*100)+'% · 眼裂 '+Math.round(sim.appearance.openness*100)+'%';
+    $('lidStatus').textContent=f.lids[0].closure>.05?({closing:'Closing · Upper lid descends',closed:'Closed · Eyes continue moving',opening:'Opening · Upper lid rises'}[f.lids[0].blinkPhase]||'Blinking'):'Lid follow '+Math.round(sim.appearance.follow*100)+'% · Opening '+Math.round(sim.appearance.openness*100)+'%';
     $('targetDot').style.left=Math.max(2,Math.min(98,50+Math.atan2(f.target[0],f.target[2])*180/Math.PI/(range()?.horizontal||35)*46))+'%';$('targetDepth').textContent=f.target[2].toFixed(2)+' m';
     const delta=Math.max(...view.rigs.flatMap((r,i)=>[Math.abs(r.yaw.rotation.y-bare.rigs[i].yaw.rotation.y),Math.abs(r.pitch.rotation.x-bare.rigs[i].pitch.rotation.x)]))*180/Math.PI;
     $('angleDelta').textContent='Δ '+delta.toFixed(6)+'°';
-    $('status').textContent=tracked?`t ${f.time.toFixed(2)} s · L (${f.angles[0].toFixed(1)}, ${f.angles[1].toFixed(1)})° · R (${f.angles[2].toFixed(1)}, ${f.angles[3].toFixed(1)})° · yaw / pitch`:'等待食指 · 当前眼位与仿真时钟保持不变';
-    $('exportJson').disabled=$('exportCsv').disabled=!sim.rows.length;$('bufferStatus').textContent=sim.rows.length>=FPS*120?'记录已满 120 秒；请导出或重新开始。':`${(sim.rows.length/FPS).toFixed(1)} / 120 s · 角度与眼睑同步保存`;
+    $('status').textContent=tracked?`t ${f.time.toFixed(2)} s · L (${f.angles[0].toFixed(1)}, ${f.angles[1].toFixed(1)})° · R (${f.angles[2].toFixed(1)}, ${f.angles[3].toFixed(1)})° · yaw / pitch`:'Waiting for fingertip · Gaze and simulation time are held';
+    $('exportJson').disabled=$('exportCsv').disabled=!sim.rows.length;$('bufferStatus').textContent=sim.rows.length>=FPS*120?'120-second buffer full. Export or restart.':`${(sim.rows.length/FPS).toFixed(1)} / 120 s · Synchronized gaze and eyelids`;
     frames++;if(now-fpsStart>1000){$('renderFps').textContent=Math.round(frames*1000/(now-fpsStart))+' fps';frames=0;fpsStart=now;}
     requestAnimationFrame(draw);
   }
   for(const id of ['pause','reset','blink'])$(id).disabled=false;playback();requestAnimationFrame(draw);
   window.oculid={sim,view,bare,finger,patients,trace,rails,reset,settings,get playing(){return playing;}};
 }
-start().catch(error=>{$('status').textContent='启动失败：'+error.message;console.error(error);});
+start().catch(error=>{$('status').textContent='Could not start: '+error.message;console.error(error);});

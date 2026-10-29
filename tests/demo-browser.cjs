@@ -22,11 +22,15 @@ let browser;
   page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.status()>=400)errors.push(`${r.status()} ${r.url()}`);});
   await page.goto(url);await page.waitForFunction(()=>!!window.demo);
   assert.equal(await page.locator('[data-case]').count(),3);
-  assert.equal(await page.locator('select,input:not([type=hidden]),#patientGenerate').count(),0);
+  assert.equal(await page.locator('select:not(#faceType),input:not([type=hidden]),#patientGenerate').count(),0);
+  assert.equal(await page.locator('html').getAttribute('lang'),'en');
+  assert.deepEqual(await page.locator('#faceType option').evaluateAll(a=>a.map(o=>o.value)),['male','female']);
+  assert.ok(!/\p{Script=Han}/u.test(await page.locator('body').innerText()));
   await page.waitForFunction(()=>demo.current?.time>.1);
   assert.equal(await page.locator('[aria-pressed=true]').count(),1);
   await page.locator('#pauseDemo').click();
   const fixed=await page.evaluate(()=>demo.current);await page.waitForTimeout(80);assert.deepEqual(await page.evaluate(()=>demo.current),fixed);
+  await page.selectOption('#faceType','female');await page.waitForTimeout(100);assert.deepEqual(await page.evaluate(()=>demo.current),fixed);
   for(const key of ['conjugate','adduction','abduction']){
     await page.locator(`[data-case=${key}]`).click();
     const result=await page.evaluate(async key=>{
@@ -78,5 +82,5 @@ let browser;
   const reduced=await browser.newContext({reducedMotion:'reduce'});const rp=await reduced.newPage();await rp.goto(url);await rp.waitForFunction(()=>!!window.demo);
   assert.equal(await rp.evaluate(()=>demo.playing),false);await rp.locator('#pauseDemo').click();await rp.waitForFunction(()=>demo.current?.time>.05);await reduced.close();
   assert.deepEqual(errors,[]);
-  console.log(JSON.stringify({threeCases:true,strongDeficits:true,automaticAndLive:true,permissionFailureRecoverable:true,patientLibraryUntouched:true,mobileOverflow:false,physicalCameraTested:false,errors},null,2));
+  console.log(JSON.stringify({threeCases:true,englishInterface:true,twoFaceShapes:true,shapeSwitchPreservesMotion:true,strongDeficits:true,automaticAndLive:true,permissionFailureRecoverable:true,patientLibraryUntouched:true,mobileOverflow:false,physicalCameraTested:false,errors},null,2));
 }finally{await browser?.close();await new Promise(r=>server.close(r));}})().catch(e=>{console.error(e);process.exitCode=1;});

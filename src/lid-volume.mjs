@@ -1,4 +1,4 @@
-import {HALF_WIDTH,lidBounds,skinZ} from './eyelid-model.mjs?v=volume7';
+import {HALF_WIDTH,lidBounds,skinZ} from './eyelid-model.mjs?v=faces8';
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 export function lidEdge(theta,state){
   const x=HALF_WIDTH*Math.cos(theta),b=lidBounds(x,state),y=Math.sin(theta)>=0?b.upper:b.lower;
