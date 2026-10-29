@@ -6,6 +6,14 @@
 
 ![Oculid eye region and synchronized bare-eye comparison](docs/preview.png)
 
+## 0.6 更新：立体扫描面部与简化肤色
+
+- 以 Lee Perry-Smith 的开放许可头部扫描替换浅平面背景，保留完整鼻部、面颊、耳部和自然眉毛、皮肤细节；眼睑与眼球仍实时运动。
+- 扫描面部与动态眼周共用皮肤纹理；调整正面透视、柔和照明和眼眶层次，修复交界处三角形孔隙。
+- 肤色简化为五种常见预设，虹膜保留三种颜色，取消自由调色盘。
+- 36 项 Node 测试及五套浏览器检查通过。患者参数、手指跟随、实时滑轴和运动轨迹保持兼容。
+- [实现、素材署名与边界](docs/REALISM-v6.zh-CN.md) · [面部预览](docs/face-preview.png)。素材为 Lee Perry-Smith 的 *Infinite, 3D Head Scan*，采用 [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)；来源为 [Three.js r180](https://github.com/mrdoob/three.js/tree/r180/examples/models/gltf/LeePerrySmith)。
+
 ## 0.5.1 更新：简洁的实时双眼滑轨
 
 - 在眼部画面下增加两条水平眼位轴，L / R 眼各有一个随当前眼位左右滑动的圆点，参考 GazeLab 的即时眼位显示方式。
@@ -45,7 +53,7 @@
 - 新旧外观共享相同角度，支持逐帧同步对照；最多 120 秒 JSON/CSV 数据导出。
 - 完整工作台保留原工程的病例库、数据回放、移动端工具栏、屏幕/相机标定与历史导出格式。
 
-This is a procedural research prototype. It adds anatomical appearance and eyelid occlusion while preserving the existing gaze controller. It is not a scan-quality human face, an optical ray tracer, a validated eyelid physiology model, or a new image-based gaze tracker.
+This is a research prototype combining a licensed reference face scan with procedural moving eyes and eyelids. It preserves the existing gaze controller. The scan does not validate the animated eyelid physiology, synthetic patients or image-based gaze tracking. It is not an optical ray tracer or a multi-identity face generator.
 
 ## Compatibility evidence
 

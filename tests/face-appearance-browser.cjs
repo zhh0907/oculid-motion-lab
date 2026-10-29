@@ -1,0 +1,34 @@
+// Visual regression for the reference face, presets and moving eyelid seams.
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),os=require('node:os'),http=require('node:http');
+let pw;try{pw=require('playwright');}catch{pw=require(path.join(os.homedir(),'.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright'));}
+const root=path.resolve(__dirname,'..'),out=process.env.QA_OUTPUT||path.join(root,'qa','face-v6');fs.mkdirSync(out,{recursive:true});
+const server=http.createServer((req,res)=>{const name=decodeURIComponent(new URL(req.url,'http://localhost').pathname),file=path.resolve(root,'.'+(name.endsWith('/')?name+'index.html':name));if(!file.startsWith(root+path.sep)){res.writeHead(403).end();return;}fs.readFile(file,(e,b)=>{res.writeHead(e?404:200,{'Content-Type':{'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.json':'application/json','.css':'text/css','.jpg':'image/jpeg','.wasm':'application/wasm'}[path.extname(file)]||'application/octet-stream'});res.end(e?'Not found':b);});});
+let browser;
+(async()=>{try{
+  await new Promise(r=>server.listen(0,'127.0.0.1',r));
+  browser=await pw.chromium.launch({channel:'chrome',headless:true});
+  const page=await browser.newPage({viewport:{width:1440,height:1100},reducedMotion:'reduce'}),errors=[];
+  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});page.on('response',r=>{if(r.status()>=400)errors.push(r.url());});
+  await page.goto(process.env.OCULID_URL||`http://127.0.0.1:${server.address().port}/`);await page.waitForFunction(()=>!!window.oculid);
+  assert.equal(await page.locator('input[type=color]').count(),0);
+  const palette=await page.locator('#skin option').evaluateAll(options=>options.map(o=>o.value));assert.equal(palette.length,5);
+  await page.selectOption('#path','static');await page.uncheck('#autoBlink');await page.selectOption('#model','ideal');
+  await page.selectOption('#pattern','abduction');await page.selectOption('#patternSide','left');
+  const patient=await page.evaluate(()=>oculid.sim.patient),checks=[];
+  for(let i=0;i<palette.length;i++){
+    await page.selectOption('#skin',palette[i]);assert.deepEqual(await page.evaluate(()=>oculid.sim.patient),patient);
+    await page.evaluate(()=>{for(let j=0;j<400;j++)oculid.sim.step([-.4,.07,.7]);});await page.waitForTimeout(120);
+    checks.push(await page.evaluate(()=>{const {angles,baseline}=oculid.sim.current;return {leftLimited:Math.abs(angles[0])<Math.abs(baseline[0])*.3,rightUnchanged:angles[2]===baseline[2],finite:oculid.view.rigs.every(r=>[...r.skinGeometry.attributes.position.array,...r.skinGeometry.attributes.uv.array].every(Number.isFinite))};}));
+    await page.locator('#eyeFocus').screenshot({path:path.join(out,`skin-${i+1}.png`)});
+  }
+  assert.ok(checks.every(v=>v.leftLimited&&v.rightUnchanged&&v.finite));
+  await page.selectOption('#skin','#b98e79');await page.selectOption('#pattern','normal');await page.evaluate(()=>{for(let i=0;i<100;i++)oculid.sim.step([0,0,.7]);});await page.waitForTimeout(150);
+  await page.locator('#eyeFocus').screenshot({path:path.join(out,'front.png')});await page.screenshot({path:path.join(out,'page.png'),fullPage:true});
+  for(const [name,target]of [['left',[-.8,0,.7]],['up',[0,.5,.7]],['down',[0,-.6,.7]]]){
+    await page.evaluate(target=>{for(let i=0;i<200;i++)oculid.sim.step(target);},target);await page.waitForTimeout(120);await page.locator('#eyeFocus').screenshot({path:path.join(out,name+'.png')});
+  }
+  await page.evaluate(()=>{oculid.sim.appearance.openness=0;});await page.waitForTimeout(120);assert.deepEqual(await page.evaluate(()=>oculid.sim.frame().lids.map(l=>l.pupilVisibility)),[0,0]);await page.locator('#eyeFocus').screenshot({path:path.join(out,'closed.png')});
+  await page.evaluate(()=>{oculid.sim.appearance.openness=1;for(let i=0;i<100;i++)oculid.sim.step([0,0,.7]);});
+  for(const width of [320,390]){await page.setViewportSize({width,height:844});await page.waitForTimeout(150);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));await page.locator('#eyeFocus').screenshot({path:path.join(out,`mobile-${width}.png`)});}
+  assert.deepEqual(errors,[]);const report={passed:true,version:'0.6.0',fiveSkinPresets:true,noColourPicker:true,patientPreserved:true,finiteScanUVs:true,wideGazeAndClosure:true,mobile:true,errors};fs.writeFileSync(path.join(out,'face-report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
+}finally{await browser?.close();await new Promise(r=>server.close(r));}})().catch(e=>{console.error(e);process.exitCode=1;});

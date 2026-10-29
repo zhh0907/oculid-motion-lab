@@ -1,4 +1,4 @@
-import {createEyeView} from './eye-rig.mjs?v=canthus3';
+import {createEyeView} from './eye-rig.mjs?v=face6';
 import {Simulation,FPS,targetAt} from './simulation.mjs?v=patients4';
 import {pointerTarget,normalizeRange} from './target-range.mjs?v=canthus3';
 import {FingerCamera} from '../camera.js?v=review7';
@@ -14,7 +14,7 @@ async function start(){
   const finger=new FingerCamera({enabled:false,ready:true,refresh(){},constraints(){return {};}});
   let playing=!matchMedia('(prefers-reduced-motion: reduce)').matches,acc=0,last=performance.now(),wasTracked=false,pointer=[0,0,.7],fpsStart=last,frames=0;
   function range(){return $('rangePreset').value==='legacy'?null:normalizeRange({horizontal:+$('horizontalRange').value,up:+$('upRange').value,down:+$('downRange').value});}
-  function settings(){return {targetRange:$('source').value==='camera'?null:range(),source:$('source').value,path:$('path').value,depth:+$('depth').value,cameraFov:+$('cameraFov').value,cameraY:+$('camY').value,depthAssumed:true};}
+  function settings(){return {targetRange:$('source').value==='camera'?null:range(),source:$('source').value,path:$('path').value,depth:+$('depth').value,cameraFov:+$('cameraFov').value,cameraY:+$('camY').value,depthAssumed:true,appearanceRenderer:'scan-face-v6'};}
   function changed(){acc=0;wasTracked=false;last=performance.now();}
   function reset(){sim.reset();changed();}
   const patients=mountPatientPanel(sim,changed);

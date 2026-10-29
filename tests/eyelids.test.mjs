@@ -91,14 +91,16 @@ test('expanded targets reach independent up/down excursions without multiplying 
   assert.ok(Math.abs(lookAngles(targetAt(4,'horizontal'),[0,0,0])[0])<28);
 });
 
-test('corner tissue stays inside the aperture, joins both lids and mirrors across eyes',()=>{
+test('corner tissue stays inside the aperture, joins both lids and mirrors in the gaze plane',()=>{
   for(const yaw of [-55,0,55])for(const pitch of [-50,0,40])for(const closure of [0,.5,1])for(const nasal of [false,true]){
     const left=lidState(pitch,closure,{},0,yaw),right=lidState(pitch,closure,{},1,-yaw);
     for(let i=0;i<=12;i++)for(let j=0;j<=12;j++){
       const u=i/12,v=j/12,a=canthusSurface(u,v,left,nasal),b=canthusSurface(u,v,right,nasal),bounds=lidBounds(a[0],left);
-      assert.ok(a.every(Number.isFinite));assert.ok(Math.abs(a[0]+b[0])<1e-12);assert.ok(Math.abs(a[1]-b[1])<1e-12);assert.ok(Math.abs(a[2]-b[2])<1e-12);
+      assert.ok(a.every(Number.isFinite));assert.ok(b.every(Number.isFinite));assert.ok(Math.abs(a[0]+b[0])<1e-12);assert.ok(Math.abs(a[1]-b[1])<1e-12);
       assert.ok(a[1]>=bounds.lower-1e-12&&a[1]<=bounds.upper+1e-12);
-      if(j===0||j===12){const theta=Math.acos(a[0]/left.halfWidth)*(j===0?-1:1),edge=lidSurface(theta,0,left);assert.ok(Math.abs(a[2]-edge[2])<.000020);}
+      // The scan is naturally asymmetric in depth. Each side must join its own
+      // face/lid surface, while the 2D aperture and gaze convention stay mirrored.
+      if(j===0||j===12)for(const [point,state]of [[a,left],[b,right]]){const theta=Math.acos(point[0]/state.halfWidth)*(j===0?-1:1),edge=lidSurface(theta,0,state);assert.ok(Math.abs(point[2]-edge[2])<.000020);}
       if(closure===1)assert.ok(Math.abs(a[1]-bounds.lower)<1e-12);
       if(u>.1&&u<.9&&v>.1&&v<.9&&closure<1)assert.equal(insideCanthus(a[0],a[1],left),true);
     }

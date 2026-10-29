@@ -1,12 +1,25 @@
 import {HALF_WIDTH,lidBounds,skinZ,canthusInnerX} from './eyelid-model.mjs?v=canthus3';
+import {FACE_REFERENCE as face} from './face-reference.mjs';
 export const OUTER_X=.033,OUTER_Y=.027;
 const softMax=(a,b,k=.0004)=>(a+b+Math.sqrt((a-b)**2+k*k))/2;
 const gauss=(x,center,width)=>Math.exp(-(((x-center)/width)**2));
 export function faceSurface(x,y){
-  const nose=.0065*gauss(x,0,.011)*gauss(y,-.015,.031);
-  const brow=.0015*(gauss(x,-.032,.024)+gauss(x,.032,.024))*gauss(y,.018,.009);
-  const cheek=.001*(gauss(x,-.037,.025)+gauss(x,.037,.025))*gauss(y,-.022,.014);
-  return .0100-.0016*(x/.08)**2-.0012*(y/.05)**2+nose+brow+cheek;
+  // Catmull-Rom reconstruction of the scan's frontal surface. This includes
+  // nasal sidewalls, orbital recesses and cheek/temple curvature, in metres.
+  const gx=Math.max(1,Math.min(face.nx-3,(x-face.xmin)/(face.xmax-face.xmin)*(face.nx-1)));
+  const gy=Math.max(1,Math.min(face.ny-3,(y-face.ymin)/(face.ymax-face.ymin)*(face.ny-1)));
+  const ix=Math.floor(gx),iy=Math.floor(gy),u=gx-ix,v=gy-iy;
+  const cubic=(a,b,c,d,t)=>b+.5*t*(c-a+t*(2*a-5*b+4*c-d+t*(3*(b-c)+d-a)));
+  const a=face.micrometres;
+  const row=j=>{const k=j*face.nx+ix;return cubic(a[k-1],a[k],a[k+1],a[k+2],u);};
+  return cubic(row(iy-1),row(iy),row(iy+1),row(iy+2),v)*1e-6;
+}
+export function faceUV(x,y){
+  const gx=Math.max(0,Math.min(face.nx-1.00001,(x-face.xmin)/(face.xmax-face.xmin)*(face.nx-1)));
+  const gy=Math.max(0,Math.min(face.ny-1.00001,(y-face.ymin)/(face.ymax-face.ymin)*(face.ny-1)));
+  const ix=Math.floor(gx),iy=Math.floor(gy),u=gx-ix,v=gy-iy,k=iy*face.nx+ix;
+  const sample=a=>(a[k]*(1-u)+a[k+1]*u)*(1-v)+(a[k+face.nx]*(1-u)+a[k+face.nx+1]*u)*v;
+  return [sample(face.u)/65535,sample(face.v)/65535,sample(face.valid)];
 }
 export function lidSurface(theta,q,state){
   const c=Math.cos(theta),s=Math.sin(theta),x=HALF_WIDTH*c,b=lidBounds(x,state),y=s>=0?b.upper:b.lower;

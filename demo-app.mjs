@@ -1,4 +1,4 @@
-import {createEyeView} from './src/eye-rig.mjs?v=canthus3';
+import {createEyeView} from './src/eye-rig.mjs?v=face6';
 import {EyelidDynamics} from './src/eyelid-model.mjs?v=canthus3';
 import * as T from './vendor/three.module.js';
 import {FingerCamera} from './camera.js?v=review7';

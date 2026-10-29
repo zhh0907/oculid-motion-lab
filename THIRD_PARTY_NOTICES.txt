@@ -17,3 +17,13 @@ eyelid behavior, UI and tests. No UnityEyes/RIT-Eyes/AniEyelid code, textures,
 scans or learned assets are included. Research links are references only.
 Upstream application: https://github.com/zhh0907/binocular-motion-lab
 Audit: docs/upstream-manifest.json.
+
+Version 0.6 face reference:
+Infinite, 3D Head Scan by Lee Perry-Smith, based on work at www.triplegangers.com.
+Creative Commons Attribution 3.0 Unported: https://creativecommons.org/licenses/by/3.0/
+Source: https://github.com/mrdoob/three.js/tree/r180/examples/models/gltf/LeePerrySmith
+Original license: vendor/face/LeePerrySmith_License.txt
+Provenance, hashes and modification notes: vendor/face/PROVENANCE.json
+The scan is rescaled and its eye regions replaced by animated procedural tissue;
+its original colour texture is sampled with derived UVs and shader skin-tone changes.
+No disease or patient status of the scanned person is implied.

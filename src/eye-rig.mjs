@@ -1,8 +1,9 @@
 import * as T from '../vendor/three.module.js';
 import {DEFAULT_APPEARANCE,rotateEyePoint,EYE_RADIUS} from './eyelid-model.mjs?v=canthus3';
-import {faceSurface,faceNormal,lidSurface,canthusSurface} from './periocular-shape.mjs?v=canthus3';
-import {skinMaterial,skinTint} from './skin-material.mjs?v=canthus3';
+import {faceNormal,faceUV,lidSurface,canthusSurface} from './periocular-shape.mjs?v=face6';
+import {skinMaterial,skinTint,skinTone} from './skin-material.mjs?v=face6';
 import {socketGLSL,socketUniforms,updateSocket,shadeSclera} from './ocular-shading.mjs?v=canthus3';
+import {createScanGeometry} from './scan-geometry.mjs?v=face6';
 
 const N=160,RINGS=32;
 function cap(radius,extent,bulge=0){
@@ -15,19 +16,15 @@ function cap(radius,extent,bulge=0){
   const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(p,3));g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));g.setIndex(indices);g.computeVertexNormals();return g;
 }
 function addFace(scene){
-  const g=new T.PlaneGeometry(.16,.10,140,90),p=g.attributes.position,uv=g.attributes.uv;
-  const tint=new Float32Array(p.count*3);
+  const g=createScanGeometry(),p=g.attributes.position;
+  const tint=new Float32Array(p.count*3),micro=new Float32Array(p.count*2);
   for(let i=0;i<p.count;i++){
     const x=p.getX(i),y=p.getY(i),cx=x<0?-.032:.032;
-    p.setZ(i,faceSurface(x,y));uv.setXY(i,x/.04,y/.04);tint.set(skinTint(x-cx,y,x<0?1:-1),i*3);
+    micro.set([x/.04,y/.04],i*2);tint.set(skinTint(x-cx,y,x<0?1:-1),i*3);
   }
   g.setAttribute('color',new T.BufferAttribute(tint,3));
-  const kept=[],idx=g.index.array;
-  for(let k=0;k<idx.length;k+=3){const a=idx[k],b=idx[k+1],c=idx[k+2],x=(p.getX(a)+p.getX(b)+p.getX(c))/3,y=(p.getY(a)+p.getY(b)+p.getY(c))/3;
-    if(![-.032,.032].some(cx=>((x-cx)/.0315)**2+(y/.0255)**2<1))kept.push(a,b,c);
-  }g.setIndex(kept);g.computeVertexNormals();
-  for(let i=0;i<p.count;i++)g.attributes.normal.setXYZ(i,...faceNormal(p.getX(i),p.getY(i)));
-  const face=new T.Mesh(g,skinMaterial(DEFAULT_APPEARANCE.skin,true));scene.add(face);return face;
+  g.setAttribute('uv1',new T.BufferAttribute(micro,2));
+  const face=new T.Mesh(g,skinMaterial(DEFAULT_APPEARANCE.skin,true));face.castShadow=face.receiveShadow=true;scene.add(face);return face;
 }
 function studioEnvironment(renderer){
   const room=new T.Scene();room.background=new T.Color('#8c9190');
@@ -60,10 +57,12 @@ export function createEyeRig(index=0,{bare=false,...initial}={}){
     const normal=new T.Vector3(x,y,z).normalize(),mesh=new T.Mesh(new T.CircleGeometry(r,24),new T.MeshBasicMaterial({color:'#fffaf0',transparent:true,opacity,depthWrite:false}));mesh.scale.set(.7,1,1);mesh.quaternion.setFromUnitVectors(new T.Vector3(0,0,1),normal);root.add(mesh);return {mesh,normal};
   });
   const surround=new T.Group();root.add(surround);surround.visible=!bare;
-  const pos=new Float32Array((N+1)*(RINGS+1)*3),uv=new Float32Array((N+1)*(RINGS+1)*2),color=new Float32Array(pos.length),indices=[];
+  const pos=new Float32Array((N+1)*(RINGS+1)*3),uv=new Float32Array((N+1)*(RINGS+1)*2),micro=new Float32Array(uv.length),color=new Float32Array(pos.length),indices=[];
   for(let j=0;j<=RINGS;j++)for(let i=0;i<=N;i++){const k=j*(N+1)+i;if(j<RINGS&&i<N)indices.push(k,k+N+1,k+N+2,k,k+N+2,k+1);}
   const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.BufferAttribute(pos,3));geometry.setAttribute('uv',new T.BufferAttribute(uv,2));geometry.setAttribute('color',new T.BufferAttribute(color,3));geometry.setIndex(indices);
-  const material=skinMaterial(o.skin,true);material.polygonOffset=true;material.polygonOffsetFactor=-1;material.polygonOffsetUnits=-1;surround.add(new T.Mesh(geometry,material));
+  geometry.setAttribute('uv1',new T.BufferAttribute(micro,2));
+  const material=skinMaterial(o.skin,true);material.polygonOffset=true;material.polygonOffsetFactor=-1;material.polygonOffsetUnits=-1;
+  const skinMesh=new T.Mesh(geometry,material);skinMesh.castShadow=skinMesh.receiveShadow=true;surround.add(skinMesh);
   // A real narrow wet margin instead of an outline painted around the aperture.
   const rimGeo=new T.BufferGeometry(),rimPos=new Float32Array((N+1)*6),rimIndices=[];
   for(let i=0;i<N;i++){const k=i*2;rimIndices.push(k,k+1,k+3,k,k+3,k+2);}
@@ -75,7 +74,8 @@ export function createEyeRig(index=0,{bare=false,...initial}={}){
     for(let i=0;i<count;i++)for(let j=0;j<4;j++){const k=i*10+j*2;idx.push(k,k+1,k+3,k,k+3,k+2);}g.setIndex(idx);
     const mesh=new T.Mesh(g,new T.MeshBasicMaterial({color,transparent:true,opacity,side:T.DoubleSide,depthWrite:false}));surround.add(mesh);return mesh;
   }
-  const upperLashes=hairs(72,'#392a22',.9),lowerLashes=hairs(36,'#695040',.6),brow=hairs(420,'#50392b',.8);
+  // Natural eyebrows come from the scan; only the moving lashes need geometry.
+  const upperLashes=hairs(72,'#392a22',.9),lowerLashes=hairs(36,'#695040',.6);
   // Caruncle, crescent fold and lateral commissure share the lid boundaries.
   const corners=[true,false].map(nasal=>{
     const across=32,rows=16,g=new T.BufferGeometry(),p=new Float32Array((across+1)*(rows+1)*3),colors=new Float32Array(p.length),idx=[];
@@ -104,7 +104,7 @@ export function createEyeRig(index=0,{bare=false,...initial}={}){
     yaw.rotation.set(0,angles[0]*Math.PI/180,0);pitch.rotation.set(-angles[1]*Math.PI/180,0,0);
     const center=new T.Vector3(...rotateEyePoint([0,0,.0056],angles[0],angles[1])),direction=center.clone().normalize();
     for(const {mesh,normal}of glints){mesh.position.copy(center).addScaledVector(normal,.00793);mesh.visible=normal.dot(direction)>.64;}
-    const opts={...o,...options};material.color.set(opts.skin);iris.material.uniforms.irisColor.value.set(opts.iris);iris.material.uniforms.pupil.value=opts.pupilMm/11.4;
+    const opts={...o,...options};material.color.copy(skinTone(opts.skin));iris.material.uniforms.irisColor.value.set(opts.iris);iris.material.uniforms.pupil.value=opts.pupilMm/11.4;
     updateSocket(socket,root,state,bareMode);
     if(!state)return;
     const open=1-state.closure;
@@ -116,7 +116,7 @@ export function createEyeRig(index=0,{bare=false,...initial}={}){
       const theta=i/N*Math.PI*2,s=Math.sin(theta);
       for(let j=0;j<=RINGS;j++){
         const q=j/RINGS,k=j*(N+1)+i,point=lidSurface(theta,q,state),wx=point[0]+(index?.032:-.032);
-        geometry.attributes.position.setXYZ(k,...point);uv[k*2]=wx/.04;uv[k*2+1]=point[1]/.04;
+        geometry.attributes.position.setXYZ(k,...point);const mapped=faceUV(wx,point[1]);uv[k*2]=mapped[0];uv[k*2+1]=mapped[1];micro[k*2]=wx/.04;micro[k*2+1]=point[1]/.04;
         const red=.09*Math.exp(-q*17)*Math.abs(s),tint=skinTint(point[0],point[1],state.side);
         const crease=.10*Math.max(0,s)*(1-state.closure)**2*Math.exp(-(((q-.205-.025*Math.cos(theta))/.027)**2));
         color[k*3]=tint[0]-crease*.65;color[k*3+1]=tint[1]-red-crease;color[k*3+2]=tint[2]-red*.9-crease;
@@ -142,36 +142,38 @@ export function createEyeRig(index=0,{bare=false,...initial}={}){
       const dx=(Math.cos(theta)*.8-state.side*.25+Math.sin(i*1.7)*.2)*length,dy=(upper?1:-1)*length*(upper?1-1.45*state.closure:1),dz=length*(upper?.55:.25);
       point[2]+=.00012;hair(mesh.geometry,i,point,dx,dy,dz,upper?.000028:.000020);
     }
-    for(let i=0;i<420;i++){
-      const f=(i+.5)/420,theta=(.11+f*.78)*Math.PI,x=.023*Math.cos(theta),y=.014+.0045*Math.sin(theta)+.0010*Math.sin(i*2.4)*Math.sin(f*Math.PI)+(state.browLift||0)*Math.sin(theta);
-      const point=[x,y,faceSurface(x+(index?.032:-.032),y)+.00012];
-      const taper=Math.pow(Math.sin(f*Math.PI),.6),length=(.0007+.00055*(.5+.5*Math.sin(i*5.1)))*taper;
-      hair(brow.geometry,i,point,-state.side*length*(.6+.35*Math.sin(f*Math.PI)),length*(.8-.5*f),.00004,.000035);
-    }
-    for(const attr of ['position','uv','color'])geometry.attributes[attr].needsUpdate=true;geometry.computeVertexNormals();
+    for(const attr of ['position','uv','uv1','color'])geometry.attributes[attr].needsUpdate=true;geometry.computeVertexNormals();
     // Matching normals and UVs at the rim remove the old circular patch seams.
     for(let i=0;i<=N;i++){const k=RINGS*(N+1)+i;geometry.attributes.normal.setXYZ(k,...faceNormal(pos[k*3]+(index?.032:-.032),pos[k*3+1]));}
     geometry.attributes.normal.needsUpdate=true;geometry.computeBoundingSphere();
     rimGeo.attributes.position.needsUpdate=true;rimGeo.computeVertexNormals();rimGeo.computeBoundingSphere();
-    for(const mesh of [upperLashes,lowerLashes,brow]){mesh.geometry.attributes.position.needsUpdate=true;mesh.geometry.computeBoundingSphere();}
+    for(const mesh of [upperLashes,lowerLashes]){mesh.geometry.attributes.position.needsUpdate=true;mesh.geometry.computeBoundingSphere();}
   }
   return {root,yaw,pitch,surround,update,setBare(value){bareMode=value;surround.visible=!value;socket.socketEnabled.value=value?0:1;},get skinGeometry(){return geometry;},get cornerGeometries(){return corners.map(c=>c.mesh.geometry);}};
 }
 export function createEyeView(host,{bare=false,background='#192627'}={}){
   const scene=new T.Scene();scene.background=new T.Color(background);
-  scene.add(new T.HemisphereLight('#fff1e6','#506064',1.35));
-  const key=new T.DirectionalLight('#fff2e6',2.15);key.position.set(-.14,.16,.35);scene.add(key);
-  const fill=new T.DirectionalLight('#d7e5ed',.7);fill.position.set(.15,.01,.3);scene.add(fill);
-  const renderer=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.8));renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=.94;host.prepend(renderer.domElement);
-  const environment=studioEnvironment(renderer);scene.environment=environment.texture;scene.environmentIntensity=.35;
+  scene.add(new T.HemisphereLight('#fff1e6','#78625a',.85));
+  const key=new T.DirectionalLight('#fff3e9',2.5);key.position.set(-.10,.16,.35);scene.add(key);
+  const fill=new T.DirectionalLight('#e2e9ee',1.2);fill.position.set(.18,-.02,.30);scene.add(fill);
+  const renderer=new T.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.8));renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=.92;host.prepend(renderer.domElement);
+  if(!bare){
+    renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.VSMShadowMap;
+    key.castShadow=true;key.shadow.mapSize.set(1024,1024);key.shadow.camera.left=-.115;key.shadow.camera.right=.115;
+    key.shadow.camera.top=.10;key.shadow.camera.bottom=-.13;key.shadow.camera.near=.08;key.shadow.camera.far=.65;
+    key.shadow.bias=-.00018;key.shadow.normalBias=.00025;key.shadow.radius=4;key.shadow.blurSamples=8;
+  }
+  const environment=studioEnvironment(renderer);scene.environment=environment.texture;scene.environmentIntensity=.26;
   renderer.domElement.setAttribute('role','img');renderer.domElement.setAttribute('aria-label',bare?'相同角度的裸眼对照':'包含动态眼睑、湿润睑缘及眼周褶皱的双眼模拟');
-  const camera=new T.OrthographicCamera(-.072,.072,.036,-.036,.001,2);camera.position.set(0,0,.2);camera.lookAt(0,0,0);
+  // A long-lens, frontal perspective retains a useful examination view while
+  // allowing the nose, sockets and cheeks to have genuine depth cues.
+  const camera=new T.PerspectiveCamera(12,1,.01,2);camera.position.set(0,bare?0:-.009,.42);camera.lookAt(0,bare?0:-.009,0);
   const rigs=[0,1].map(i=>{const rig=createEyeRig(i,{bare});rig.root.position.x=i?.032:-.032;scene.add(rig.root);return rig;});
   const face=bare?null:addFace(scene);let oldW=0,oldH=0;
   function draw(angles,states,options={}){
     const w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;
-    if(w!==oldW||h!==oldH){oldW=w;oldH=h;renderer.setSize(w,h,false);const halfY=Math.max(.024,.072/(w/h));camera.left=-halfY*w/h;camera.right=halfY*w/h;camera.top=halfY;camera.bottom=-halfY;camera.updateProjectionMatrix();}
-    if(face)face.material.color.set(options.skin||DEFAULT_APPEARANCE.skin);
+    if(w!==oldW||h!==oldH){oldW=w;oldH=h;renderer.setSize(w,h,false);const halfY=Math.max(bare?.024:.045,(bare?.072:.078)/(w/h));camera.aspect=w/h;camera.fov=2*Math.atan(halfY/.42)*180/Math.PI;camera.updateProjectionMatrix();}
+    if(face)face.material.color.copy(skinTone(options.skin||DEFAULT_APPEARANCE.skin));
     rigs.forEach((rig,i)=>rig.update(angles.slice(i*2,i*2+2),states[i],options));renderer.render(scene,camera);
   }
   return {draw,rigs,renderer,scene,camera};

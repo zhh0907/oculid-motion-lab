@@ -19,9 +19,11 @@ let browser;
   });
   assert.deepEqual(invariants.compare,invariants.realistic);assert.ok(invariants.pose.every((v,i)=>Math.abs(v-invariants.angles[i])<1e-12));assert.ok(invariants.finite);assert.ok(invariants.triangles>1000);
   // Compare real rendered pixels, so a back-facing/missing iris fails the check.
-  const irisPixels=await page.evaluate(()=>{
+  const irisPixels=await page.evaluate(async()=>{
     const {renderer,camera,rigs}=oculid.view;const c=renderer.domElement,w=c.width,h=c.height,gl=renderer.getContext(),buf=new Uint8Array(w*h*4);gl.readPixels(0,0,w,h,gl.RGBA,gl.UNSIGNED_BYTE,buf);
-    const x=Math.round((-.032-camera.left)/(camera.right-camera.left)*w),y=Math.round(h/2);let dark=0;
+    const {Vector3}=await import('./vendor/three.module.js');
+    const centre=new Vector3(0,0,.01255);rigs[0].pitch.localToWorld(centre);centre.project(camera);
+    const x=Math.round((centre.x+1)*w/2),y=Math.round((centre.y+1)*h/2);let dark=0;
     for(let j=y-12;j<y+12;j++)for(let i=x-12;i<x+12;i++){const k=(j*w+i)*4;if(buf[k]+buf[k+1]+buf[k+2]<300)dark++;}return dark;
   });assert.ok(irisPixels>20,'pupil/iris should be visibly rendered');
   // Complete closure is visible in the renderer, and the pupil estimator is zero.
@@ -59,5 +61,5 @@ let browser;
   await page.selectOption('#source','auto');await page.selectOption('#model','gru_expanded_520');
   for(const [width,height]of [[390,844],[320,740],[844,390]]){await page.setViewportSize({width,height});await page.waitForTimeout(80);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));await page.screenshot({path:path.join(out,`mobile-${width}.png`),fullPage:true});}
   const reduced=await browser.newContext({reducedMotion:'reduce'}),rp=await reduced.newPage();await rp.goto(url);await rp.waitForFunction(()=>!!window.oculid);assert.equal(await rp.evaluate(()=>oculid.playing),false);await reduced.close();
-  assert.deepEqual(errors,[]);const report={passed:true,version:'0.5.1',angleDeltaDegrees:0,desktopAndMobile:true,renderedIris:true,fullClosure:true,wideGazeAndClosure:true,rangeControlsAndLegacyMode:true,cameraMappingUnaffectedByRange:true,threeCases:true,syntheticPointerAndInjectedCamera:true,trackingLossHold:true,exportJSONCSV:true,reducedMotion:true,physicalCameraTested:false,errors};fs.writeFileSync(path.join(out,'browser-report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
+  assert.deepEqual(errors,[]);const report={passed:true,version:'0.6.0',angleDeltaDegrees:0,desktopAndMobile:true,renderedIris:true,fullClosure:true,wideGazeAndClosure:true,rangeControlsAndLegacyMode:true,cameraMappingUnaffectedByRange:true,threeCases:true,syntheticPointerAndInjectedCamera:true,trackingLossHold:true,exportJSONCSV:true,reducedMotion:true,physicalCameraTested:false,errors};fs.writeFileSync(path.join(out,'browser-report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
 }finally{await browser?.close();await new Promise(r=>server.close(r));}})().catch(e=>{console.error(e);process.exitCode=1;});

@@ -1,4 +1,4 @@
-import {createEyeRig} from './src/eye-rig.mjs?v=canthus3';
+import {createEyeRig} from './src/eye-rig.mjs?v=face6';
 import {appearanceFrame,EyelidDynamics} from './src/eyelid-model.mjs?v=canthus3';
 import {simplifyUI} from './simplify-ui.js?v=simple2';
 import {mountPatientControls,downloadJSON} from './patient-ui.mjs?v=simple2';

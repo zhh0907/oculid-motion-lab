@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "version": "0.6.0",
+  "fiveSkinPresets": true,
+  "noColourPicker": true,
+  "patientPreserved": true,
+  "finiteScanUVs": true,
+  "wideGazeAndClosure": true,
+  "mobile": true,
+  "errors": []
+}
