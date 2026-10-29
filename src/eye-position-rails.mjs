@@ -1,9 +1,10 @@
-import {HALF_WIDTH,rotateEyePoint} from './eyelid-model.mjs?v=canthus3';
+import {IRIS_DEPTH} from './eye-anatomy.mjs';
+import {HALF_WIDTH,rotateEyePoint} from './eyelid-model.mjs?v=volume7';
 
-// Orthographic pupil-centre projection, using the existing iris surface radius.
+// Orthographic pupil-centre projection, using the recessed iris plane.
 // It is a geometric relative position, not a measurement from rendered pixels.
 export function horizontalEyePosition(yaw,pitch){
-  return rotateEyePoint([0,0,.01255],yaw,pitch)[0]/HALF_WIDTH;
+  return rotateEyePoint([0,0,IRIS_DEPTH],yaw,pitch)[0]/HALF_WIDTH;
 }
 export function eyeRailState(frame){
   return [0,1].map(i=>({

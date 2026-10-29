@@ -3,11 +3,7 @@ import * as T from '../vendor/three.module.js';
 // A shared 40 mm texture space keeps the face and animated lids continuous.
 // All irregularity is seeded once: the texture never changes between frames.
 let maps;
-let referenceMap;
-export function skinTone(color){
-  const c=new T.Color(color),base=new T.Color('#cfa58b');
-  c.r/=base.r;c.g/=base.g;c.b/=base.b;return c;
-}
+export function skinTone(color){return new T.Color(color);}
 const smooth=t=>t*t*(3-2*t);
 function field(size,random){
   const a=Float32Array.from({length:size*size},random);
@@ -49,25 +45,14 @@ function skinTextures(){
   map.colorSpace=T.SRGBColorSpace;maps={map,bumpMap,roughnessMap};return maps;
 }
 export function skinMaterial(color,vertexColors=false){
-  const micro=skinTextures();micro.bumpMap.channel=micro.roughnessMap.channel=1;
-  if(!referenceMap){referenceMap=new T.TextureLoader().load(new URL('../vendor/face/Map-COL.jpg',import.meta.url).href);referenceMap.colorSpace=T.SRGBColorSpace;referenceMap.anisotropy=8;}
-  const material=new T.MeshPhysicalMaterial({color:skinTone(color),...micro,map:referenceMap,bumpScale:.000035,roughness:.83,clearcoat:.07,clearcoatRoughness:.55,sheen:.08,sheenColor:'#b87967',sheenRoughness:.85,vertexColors,side:T.DoubleSide});
-  // Remove the stationary closed-lid seam from the scan at shading time. The
-  // replacement is confined to the moving aperture: live geometry supplies
-  // the lid edge, blink and occlusion. Original texture bytes stay untouched.
+  const material=new T.MeshPhysicalMaterial({color:skinTone(color),...skinTextures(),bumpScale:.000065,roughness:.72,clearcoat:.06,clearcoatRoughness:.5,sheen:.12,sheenColor:'#bb806c',sheenRoughness:.85,vertexColors,side:T.DoubleSide});
+  // Small warm grazing fill approximates thin tissue; all facial shape and
+  // directional shading come from mesh geometry, never a face photograph.
   material.onBeforeCompile=shader=>{
-    shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nvarying vec2 skinXY;').replace('#include <begin_vertex>','#include <begin_vertex>\nskinXY=uv1*.04;');
-    shader.fragmentShader=shader.fragmentShader.replace('#include <common>','#include <common>\nvarying vec2 skinXY;');
-    let map=T.ShaderChunk.map_fragment;
-    map=map.replace('diffuseColor *= sampledDiffuseColor;',`float ex=(abs(skinXY.x)-.032)/.018;
-      float ey=(skinXY.y+.0025)/.0058;
-      float blend=1.-smoothstep(.55,1.,ex*ex+ey*ey);
-      vec3 tissue=vec3(.56,.36,.27)*(1.+.025*sin(skinXY.x*5200.)*sin(skinXY.y*3900.));
-      sampledDiffuseColor.rgb=mix(sampledDiffuseColor.rgb,tissue,blend);
-      diffuseColor *= sampledDiffuseColor;`);
-    shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',map);
+    shader.fragmentShader=shader.fragmentShader.replace('#include <lights_fragment_end>',`#include <lights_fragment_end>
+      reflectedLight.indirectDiffuse+=diffuseColor.rgb*vec3(.035,.012,.006)*pow(1.-max(0.,dot(normal,geometryViewDir)),3.);`);
   };
-  material.customProgramCacheKey=()=> 'scan-skin-v6';
+  material.customProgramCacheKey=()=> 'volume-skin-v7';
   return material;
 }
 

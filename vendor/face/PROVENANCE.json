@@ -9,5 +9,5 @@
     "LeePerrySmith.glb": "402b8a8ac9f03232e6d64b5962929703a069daf99d3c49ac8eb0e48bedc9c576",
     "Map-COL.jpg": "e976d73b31407f8d0967412bf468019ed26a5d5a32cf5811aabff7e816458a65"
   },
-  "modifications": "Runtime mesh rescaled and aligned; triangles fully inside eye regions replaced with animated procedural lids. Front-surface depth/UV grid supplies the dynamic attachment only; the static face retains the original 3D mesh. Original colour texture bytes unmodified; shader changes skin tone and blends closed-lid seam. Appearance reference only; no actual patient data or implied disease of scanned person."
+  "modifications": "Version 0.7: runtime mesh rescaled, aligned, welded and Loop-subdivided; socket boundary vertices shared with animated procedural eyelids. Original colour texture retained unmodified for historical v0.6 provenance, not loaded by the current runtime. Skin detail is procedural. Appearance reference only; no actual patient data or implied disease of scanned person."
 }

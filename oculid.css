@@ -13,3 +13,5 @@
 
 /* A small, named palette replaces unrestricted colour pickers. */
 .appearance-presets{display:grid;grid-template-columns:1fr 1fr;gap:12px}.appearance-presets select{padding:9px 7px;font-size:12px}.eye-label,.stage-bottom{color:#f2e9df;text-shadow:0 1px 3px #251c18}.eye-label{background:#2b211955;padding:4px 7px;border-radius:4px}
+
+.view-tools-3d{display:flex;align-items:center;gap:8px;padding:10px 17px 16px;color:#b7c8bd}.view-tools-3d button,.view-tools-3d select{padding:7px 10px;background:#243b37;color:#dce6dd;border-color:#456159;font-size:11px}.view-tools-3d button[aria-pressed=true]{background:#416653;color:white}.view-tools-3d select{width:auto}.view-tools-3d>span{font-size:10px;margin-left:auto}@media(max-width:760px){.view-tools-3d{gap:5px;flex-wrap:wrap;padding:9px}.view-tools-3d>span{width:100%;margin:3px 0 0}.view-tools-3d button,.view-tools-3d select{padding:7px;font-size:10px}}

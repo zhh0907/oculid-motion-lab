@@ -4,9 +4,17 @@
 
 [Live demo](https://zhh0907.github.io/oculid-motion-lab/) · [Complete workspace](https://zhh0907.github.io/oculid-motion-lab/workspace.html) · [中文调研与设计](docs/RESEARCH.zh-CN.md) · [Architecture](docs/ARCHITECTURE.md)
 
-![Oculid eye region and synchronized bare-eye comparison](docs/preview.png)
+![一体化三维头部与动态眼球](docs/volume-head.png)
 
-## 0.6 更新：立体扫描面部与简化肤色
+## 0.7 更新：一体化三维头部与分层眼球
+
+- 移除运行时人脸照片贴图；扫描头部网格与动态眼睑共用边界顶点，并增加有厚度的睑缘、立体眼角和细管毛发。
+- 眼球包含开口巩膜、后置虹膜、真实瞳孔孔洞、暗色内腔及独立透明角膜。
+- 拖动旋转、滚轮缩放，支持灰模和网格查看；“正面检查”恢复跟随任务视角。患者参数与仿真时钟不受观察角度影响。
+- 五种肤色、三种虹膜预设；保留固定患者、食指跟随、简洁滑轴及实时轨迹。
+- 38 项 Node 测试及五套浏览器检查通过。[结构、公式、素材与验证](docs/VOLUME-v7.zh-CN.md)。
+
+## 0.6 历史更新：立体扫描面部与简化肤色
 
 - 以 Lee Perry-Smith 的开放许可头部扫描替换浅平面背景，保留完整鼻部、面颊、耳部和自然眉毛、皮肤细节；眼睑与眼球仍实时运动。
 - 扫描面部与动态眼周共用皮肤纹理；调整正面透视、柔和照明和眼眶层次，修复交界处三角形孔隙。
@@ -47,7 +55,7 @@
 ## 已实现
 
 - 连续三维上下眼睑、垂直注视随动、自动/手动眨眼、单眼上睑覆盖、可调眼裂。
-- 程序化虹膜、可调瞳孔、简化角膜高光、眼周皮肤、睫毛及眉毛。
+- 立体虹膜、可调瞳孔孔洞、透明凸面角膜、连续头部皮肤及三维毛发。
 - 原有两种 GRU、几何参考、正常、三种模板的左右侧明显示例，以及可编号调用的固定患者。
 - 自动水平/垂直/圆周/阶跃/远近目标、鼠标/触控和本地摄像头食指跟随。
 - 新旧外观共享相同角度，支持逐帧同步对照；最多 120 秒 JSON/CSV 数据导出。
@@ -60,7 +68,7 @@ This is a research prototype combining a licensed reference face scan with proce
 | Check | Result |
 | --- | --- |
 | Upstream-generated golden fixture | **3,600 samples, exact angle equality** across 2 GRUs + ideal geometry and 4 patterns |
-| Node tests | **34 passed**, including upstream patient/demo tests, lid closure/bounds, invariance and audited file hashes |
+| Node tests | **38 passed**, including upstream patient/demo tests, lid closure/bounds, invariance and audited file hashes |
 | Homepage browser tests | Rendered iris, exact same-pose comparison, full closure, cases, pointer/camera boundary, tracking loss/recovery, JSON/CSV, reduced motion |
 | Complete workspace and demo | Patient persistence/import/export, all replay controllers, seeking, injected live input and mobile tools passed |
 | Layout | 1440 px desktop and 320/390/844 px mobile viewports checked |
@@ -88,6 +96,7 @@ npm ci
 # Browser tests require Google Chrome; all processing stays local.
 npm run test:browser
 npm run test:workspace
+npm run test:face
 ```
 
 Node 22+ is recommended. Browser tests use Playwright; the homepage test can select an installed channel through `PW_CHANNEL`. Generated screenshots/downloads are ignored under `qa/`; the checked-in preview and compact report are under `docs/`.
@@ -99,8 +108,8 @@ Node 22+ is recommended. Browser tests use Playwright; the homepage test can sel
 | `src/simulation.mjs` | Target and controller orchestration, synchronized export |
 | `src/eyelid-model.mjs` | Pure deterministic eyelid/blink/visibility math |
 | `src/target-range.mjs` | Angular target excursions; original camera mapping is unchanged |
-| `src/periocular-shape.mjs` | Continuous eyelid/contact and face surfaces |
-| `src/eye-rig.mjs` | Eye, lid and eye-region meshes and materials |
+| `src/head-topology.mjs`, `src/head-mesh.mjs`, `src/lid-volume.mjs` | Connected head/lid topology, deformation and hair |
+| `src/globe-mesh.mjs`, `src/eye-anatomy.mjs`, `src/eye-rig.mjs` | Layered eyes, dimensions, lighting and orbit camera |
 | `src/main.mjs`, `index.html`, `oculid.css` | New interface |
 | `workspace.html`, `app.js` | Complete inherited workspace with new eye meshes |
 | `engine.js`, `models-selected.json`, `patient-model.mjs` | Audited upstream motion code and weights |

@@ -29,7 +29,7 @@ let browser;
  const current=await page.evaluate(()=>({frame:oculid.sim.current,latest:oculid.trace.lastDraw.latest,run:oculid.sim.export()}));
  assert.ok(current.frame.angles.some((v,i)=>Math.abs(v-current.frame.baseline[i])>1));assert.equal(current.run.patientLibraryId,library.libraryId);
  const projected=await page.evaluate(()=>oculid.rails.state);
- for(let i=0;i<2;i++){const angle=current.frame.angles[2*i]*Math.PI/180,pitch=current.frame.angles[2*i+1]*Math.PI/180;assert.ok(Math.abs(projected[i].position-Math.sin(angle)*Math.cos(pitch)*.01255/.0132)<1e-12);}
+ for(let i=0;i<2;i++){const angle=current.frame.angles[2*i]*Math.PI/180,pitch=current.frame.angles[2*i+1]*Math.PI/180;assert.ok(Math.abs(projected[i].position-Math.sin(angle)*Math.cos(pitch)*.01055/.0132)<1e-12);}
  await page.locator('#eyePositionRails').screenshot({path:path.join(out,'eye-rails.png')});
  assert.equal(current.latest.time,current.run.samples.find(s=>s.time===current.latest.time).time);
  assert.deepEqual(current.latest.angles,current.run.samples.find(s=>s.time===current.latest.time).angles);
@@ -76,7 +76,7 @@ let browser;
  await page.setViewportSize({width:1440,height:1100});await page.selectOption('#pattern','abduction');await page.selectOption('#patternSide','left');
  await page.evaluate(()=>{oculid.sim.appearance.blink=false;for(let i=0;i<800;i++)oculid.sim.step([-.7,0,.7]);});
  await page.waitForFunction(()=>oculid.rails.state[0].position<-.05);
- const limited=await page.evaluate(()=>oculid.rails.state);assert.ok(Math.abs(limited[0].position)<.12);assert.ok(limited[0].reference<-.6);assert.equal(limited[1].position,limited[1].reference);
+ const limited=await page.evaluate(()=>oculid.rails.state);assert.ok(Math.abs(limited[0].position)<.12);assert.ok(limited[0].reference<-.5);assert.equal(limited[1].position,limited[1].reference);
  await page.locator('#eyePositionRails').screenshot({path:path.join(out,'rails-limited.png')});
  await page.evaluate(()=>{oculid.sim.manualTime=oculid.sim.current.time-.1;});await page.waitForFunction(()=>document.querySelectorAll('.rail-marker.is-occluded').length===2);
  assert.deepEqual(await page.evaluate(()=>oculid.rails.state.map(s=>s.position)),limited.map(s=>s.position));

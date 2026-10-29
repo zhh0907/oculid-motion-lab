@@ -1,10 +1,13 @@
 # Verification record — 2026-10-29
 
-Environment: Version 0.6.0. Windows, Node 24.15.0, installed Google Chrome through Playwright 1.62.1. Browser input is synthetic or injected at the existing fingertip boundary. No person/camera was recorded.
+Environment: Version 0.7.0. Windows, Node 24.15.0, installed Google Chrome through Playwright 1.62.1. Browser input is synthetic or injected at the existing fingertip boundary. No person/camera was recorded.
 
 ## Results
 
-- Version 0.6: scan mesh/UV and asset checksums pass; five skin presets, no colour wheel, patient preservation, wide gaze, complete closure and 320/390 px rendering pass. [Appearance report](face-report.json). Frontal, oblique, light/dark skin and closed-eye screenshots were inspected. The final static mesh retains crossing triangles under the dynamic patches to prevent visible holes.
+- Version 0.7: connected head/lid topology, shared boundary edges and finite eye geometry pass. The browser verifies actual drag rotation, frontal reset, clay/wireframe modes, fixed patient and simulation time during inspection, stable boundary coordinates through motion, no facial-photo requests, wide gaze/full closure, five skin presets and 320/390 px layouts. Frontal, 63-degree side, full-head, clay, wireframe and closed-eye screenshots were inspected. [Current appearance report](face-report.json).
+- Current runtime: 42,780 connected skin vertices; 196/184 shared socket-boundary vertices. Layered eyes use a recessed annular iris and independent convex cornea. All five browser suites passed after integration. A local 180-frame desktop headless Chrome sample had a 22.2 ms median frame interval; no mobile hardware benchmark was performed.
+
+- Version 0.6: scan mesh/UV and asset checksums pass; five skin presets, no colour wheel, patient preservation, wide gaze, complete closure and 320/390 px rendering pass. The historical frontal, oblique, light/dark skin and closed-eye screenshots were inspected. The final static mesh retains crossing triangles under the dynamic patches to prevent visible holes.
 
 - Version 0.5.1 simplifies the rails to plain dots and fewer labels. The existing homepage/patient browser integration suite passed, including rail positions, pause/occlusion, and 320/390/844 px layouts. Motion mathematics is unchanged.
 
@@ -13,7 +16,7 @@ Environment: Version 0.6.0. Windows, Node 24.15.0, installed Google Chrome throu
 - Homepage patient/trajectory integration: 30 balanced profiles; ID recall, refresh persistence, unchanged profile after controller change, portable library import and conflict rejection, shared workspace storage, arbitrary 3D targets, three chart views, independent clearing, pause/tracking loss/reacquisition, and JSON/CSV provenance pass. [Report](patients-browser-report.json).
 - Unit checks include six correctly sided examples, deterministic custom-patient replay, stale/corrupt/unavailable storage protection, and continued bounded chart history after the 120-second export buffer fills.
 
-- `npm test`: 36/36 passed. This includes the original patient and three-case suites.
+- `npm test`: 38/38 passed. This includes the original patient and three-case suites.
 - `node tests/oculid-browser.cjs`: passed; [machine-readable report](browser-report.json).
 - `npm run test:workspace`: both inherited browser suites passed with the new eye meshes.
 - Wide-target checks: UI-controlled 50° gaze, full closure at that angle, legacy toggle and camera bypass pass. Pure geometry checks cover ±55° yaw, −50° / +40° pitch, contact clearance and continuous outer boundaries.
@@ -26,8 +29,8 @@ Environment: Version 0.6.0. Windows, Node 24.15.0, installed Google Chrome throu
 
 ## What these results do not establish
 
-Physical webcam detection rate, calibrated accuracy, real-world latency, iPhone/Android WebGL performance, visual similarity judged by humans, eye-tracker recognition of synthetic images, full-angle self-collision/contact physics, and patient/biological validity have not been measured. The moving eye region remains a procedural mesh with simplified surface shading and analytic reflection highlights. Version 0.6 adds a licensed reference face scan and its colour texture; this does not establish clinical or photometric validity. No new eye-motion model was introduced. Very oblique gaze can hide a pupil; exported hidden angles remain simulation ground truth.
+Physical webcam detection rate, calibrated accuracy, real-world latency, iPhone/Android WebGL performance, visual similarity judged by humans, eye-tracker recognition of synthetic images, full-angle self-collision/contact physics, and patient/biological validity have not been measured. The moving eye region remains a procedural mesh with simplified surface shading. Version 0.7 retains the licensed head geometry, removes the facial colour image from runtime, and uses independent transmissive corneal geometry. This does not establish clinical or photometric validity. No new eye-motion model was introduced. Very oblique gaze can hide a pupil; exported hidden angles remain simulation ground truth.
 
-The pupil visibility value samples the front-view pupil disk against the procedural aperture and corner-tissue mask. It is not a learned image measurement, uncertainty estimate, or support for arbitrary camera viewpoints. Skin/highlight changes do not enter the visibility calculation. The fixed 250 Hz grid is model time; browser rendering rate is measured separately.
+The pupil visibility value samples the pupil disk at the recessed iris plane in a fixed front reference view against the procedural aperture and corner-tissue mask. It is not a learned image measurement, uncertainty estimate, or support for arbitrary camera viewpoints. Skin/highlight changes do not enter the visibility calculation. The fixed 250 Hz grid is model time; browser rendering rate is measured separately.
 
 Screenshots can be regenerated with `npm run test:browser` and `npm run test:face`. Runtime downloads and sample JSON/CSV are kept outside version control. Historical model-evaluation reports in this repository describe the original eye-motion work and have not been rerun as eyelid experiments.

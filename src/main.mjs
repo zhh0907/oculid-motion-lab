@@ -1,11 +1,11 @@
-import {createEyeView} from './eye-rig.mjs?v=face6';
-import {Simulation,FPS,targetAt} from './simulation.mjs?v=patients4';
+import {createEyeView} from './eye-rig.mjs?v=volume7';
+import {Simulation,FPS,targetAt} from './simulation.mjs?v=volume7';
 import {pointerTarget,normalizeRange} from './target-range.mjs?v=canthus3';
 import {FingerCamera} from '../camera.js?v=review7';
 import {angularError} from '../engine.js';
 import {mountPatientPanel} from './patient-panel.mjs?v=patients4';
 import {TrajectoryPlot} from './trajectory-plot.mjs?v=patients4';
-import {EyePositionRails} from './eye-position-rails.mjs?v=rails-simple1';
+import {EyePositionRails} from './eye-position-rails.mjs?v=volume7';
 const $=id=>document.getElementById(id);
 async function start(){
   const response=await fetch('./models-selected.json');if(!response.ok)throw Error('模型加载失败');
@@ -14,10 +14,14 @@ async function start(){
   const finger=new FingerCamera({enabled:false,ready:true,refresh(){},constraints(){return {};}});
   let playing=!matchMedia('(prefers-reduced-motion: reduce)').matches,acc=0,last=performance.now(),wasTracked=false,pointer=[0,0,.7],fpsStart=last,frames=0;
   function range(){return $('rangePreset').value==='legacy'?null:normalizeRange({horizontal:+$('horizontalRange').value,up:+$('upRange').value,down:+$('downRange').value});}
-  function settings(){return {targetRange:$('source').value==='camera'?null:range(),source:$('source').value,path:$('path').value,depth:+$('depth').value,cameraFov:+$('cameraFov').value,cameraY:+$('camY').value,depthAssumed:true,appearanceRenderer:'scan-face-v6'};}
+  function settings(){return {targetRange:$('source').value==='camera'?null:range(),source:$('source').value,path:$('path').value,depth:+$('depth').value,cameraFov:+$('cameraFov').value,cameraY:+$('camY').value,depthAssumed:true,appearanceRenderer:'connected-head-v7'};}
   function changed(){acc=0;wasTracked=false;last=performance.now();}
   function reset(){sim.reset();changed();}
   const patients=mountPatientPanel(sim,changed);
+  function orbitControls(enabled){view.setOrbit(enabled);$('orbitToggle').setAttribute('aria-pressed',String(enabled));$('viewHint').textContent=enabled?'拖动旋转 · 滚轮缩放':'指引注视 · 可切换旋转观察';}
+  $('orbitToggle').onclick=()=>orbitControls(!view.orbit.enabled);
+  $('frontView').onclick=()=>{view.setView(0,0,.43);orbitControls(false);};
+  $('surfaceView').onchange=()=>view.setMode($('surfaceView').value);
   const trace=new TrajectoryPlot($('motionTrace'),$('traceView'),$('traceClear'),sim.trace);
   const rails=new EyePositionRails($('eyePositionRails'));
   function playback(){ $('pause').textContent=playing?'暂停':'继续';$('stateLabel').textContent=playing?'实时双眼模拟':'已暂停';}
@@ -36,11 +40,11 @@ async function start(){
   $('rangePreset').onchange=rangeChanged;
   for(const id of ['horizontalRange','upRange','downRange'])$(id).oninput=rangeChanged;
   $('source').onchange=()=>{
-    const source=$('source').value;finger.stop();$('cameraPanel').hidden=source!=='camera';$('path').disabled=source!=='auto';$('rangeSection').hidden=source==='camera';
+    const source=$('source').value;if(source==='pointer')orbitControls(false);finger.stop();$('cameraPanel').hidden=source!=='camera';$('path').disabled=source!=='auto';$('rangeSection').hidden=source==='camera';
     $('sourceHint').textContent={auto:'目标在设定角度内运动，病例仍按原参数受限。',pointer:'在上方眼部画面移动鼠标，或按住并拖动。',camera:'开启摄像头后，用一根食指引导注视。'}[source];reset();
   };
   $('depth').oninput=()=>{$('depthValue').textContent=(+$('depth').value).toFixed(2)+' m';$('cameraDepth').value=$('depth').value;pointer[2]=+$('depth').value;reset();};
-  $('eyeFocus').onpointermove=e=>{if($('source').value!=='pointer')return;const r=$('eyeFocus').getBoundingClientRect(),u=(e.clientX-r.left-r.width/2)/r.width*2,v=-(e.clientY-r.top-r.height/2)/r.height*2;pointer=range()?pointerTarget(u,v,+$('depth').value,range()):[Math.max(-1,Math.min(1,u))*.35,Math.max(-1,Math.min(1,v))*.225,+$('depth').value];};
+  $('eyeFocus').onpointermove=e=>{if($('source').value!=='pointer'||view.orbit.enabled)return;const r=$('eyeFocus').getBoundingClientRect(),u=(e.clientX-r.left-r.width/2)/r.width*2,v=-(e.clientY-r.top-r.height/2)/r.height*2;pointer=range()?pointerTarget(u,v,+$('depth').value,range()):[Math.max(-1,Math.min(1,u))*.35,Math.max(-1,Math.min(1,v))*.225,+$('depth').value];};
   $('eyeFocus').onpointerdown=e=>{$('eyeFocus').setPointerCapture(e.pointerId);$('eyeFocus').onpointermove(e);};
   function appearance(){
     Object.assign(sim.appearance,{openness:+$('openness').value,follow:+$('follow').value,blink:$('autoBlink').checked,pupilMm:+$('pupil').value,skin:$('skin').value,iris:$('iris').value,ptosisLeft:+$('ptosisLeft').value,ptosisRight:+$('ptosisRight').value});

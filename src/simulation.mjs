@@ -1,7 +1,7 @@
 import {LearnedModel,desired} from '../engine.js';
 import {PatientLayer,validatePatient,MODEL_VERSION} from '../patient-model.mjs';
 import {DEMO_CASES,DEMO_EYES,demoTarget} from '../demo-presets.mjs';
-import {appearanceFrame,EyelidDynamics,DEFAULT_APPEARANCE,LID_VERSION} from './eyelid-model.mjs?v=canthus3';
+import {appearanceFrame,EyelidDynamics,DEFAULT_APPEARANCE,LID_VERSION} from './eyelid-model.mjs?v=volume7';
 import {normalizeRange,angularTarget} from './target-range.mjs?v=canthus3';
 import {TrajectoryHistory} from './trajectory-data.mjs?v=patients4';
 export const FPS=250;

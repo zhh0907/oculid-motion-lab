@@ -1,6 +1,7 @@
+import {IRIS_DEPTH} from './eye-anatomy.mjs';
 // Metres, seconds, degrees. Eyelids are downstream of gaze: no feedback to motion.
-export const LID_VERSION = 'anatomical-lids-v3';
-export const DEFAULT_APPEARANCE = Object.freeze({openness:1,follow:1,blink:true,blinkPeriod:4.6,ptosisLeft:0,ptosisRight:0,pupilMm:4.6,skin:'#b98e79',iris:'#6c7148'});
+export const LID_VERSION = 'volumetric-lids-v7';
+export const DEFAULT_APPEARANCE = Object.freeze({openness:1,follow:1,blink:true,blinkPeriod:4.6,ptosisLeft:0,ptosisRight:0,pupilMm:4.6,skin:'#b98e79',iris:'#503b2c'});
 export const EYE_RADIUS=.0124;
 export const HALF_WIDTH=.0132;
 export const CANTHUS_WIDTH=Object.freeze({nasal:.0028,temporal:.0015});
@@ -81,7 +82,7 @@ export function pupilVisibility(yaw,pitch,state,pupilMm=4.6){
   let visible=0,total=0;const radius=clamp(pupilMm,2,8)/2000;
   for(let ring=0;ring<6;ring++)for(let i=0;i<32;i++){
     const r=radius*Math.sqrt((ring+.5)/6),theta=i/32*Math.PI*2;
-    const [x,y,z]=rotateEyePoint([r*Math.cos(theta),r*Math.sin(theta),Math.sqrt(.01255**2-r*r)],yaw,pitch);
+    const [x,y,z]=rotateEyePoint([r*Math.cos(theta),r*Math.sin(theta),IRIS_DEPTH],yaw,pitch);
     const b=lidBounds(x,state);total++;
     if(z>0&&Math.abs(x)<state.halfWidth&&y>b.lower&&y<b.upper&&!insideCanthus(x,y,state))visible++;
   }return visible/total;
