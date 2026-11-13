@@ -38,15 +38,23 @@ export function createEyeView(host,{bare=false,background='#192627'}={}){
   for(const event of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(event,e=>pointers.delete(e.pointerId));
   canvas.addEventListener('wheel',e=>{if(!orbit.enabled)return;e.preventDefault();orbit.distance=Math.max(.25,Math.min(1.15,orbit.distance*Math.exp(e.deltaY*.0007)));orient();},{passive:false});
   canvas.addEventListener('keydown',e=>{if(!orbit.enabled)return;const moves={ArrowLeft:[-.07,0],ArrowRight:[.07,0],ArrowUp:[0,-.05],ArrowDown:[0,.05]};if(moves[e.key]){e.preventDefault();orbit.yaw=Math.max(-1.45,Math.min(1.45,orbit.yaw+moves[e.key][0]));orbit.pitch=Math.max(-.45,Math.min(.55,orbit.pitch+moves[e.key][1]));orient();}else if(['+','=','-'].includes(e.key)){e.preventDefault();orbit.distance=Math.max(.25,Math.min(1.15,orbit.distance*(e.key==='-'?1.1:.9)));orient();}});
-  let oldW=0,oldH=0,mode='skin',eyeOnly=bare;
+  let oldW=0,oldH=0,mode='skin',eyeOnly=bare,lastFrame=null;
+  const invalidate=()=>{lastFrame=null;};
+  canvas.addEventListener('webglcontextrestored',invalidate);
   function draw(angles,states,appearance={},referenceCamera=null){
+    const w=host.clientWidth,h=host.clientHeight;
+    // Paused/held scenes need no repeated mesh deformation, shadow or cornea
+    // passes. Simulation clocks and input handling remain outside the renderer.
+    const frameKey=JSON.stringify([angles,states,appearance,eyeOnly,mode,w,h,orbit.yaw,orbit.pitch,orbit.distance,
+      referenceCamera?.position.toArray(),referenceCamera?.quaternion.toArray(),referenceCamera?.projectionMatrix.elements]);
+    if(frameKey===lastFrame)return;
     rigs.forEach((r,i)=>r.update(angles.slice(i*2,i*2+2),states[i],appearance));head?.update(states,appearance);
-    const w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;
+    if(!w||!h)return;
     if(w!==oldW||h!==oldH){oldW=w;oldH=h;renderer.setSize(w,h,false);const halfY=Math.max(eyeOnly?.024:.06,(eyeOnly?.072:.088)/(w/h));camera.aspect=w/h;camera.fov=2*Math.atan(halfY/.43)*180/Math.PI;camera.updateProjectionMatrix();}
     if(referenceCamera){camera.position.copy(referenceCamera.position);camera.quaternion.copy(referenceCamera.quaternion);camera.projectionMatrix.copy(referenceCamera.projectionMatrix);camera.projectionMatrixInverse.copy(referenceCamera.projectionMatrixInverse);}
-    renderer.render(scene,camera);
+    renderer.render(scene,camera);lastFrame=frameKey;
   }
-  return {draw,rigs,head,renderer,scene,camera,orbit,
+  return {draw,invalidate,rigs,head,renderer,scene,camera,orbit,
     setAnatomy(value){if(!['face','eyes'].includes(value))throw Error('Unknown anatomy view');eyeOnly=value==='eyes';if(head)head.group.visible=!eyeOnly;rigs.forEach(r=>r.setBare(eyeOnly));oldW=oldH=0;canvas.setAttribute('aria-label',eyeOnly?'3D eye-only view':'3D head with animated eyelids');},get anatomy(){return eyeOnly?'eyes':'face';},
     setOrbit(enabled){orbit.enabled=enabled;pointers.clear();canvas.style.cursor=enabled?'grab':'crosshair';},
     setView(yaw=0,pitch=0,distance=.43){Object.assign(orbit,{yaw,pitch,distance});orient();},

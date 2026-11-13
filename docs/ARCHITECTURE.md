@@ -73,3 +73,7 @@ The homepage, complete workspace and three-case demo all use the connected head 
 The homepage `Simulation.setFaceType()` changes appearance without calling reset. `faceChanges` starts with the initial type at time zero; later events use the next simulation sample time. Changes at the same time are coalesced. JSON includes `faceProfileVersion` and the copied timeline; `appearance.faceType` is the current choice. A normal run reset starts a fresh timeline with that choice. CSV remains motion-only and does not encode facial appearance. The demo and workspace expose the same two appearance options without changing their simulation state or legacy export schemas.
 
 English is the default UI language across the homepage, full workspace, demo and linked help pages. The inherited demo's internal Chinese phase identifiers are mapped to English display text without modifying its audited target or patient logic. Historical research Markdown remains in its original language.
+
+## Rendering invalidation (0.9.1)
+
+`createEyeView.draw` caches the last rendered input state. Unchanged gaze, lids, appearance, anatomy/material mode, orbit, paired camera and viewport reuse the existing canvas; simulation and input processing continue independently. WebGL context restoration invalidates this cache. Consumers that mutate the exposed Three.js scene directly must call `view.invalidate()` before the next `draw`.

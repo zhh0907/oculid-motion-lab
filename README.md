@@ -8,6 +8,8 @@
 
 ## 0.9: Unified Binocular + Oculid library
 
+Patch 0.9.1 avoids redundant rendering of unchanged paused scenes. Simulation and camera input keep their original timing; all pose, appearance, camera and viewport changes trigger drawing.
+
 Oculid is now the canonical repository. Binocular remains a historical demo with a migration link.
 
 - One numerical core and patient store, shared by the homepage, full workspace and three-case demo.

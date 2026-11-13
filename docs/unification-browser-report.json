@@ -1,7 +1,8 @@
 {
   "passed": true,
-  "version": "0.9.0",
+  "version": "0.9.1",
   "sharedLibrary": true,
+  "idleRenderingCached": true,
   "migrationReviewedAndLossless": true,
   "staleMigrationProtected": true,
   "displayStateInvariant": true,
