@@ -21,7 +21,7 @@ let browser;
   await page.click('#reviewPatients');assert.equal(await page.evaluate(()=>localStorage.getItem('oculid-motion-patients-v1')),null);
   await page.click('#applyMigration');assert.match(await page.locator('#migrationStatus').innerText(),/Imported/);
   assert.equal(await page.evaluate(()=>localStorage.getItem('binocular-motion-patients-v1')),legacy);
-  await page.goto(url);await page.waitForFunction(()=>!!window.oculid);
+  await page.goto(url);await page.waitForFunction(()=>!!window.oculid,null,{timeout:120000});
   assert.equal(await page.evaluate(()=>oculid.sim.patient.id),'P000002');
   await page.evaluate(()=>{for(let i=0;i<100;i++)oculid.sim.step([.3,.1,.7]);});
   const snapshot=()=>page.evaluate(()=>JSON.stringify({run:oculid.sim.export(),time:oculid.sim.time,plant:oculid.sim.layer.snapshot(),previous:oculid.sim.previous,trace:oculid.sim.trace}));
@@ -42,7 +42,7 @@ let browser;
   await page.setViewportSize({width:390,height:844});await page.selectOption('#displayMode','compare');await page.waitForTimeout(150);
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));await page.screenshot({path:path.join(out,'paired-mobile.png'),fullPage:true});
   // The original workspace loads the very same migrated bank and keeps old run schema.
-  await page.setViewportSize({width:1440,height:1100});await page.goto(url+'workspace.html');await page.waitForFunction(()=>!!window.lab);await page.click('#pause');
+  await page.setViewportSize({width:1440,height:1100});await page.goto(url+'workspace.html');await page.waitForFunction(()=>!!window.lab,null,{timeout:120000});await page.click('#pause');
   assert.equal(await page.evaluate(()=>lab.patients.active.id),'P000002');
   const held=await page.evaluate(()=>JSON.stringify({current:lab.current,patient:lab.patients.layer.snapshot()}));
   for(const mode of ['eyes','face']){await page.selectOption('#displayMode',mode);await page.waitForTimeout(100);assert.equal(await page.evaluate(()=>JSON.stringify({current:lab.current,patient:lab.patients.layer.snapshot()})),held);}

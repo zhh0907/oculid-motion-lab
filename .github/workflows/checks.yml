@@ -14,6 +14,10 @@ jobs:
   browser:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [oculid, home-patients, patients, demo, face-appearance, unified]
     env:
       # Use the full browser's headless mode, as in the installed-Chrome checks.
       PW_CHANNEL: chromium
@@ -26,4 +30,4 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps --no-shell chromium
-      - run: npm run test:all-browser
+      - run: node tests/${{ matrix.suite }}-browser.cjs

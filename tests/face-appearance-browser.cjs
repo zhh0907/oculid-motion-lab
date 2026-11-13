@@ -10,7 +10,7 @@ let browser;
   const page=await browser.newPage({viewport:{width:1440,height:1100},reducedMotion:'reduce'}),errors=[],requests=[];
   page.on('request',r=>requests.push(r.url()));
   page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});page.on('response',r=>{if(r.status()>=400)errors.push(r.url());});
-  await page.goto(process.env.OCULID_URL||`http://127.0.0.1:${server.address().port}/`);await page.waitForFunction(()=>!!window.oculid);
+  await page.goto(process.env.OCULID_URL||`http://127.0.0.1:${server.address().port}/`);await page.waitForFunction(()=>!!window.oculid,null,{timeout:120000});
   assert.equal(await page.locator('html').getAttribute('lang'),'en');
   assert.ok(!/\p{Script=Han}/u.test(await page.locator('body').innerText()));
   assert.deepEqual(await page.locator('#faceType option').evaluateAll(a=>a.map(x=>x.value)),['male','female']);

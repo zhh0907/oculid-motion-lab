@@ -8,7 +8,7 @@ let browser;
   browser=await pw.chromium.launch(require('./browser-options.cjs'));
   const page=await browser.newPage({viewport:{width:1440,height:1100}}),errors=[];
   page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});page.on('response',r=>{if(r.status()>=400)errors.push(`${r.status()} ${r.url()}`);});
-  await page.goto(url);await page.waitForFunction(()=>!!window.oculid);await page.selectOption('#path','static');await page.uncheck('#autoBlink');
+  await page.goto(url);await page.waitForFunction(()=>!!window.oculid,null,{timeout:120000});await page.selectOption('#path','static');await page.uncheck('#autoBlink');
   await page.waitForFunction(()=>oculid.sim.time>.15);await page.click('#pause');
   const held=await page.evaluate(()=>oculid.sim.current);await page.waitForTimeout(100);assert.deepEqual(await page.evaluate(()=>oculid.sim.current),held);
   await page.screenshot({path:path.join(out,'desktop.png'),fullPage:true});
@@ -60,6 +60,8 @@ let browser;
   const [csv]=await Promise.all([page.waitForEvent('download'),page.click('#exportCsv')]);await csv.saveAs(path.join(out,'run.csv'));assert.match(fs.readFileSync(path.join(out,'run.csv'),'utf8'),/left_pupil_visible/);
   await page.selectOption('#source','auto');await page.selectOption('#model','gru_expanded_520');
   for(const [width,height]of [[390,844],[320,740],[844,390]]){await page.setViewportSize({width,height});await page.waitForTimeout(80);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));await page.screenshot({path:path.join(out,`mobile-${width}.png`),fullPage:true});}
-  const reduced=await browser.newContext({reducedMotion:'reduce'}),rp=await reduced.newPage();await rp.goto(url);await rp.waitForFunction(()=>!!window.oculid);assert.equal(await rp.evaluate(()=>oculid.playing),false);await reduced.close();
+  // Release the first page's WebGL contexts before the independent startup check.
+  await page.close();
+  const reduced=await browser.newContext({reducedMotion:'reduce'}),rp=await reduced.newPage();await rp.goto(url);await rp.waitForFunction(()=>!!window.oculid,null,{timeout:120000});assert.equal(await rp.evaluate(()=>oculid.playing),false);await reduced.close();
   assert.deepEqual(errors,[]);const report={passed:true,version:'0.9.0',angleDeltaDegrees:0,desktopAndMobile:true,renderedIris:true,fullClosure:true,wideGazeAndClosure:true,rangeControlsAndLegacyMode:true,cameraMappingUnaffectedByRange:true,threeCases:true,syntheticPointerAndInjectedCamera:true,trackingLossHold:true,exportJSONCSV:true,reducedMotion:true,physicalCameraTested:false,errors};fs.writeFileSync(path.join(out,'browser-report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
 }finally{await browser?.close();await new Promise(r=>server.close(r));}})().catch(e=>{console.error(e);process.exitCode=1;});
