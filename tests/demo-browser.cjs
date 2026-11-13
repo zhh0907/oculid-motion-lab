@@ -1,3 +1,4 @@
+const {settle}=require('./render-settle.cjs');
 // Integration tests inject fingertip positions at the camera boundary; no physical camera is used.
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),os=require('node:os');
 const http=require('node:http');
@@ -29,8 +30,8 @@ let browser;
   await page.waitForFunction(()=>demo.current?.time>.1);
   assert.equal(await page.locator('[aria-pressed=true]').count(),1);
   await page.locator('#pauseDemo').click();
-  const fixed=await page.evaluate(()=>demo.current);await page.waitForTimeout(80);assert.deepEqual(await page.evaluate(()=>demo.current),fixed);
-  await page.selectOption('#faceType','female');await page.waitForTimeout(100);assert.deepEqual(await page.evaluate(()=>demo.current),fixed);
+  const fixed=await page.evaluate(()=>demo.current);await settle(page,80);assert.deepEqual(await page.evaluate(()=>demo.current),fixed);
+  await page.selectOption('#faceType','female');await settle(page,100);assert.deepEqual(await page.evaluate(()=>demo.current),fixed);
   for(const key of ['conjugate','adduction','abduction']){
     await page.locator(`[data-case=${key}]`).click();
     const result=await page.evaluate(async key=>{
@@ -42,7 +43,7 @@ let browser;
     assert.equal(result.caseKey,key);assert.equal(await page.locator(`[data-case=${key}]`).getAttribute('aria-pressed'),'true');
     assert.ok(Math.abs(result.output[0]-result.baseline[0])>15);
     if(key!=='conjugate')assert.equal(result.output[2],result.baseline[2]);
-    await page.waitForTimeout(60);await page.screenshot({path:path.join(artifacts,`demo-${key}-desktop.png`)});
+    await settle(page,60);await page.screenshot({timeout:120000,path:path.join(artifacts,`demo-${key}-desktop.png`)});
   }
   await page.locator('#restartDemo').click();assert.equal(await page.evaluate(()=>demo.current),null);
   await page.locator('#pauseDemo').click();await page.waitForFunction(()=>demo.current?.time>.1);
@@ -61,7 +62,7 @@ let browser;
   assert.equal(await page.locator('#cameraPanel').isVisible(),true);
   await page.locator('#cameraPreview').evaluate(e=>e.style.transform='scaleX(-1)');
   assert.equal(await page.locator('#cameraPreview').evaluate(e=>getComputedStyle(e).transform),'none');
-  const held=await page.evaluate(()=>{qaTracked=false;return demo.current;});await page.waitForTimeout(100);
+  const held=await page.evaluate(()=>{qaTracked=false;return demo.current;});await settle(page,100);
   assert.deepEqual(await page.evaluate(()=>demo.current),held);
   await page.evaluate(()=>{qaTarget=[.25,-.2,1.1];qaTracked=true;});await page.waitForFunction(()=>demo.current?.target[1]===-.2);
   assert.equal(await page.evaluate(()=>demo.current.output[1]===demo.current.baseline[1]),true);
@@ -72,11 +73,11 @@ let browser;
     await page.setViewportSize({width,height});
     await page.locator('[data-case=adduction]').click();
     await page.evaluate(async()=>{const {demoTarget}=await import('./demo-presets.mjs?v=demo1');for(let i=0;i<=2750;i++)demo.sim.step(demoTarget(i/250).target);});
-    await page.waitForTimeout(80);
+    await settle(page,80);
     assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
     const sizes=await page.locator('.eye-view canvas').evaluateAll(es=>es.map(e=>({w:e.clientWidth,h:e.clientHeight})));
     assert.deepEqual(sizes[0],sizes[1]);
-    await page.screenshot({path:path.join(artifacts,`demo-mobile-${width}.png`),fullPage:true});
+    await page.screenshot({timeout:120000,path:path.join(artifacts,`demo-mobile-${width}.png`),fullPage:true});
   }
   await page.reload();await page.waitForFunction(()=>!!window.demo,null,{timeout:120000});assert.equal(await page.evaluate(()=>demo.sim.case.key),'conjugate');
   const reduced=await browser.newContext({reducedMotion:'reduce'});const rp=await reduced.newPage();await rp.goto(url);await rp.waitForFunction(()=>!!window.demo,null,{timeout:120000});

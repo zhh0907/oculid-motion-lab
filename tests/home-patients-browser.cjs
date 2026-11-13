@@ -1,3 +1,4 @@
+const {settle}=require('./render-settle.cjs');
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),os=require('node:os'),http=require('node:http');
 let pw;try{pw=require('playwright');}catch{pw=require(process.env.PLAYWRIGHT_MODULE||path.join(os.homedir(),'.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright'));}
 const root=path.resolve(__dirname,'..'),out=process.env.QA_OUTPUT||path.join(root,'qa','patients-v4');fs.mkdirSync(out,{recursive:true});
@@ -30,12 +31,12 @@ let browser;
  assert.ok(current.frame.angles.some((v,i)=>Math.abs(v-current.frame.baseline[i])>1));assert.equal(current.run.patientLibraryId,library.libraryId);
  const projected=await page.evaluate(()=>oculid.rails.state);
  for(let i=0;i<2;i++){const angle=current.frame.angles[2*i]*Math.PI/180,pitch=current.frame.angles[2*i+1]*Math.PI/180;assert.ok(Math.abs(projected[i].position-Math.sin(angle)*Math.cos(pitch)*.01055/.0132)<1e-12);}
- await page.locator('#eyePositionRails').screenshot({path:path.join(out,'eye-rails.png')});
+ await page.locator('#eyePositionRails').screenshot({timeout:120000,path:path.join(out,'eye-rails.png')});
  assert.equal(current.latest.time,current.run.samples.find(s=>s.time===current.latest.time).time);
  assert.deepEqual(current.latest.angles,current.run.samples.find(s=>s.time===current.latest.time).angles);
- await page.locator('.trajectory-card').screenshot({path:path.join(out,'horizontal.png')});
+ await page.locator('.trajectory-card').screenshot({timeout:120000,path:path.join(out,'horizontal.png')});
  await page.selectOption('#traceView','xy');await page.waitForFunction(()=>oculid.trace.lastDraw?.mode==='xy');
- await page.locator('.trajectory-card').screenshot({path:path.join(out,'xy.png')});await page.screenshot({path:path.join(out,'desktop.png'),fullPage:true});
+ await page.locator('.trajectory-card').screenshot({timeout:120000,path:path.join(out,'xy.png')});await page.screenshot({timeout:120000,path:path.join(out,'desktop.png'),fullPage:true});
  await page.selectOption('#traceView','vertical');await page.waitForFunction(()=>oculid.trace.lastDraw?.mode==='vertical');
  // Clearing a graph does not alter the patient, recording, or current plant state.
  const prior=await page.evaluate(()=>({time:oculid.sim.time,count:oculid.sim.rows.length,state:oculid.sim.layer.snapshot(),patient:oculid.sim.patient}));
@@ -45,9 +46,9 @@ let browser;
  await page.selectOption('#source','camera');await page.evaluate(()=>{window.qaTracked=true;Object.defineProperty(oculid.finger,'tracked',{get:()=>qaTracked});oculid.finger.target=()=>[.4,.12,.7];});
  await page.click('#pause');await page.waitForFunction(()=>oculid.trace.lastDraw?.count>8);await page.click('#pause');
  const heldRails=await page.evaluate(()=>oculid.rails.state);
- const held=await page.evaluate(()=>oculid.sim.trace.revision);await page.waitForTimeout(120);assert.equal(await page.evaluate(()=>oculid.sim.trace.revision),held);assert.deepEqual(await page.evaluate(()=>oculid.rails.state),heldRails);
- await page.click('#pause');await page.evaluate(()=>{qaTracked=false;});await page.waitForTimeout(80);const lost=await page.evaluate(()=>({time:oculid.sim.time,revision:oculid.sim.trace.revision}));const lostRails=await page.evaluate(()=>oculid.rails.state);
- await page.waitForTimeout(120);assert.deepEqual(await page.evaluate(()=>({time:oculid.sim.time,revision:oculid.sim.trace.revision})),lost);assert.deepEqual(await page.evaluate(()=>oculid.rails.state),lostRails);assert.match(await page.locator('#railsStatus').innerText(),/Waiting for fingertip/);
+ const held=await page.evaluate(()=>oculid.sim.trace.revision);await settle(page,120);assert.equal(await page.evaluate(()=>oculid.sim.trace.revision),held);assert.deepEqual(await page.evaluate(()=>oculid.rails.state),heldRails);
+ await page.click('#pause');await page.evaluate(()=>{qaTracked=false;});await settle(page,80);const lost=await page.evaluate(()=>({time:oculid.sim.time,revision:oculid.sim.trace.revision}));const lostRails=await page.evaluate(()=>oculid.rails.state);
+ await settle(page,120);assert.deepEqual(await page.evaluate(()=>({time:oculid.sim.time,revision:oculid.sim.trace.revision})),lost);assert.deepEqual(await page.evaluate(()=>oculid.rails.state),lostRails);assert.match(await page.locator('#railsStatus').innerText(),/Waiting for fingertip/);
  const segment=await page.evaluate(()=>oculid.sim.trace.samples().at(-1).segment);await page.evaluate(()=>{qaTracked=true;});await page.waitForFunction(s=>oculid.sim.trace.samples().at(-1)?.segment>s,segment);await page.click('#pause');
  assert.deepEqual(await page.evaluate(()=>oculid.sim.patient),patient);
  const [runDownload]=await Promise.all([page.waitForEvent('download'),page.click('#exportJson')]);await runDownload.saveAs(path.join(out,'run.json'));
@@ -65,11 +66,11 @@ let browser;
  await page.selectOption('#source','auto');await page.selectOption('#traceView','horizontal');
  await page.evaluate(()=>{for(let i=0;i<1000;i++)oculid.sim.step([.4*Math.sin(i*.008),.15,.7]);});
  for(const [width,height]of [[390,844],[320,740],[844,390]]){
-   await page.setViewportSize({width,height});await page.waitForTimeout(100);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
-   await page.locator('.trajectory-card').screenshot({path:path.join(out,`chart-${width}.png`)});
-   await page.locator('#eyePositionRails').screenshot({path:path.join(out,`rails-${width}.png`)});
+   await page.setViewportSize({width,height});await settle(page,100);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+   await page.locator('.trajectory-card').screenshot({timeout:120000,path:path.join(out,`chart-${width}.png`)});
+   await page.locator('#eyePositionRails').screenshot({timeout:120000,path:path.join(out,`rails-${width}.png`)});
    await page.selectOption('#traceView','xy');await page.waitForFunction(()=>oculid.trace.lastDraw?.mode==='xy');
-   await page.locator('.trajectory-card').screenshot({path:path.join(out,`xy-${width}.png`)});await page.selectOption('#traceView','horizontal');
+   await page.locator('.trajectory-card').screenshot({timeout:120000,path:path.join(out,`xy-${width}.png`)});await page.selectOption('#traceView','horizontal');
  }
  await page.click('#patientNormal');assert.equal(await page.evaluate(()=>oculid.sim.patient),null);assert.equal(await page.evaluate(()=>oculid.sim.trace.length),0);
  // Obvious unilateral impairment leaves one eye marker behind its normal reference.
@@ -77,7 +78,7 @@ let browser;
  await page.evaluate(()=>{oculid.sim.appearance.blink=false;for(let i=0;i<800;i++)oculid.sim.step([-.7,0,.7]);});
  await page.waitForFunction(()=>oculid.rails.state[0].position<-.05);
  const limited=await page.evaluate(()=>oculid.rails.state);assert.ok(Math.abs(limited[0].position)<.12);assert.ok(limited[0].reference<-.5);assert.equal(limited[1].position,limited[1].reference);
- await page.locator('#eyePositionRails').screenshot({path:path.join(out,'rails-limited.png')});
+ await page.locator('#eyePositionRails').screenshot({timeout:120000,path:path.join(out,'rails-limited.png')});
  await page.evaluate(()=>{oculid.sim.manualTime=oculid.sim.current.time-.1;});await page.waitForFunction(()=>document.querySelectorAll('.rail-marker.is-occluded').length===2);
  assert.deepEqual(await page.evaluate(()=>oculid.rails.state.map(s=>s.position)),limited.map(s=>s.position));
  assert.deepEqual(errors,[]);const report={passed:true,thirtyBalancedPatients:true,numberRecallAndPersistence:true,modelChangePreservesPatient:true,workspaceSharesLibrary:true,portableImportAndConflicts:true,arbitrary3DTargets:true,threeTraceViews:true,liveEyeRails:true,railGeometryMatchesEyes:true,unilateralRailLimitation:true,occlusionIndication:true,independentClear:true,pauseAndTrackingLoss:true,reacquisitionGap:true,patientRunExports:true,mobileWidths:[320,390,844],physicalCameraTested:false,errors};

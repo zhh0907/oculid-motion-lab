@@ -1,3 +1,4 @@
+const {settle}=require('./render-settle.cjs');
 // Integration tests inject fingertip positions at the camera boundary; no physical camera is used.
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),os=require('node:os');
 const http=require('node:http');
@@ -28,7 +29,7 @@ let browser;
   assert.equal(await page.locator('#patientLookup').isVisible(),false);
   assert.equal(await page.locator('#patientGeneratePanel').getAttribute('open'),'');
   assert.equal(await page.locator('#longResults,#expansionResults,#results').count(),0);
-  await page.screenshot({path:path.join(artifacts,'simple-desktop-new.png')});
+  await page.screenshot({timeout:120000,path:path.join(artifacts,'simple-desktop-new.png')});
   await expand(page);
   await page.locator('#patientSeed').fill('clinical-review-batch');
   await page.locator('#patientCount').fill('30');await page.locator('#patientGenerate').click();
@@ -42,18 +43,18 @@ let browser;
   report.checks.push('30 balanced fixed profiles; numeric lookup and active patient survive refresh');
   await page.locator('#source').selectOption('synthetic');await page.locator('#mode').selectOption('ideal');
   await page.locator('#path').selectOption('manual');
-  async function target(x,y,z){await page.evaluate(([x,y,z])=>{for(const [id,value]of Object.entries({x,y,z})){const el=document.getElementById(id);el.value=value;el.dispatchEvent(new Event('input'));}},[x,y,z]);await page.waitForTimeout(450);}
+  async function target(x,y,z){await page.evaluate(([x,y,z])=>{for(const [id,value]of Object.entries({x,y,z})){const el=document.getElementById(id);el.value=value;el.dispatchEvent(new Event('input'));}},[x,y,z]);await settle(page,450);}
   await target(-.4,.2,.7);
   let current=await page.evaluate(()=>lab.current);
   assert.ok(current.a[0]>current.baseline[0]+1);assert.ok(current.a[2]>current.baseline[2]+1);
   assert.equal(current.a[1],current.baseline[1]);assert.equal(current.a[3],current.baseline[3]);
   for(const [x,y,z]of [[.4,-.2,.6],[0,.3,.25],[-.2,-.3,1.5]]){await target(x,y,z);current=await page.evaluate(()=>lab.current);assert.ok(current.a.every(Number.isFinite));assert.deepEqual(await page.evaluate(()=>lab.patients.active),chosen);}
   for(const mode of ['gru_expanded_520_new','gru_dynamics_long_new']){
-    await page.locator('#mode').selectOption(mode);await page.waitForTimeout(250);
+    await page.locator('#mode').selectOption(mode);await settle(page,250);
     assert.ok(await page.evaluate(()=>lab.current.baseline.every(Number.isFinite)));
     assert.equal(await page.evaluate(()=>lab.exportRun().run.controller),mode);
   }
-  await page.locator('#mode').selectOption('ideal');await page.waitForTimeout(300);
+  await page.locator('#mode').selectOption('ideal');await settle(page,300);
   await page.locator('#pause').click();
   const run=await page.evaluate(()=>lab.exportRun());
   const {PatientLayer}=await import('../patient-model.mjs');const layer=new PatientLayer(run.run.patient);layer.restoreState(run.run.layerInitialState);
@@ -106,19 +107,19 @@ let browser;
   // Resume and inject arbitrary live target positions through the same FingerCamera boundary.
   await page.locator('#pause').click();await page.locator('#source').selectOption('camera');
   await page.evaluate(()=>{window.qaTracked=true;window.qaTarget=[-.35,.2,.6];Object.defineProperty(lab.finger,'tracked',{get:()=>window.qaTracked,configurable:true});lab.finger.target=()=>[...window.qaTarget];});
-  await page.waitForTimeout(400);current=await page.evaluate(()=>lab.current);
+  await settle(page,400);current=await page.evaluate(()=>lab.current);
   assert.ok(current.a[2]>current.baseline[2]+1);assert.equal(current.a[0],current.baseline[0]);assert.equal(current.a[1],current.baseline[1]);
   const before=await page.evaluate(()=>{window.qaTracked=false;return {a:lab.current.a,state:lab.patients.layer.snapshot(),count:lab.exportRun().samples.length,patient:lab.patients.active};});
-  await page.waitForTimeout(150);
+  await settle(page,150);
   assert.deepEqual(await page.evaluate(()=>({a:lab.current.a,state:lab.patients.layer.snapshot(),count:lab.exportRun().samples.length,patient:lab.patients.active})),before);
-  await page.evaluate(()=>{qaTarget=[.3,-.2,1.2];qaTracked=true;});await page.waitForTimeout(200);
+  await page.evaluate(()=>{qaTarget=[.3,-.2,1.2];qaTracked=true;});await settle(page,200);
   assert.equal(await page.evaluate(()=>lab.current.patientId),'P000031');
-  await page.locator('#patientDisable').click();await page.waitForTimeout(80);current=await page.evaluate(()=>lab.current);assert.deepEqual(current.a,current.baseline);
+  await page.locator('#patientDisable').click();await settle(page,80);current=await page.evaluate(()=>lab.current);assert.deepEqual(current.a,current.baseline);
   report.checks.push('Live camera boundary uses patient layer; tracking loss freezes state; normal reference is exact bypass');
   await page.locator('#patientNumber').fill('17');await page.locator('#patientApply').click();
   await page.locator('#source').selectOption('data');await page.waitForFunction(()=>document.querySelector('#source').value==='data'&&!document.querySelector('#source').disabled,null,{timeout:60000});
   await page.locator('#pause').click();
-  for(const mode of await page.locator('#mode option:not(:disabled)').evaluateAll(es=>es.map(e=>e.value))){await page.locator('#mode').selectOption(mode);await page.waitForTimeout(20);assert.ok(await page.evaluate(()=>lab.current.a.every(Number.isFinite)));}
+  for(const mode of await page.locator('#mode option:not(:disabled)').evaluateAll(es=>es.map(e=>e.value))){await page.locator('#mode').selectOption(mode);await settle(page,20);assert.ok(await page.evaluate(()=>lab.current.a.every(Number.isFinite)));}
   await page.locator('#scrub').evaluate(e=>{e.value=500;e.dispatchEvent(new Event('input'));});
   let scrubRun=await page.evaluate(()=>lab.exportRun());assert.ok(scrubRun.samples.length);
   const resumed=new PatientLayer(scrubRun.run.patient);resumed.restoreState(scrubRun.run.layerInitialState);
@@ -127,9 +128,9 @@ let browser;
   report.checks.push('All supported replay controllers and history-aware seeking remain functional');
   await page.locator('#source').selectOption('camera');
   await page.locator('details').evaluateAll(es=>es.forEach(e=>e.open=false));
-  await page.screenshot({path:path.join(artifacts,'simple-desktop-patient.png')});
+  await page.screenshot({timeout:120000,path:path.join(artifacts,'simple-desktop-patient.png')});
   for(const [width,height]of [[320,740],[390,844],[844,390]]){
-    await page.setViewportSize({width,height});await page.waitForTimeout(150);
+    await page.setViewportSize({width,height});await settle(page,150);
     await page.locator('.app-menu').click();await page.locator('#patientNumber').scrollIntoViewIfNeeded();
     assert.deepEqual(await page.locator('.drawer-tabs button').allTextContents(),['Setup','More']);
     await page.getByRole('button',{name:'More',exact:true}).click();
@@ -139,11 +140,11 @@ let browser;
     await page.getByRole('button',{name:'Setup',exact:true}).click();
     const dimensions=await page.evaluate(()=>({screen:document.documentElement.clientWidth,scroll:document.documentElement.scrollWidth,drawer:document.querySelector('.drawer-content').clientWidth,drawerScroll:document.querySelector('.drawer-content').scrollWidth}));
     assert.ok(dimensions.scroll<=dimensions.screen+1);assert.ok(dimensions.drawerScroll<=dimensions.drawer+1);
-    await page.screenshot({path:path.join(artifacts,`patients-${width}.png`)});
-    await page.locator('.drawer-close').click();await page.screenshot({path:path.join(artifacts,`live-${width}.png`)});
+    await page.screenshot({timeout:120000,path:path.join(artifacts,`patients-${width}.png`)});
+    await page.locator('.drawer-close').click();await page.screenshot({timeout:120000,path:path.join(artifacts,`live-${width}.png`)});
   }
   report.checks.push('Patient controls work inside mobile tools drawer without horizontal overflow at 320/390/844 px');
-  await page.setViewportSize({width:1440,height:1000});await page.waitForTimeout(150);
+  await page.setViewportSize({width:1440,height:1000});await settle(page,150);
   assert.equal(await page.locator('#settings > #advancedControls').count(),1);
   assert.equal(await page.locator('#patientNumber').isVisible(),true);
   assert.deepEqual(report.errors,[]);

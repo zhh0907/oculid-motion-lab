@@ -1,3 +1,4 @@
+const {settle}=require('./render-settle.cjs');
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),os=require('node:os'),http=require('node:http');
 let pw;try{pw=require('playwright');}catch{pw=require(process.env.PLAYWRIGHT_MODULE||path.join(os.homedir(),'.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright'));}
 const root=path.resolve(__dirname,'..'),out=path.join(root,'qa','unified');fs.mkdirSync(out,{recursive:true});
@@ -27,7 +28,7 @@ let browser;
   const snapshot=()=>page.evaluate(()=>JSON.stringify({run:oculid.sim.export(),time:oculid.sim.time,plant:oculid.sim.layer.snapshot(),previous:oculid.sim.previous,trace:oculid.sim.trace}));
   const before=await snapshot();
   for(const mode of ['eyes','face','compare','eyes','compare']){
-    await page.selectOption('#displayMode',mode);await page.waitForTimeout(90);assert.equal(await snapshot(),before,'display must not mutate motion or recording');
+    await page.selectOption('#displayMode',mode);await settle(page,90);assert.equal(await snapshot(),before,'display must not mutate motion or recording');
     assert.equal(await page.evaluate(()=>oculid.view.head.group.visible),mode!=='eyes');
     assert.equal(await page.locator('#comparison').isVisible(),mode==='compare');
   }
@@ -37,15 +38,15 @@ let browser;
     pose:oculid.view.camera.matrixWorld.elements,referencePose:oculid.bare.camera.matrixWorld.elements
   }));
   assert.deepEqual(paired.main,paired.reference);assert.deepEqual(paired.projection,paired.referenceProjection);assert.deepEqual(paired.pose,paired.referencePose);
-  await page.screenshot({path:path.join(out,'paired-desktop.png'),fullPage:true});
-  await page.selectOption('#displayMode','eyes');await page.waitForTimeout(150);await page.screenshot({path:path.join(out,'eyes-desktop.png'),fullPage:true});
-  await page.setViewportSize({width:390,height:844});await page.selectOption('#displayMode','compare');await page.waitForTimeout(150);
-  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));await page.screenshot({path:path.join(out,'paired-mobile.png'),fullPage:true});
+  await page.screenshot({timeout:120000,path:path.join(out,'paired-desktop.png'),fullPage:true});
+  await page.selectOption('#displayMode','eyes');await settle(page,150);await page.screenshot({timeout:120000,path:path.join(out,'eyes-desktop.png'),fullPage:true});
+  await page.setViewportSize({width:390,height:844});await page.selectOption('#displayMode','compare');await settle(page,150);
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));await page.screenshot({timeout:120000,path:path.join(out,'paired-mobile.png'),fullPage:true});
   // The original workspace loads the very same migrated bank and keeps old run schema.
   await page.setViewportSize({width:1440,height:1100});await page.goto(url+'workspace.html');await page.waitForFunction(()=>!!window.lab,null,{timeout:120000});await page.click('#pause');
   assert.equal(await page.evaluate(()=>lab.patients.active.id),'P000002');
   const held=await page.evaluate(()=>JSON.stringify({current:lab.current,patient:lab.patients.layer.snapshot()}));
-  for(const mode of ['eyes','face']){await page.selectOption('#displayMode',mode);await page.waitForTimeout(100);assert.equal(await page.evaluate(()=>JSON.stringify({current:lab.current,patient:lab.patients.layer.snapshot()})),held);}
+  for(const mode of ['eyes','face']){await page.selectOption('#displayMode',mode);await settle(page,100);assert.equal(await page.evaluate(()=>JSON.stringify({current:lab.current,patient:lab.patients.layer.snapshot()})),held);}
   // A stale migration review cannot overwrite a library changed by another tab.
   await page.goto(url+'migration.html');await page.click('#reviewPatients');
   await page.evaluate(()=>{const k='oculid-motion-patients-v1',value=JSON.parse(localStorage.getItem(k));value.activeId=null;localStorage.setItem(k,JSON.stringify(value));});
