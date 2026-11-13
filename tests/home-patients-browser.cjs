@@ -13,7 +13,7 @@ let browser;
  browser=await pw.chromium.launch(require('./browser-options.cjs'));
  const context=await browser.newContext({viewport:{width:1440,height:1100},reducedMotion:'reduce'}),page=await context.newPage(),errors=[];
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});page.on('response',r=>{if(r.status()>=400)errors.push(`${r.status()} ${r.url()}`);});
- await page.goto(url);await page.waitForFunction(()=>!!window.oculid,null,{timeout:120000});
+ await page.goto(url,{waitUntil:'domcontentloaded',timeout:120000});await page.waitForFunction(()=>!!window.oculid,null,{timeout:120000});
  await page.selectOption('#pattern','conjugate');await page.selectOption('#patternSide','right');
  assert.equal(await page.evaluate(()=>oculid.sim.patient.side),'right');assert.match(await page.locator('#patientActive').innerText(),/Example/);
  await page.locator('#patientGeneratePanel>summary').click();await page.fill('#patientCount','30');
@@ -22,7 +22,7 @@ let browser;
  assert.deepEqual([0,1,2].map(i=>library.patients.filter(p=>p.stratum===i).length),[10,10,10]);
  await page.fill('#patientNumber','17');await page.press('#patientNumber','Enter');const patient=await page.evaluate(()=>oculid.sim.patient);assert.equal(patient.id,'P000017');
  await page.click('#patientNext');assert.equal(await page.evaluate(()=>oculid.sim.patient.id),'P000018');await page.click('#patientPrevious');
- await page.reload();await page.waitForFunction(()=>!!window.oculid,null,{timeout:120000});assert.deepEqual(await page.evaluate(()=>oculid.sim.patient),patient);
+ await page.reload({waitUntil:'domcontentloaded',timeout:120000});await page.waitForFunction(()=>!!window.oculid,null,{timeout:120000});assert.deepEqual(await page.evaluate(()=>oculid.sim.patient),patient);
  await page.selectOption('#model','ideal');assert.deepEqual(await page.evaluate(()=>oculid.sim.patient),patient);
  // A single fixed profile applies to multi-axis and depth input, with matching chart data.
  await page.evaluate(()=>{for(let i=0;i<4000;i++)oculid.sim.step([.5*Math.sin(i*.004),.22*Math.cos(i*.006),.7+.2*Math.sin(i*.003)]);});
@@ -56,13 +56,15 @@ let browser;
  const [csvDownload]=await Promise.all([page.waitForEvent('download'),page.click('#exportCsv')]);await csvDownload.saveAs(path.join(out,'run.csv'));assert.match(fs.readFileSync(path.join(out,'run.csv'),'utf8'),/patient_id,patient_library_id,patient_template,patient_side/);
  await page.locator('#patientFiles>summary').click();const [bankDownload]=await Promise.all([page.waitForEvent('download'),page.click('#patientExport')]);await bankDownload.saveAs(path.join(out,'patients.json'));
  assert.deepEqual(JSON.parse(fs.readFileSync(path.join(out,'patients.json'))),library);
- const workspace=await context.newPage();await workspace.goto(new URL('workspace.html',url).href);await workspace.waitForFunction(()=>!!window.lab,null,{timeout:120000});assert.match(await workspace.locator('#patientActive').innerText(),/P000017/);await workspace.close();
- const separate=await browser.newContext({reducedMotion:'reduce'}),imported=await separate.newPage();await imported.goto(url);await imported.waitForFunction(()=>!!window.oculid,null,{timeout:120000});
+ // Reuse the tab for the shared-workspace check, releasing its old GPU scene.
+ await page.goto(new URL('workspace.html',url).href,{waitUntil:'domcontentloaded',timeout:120000});await page.waitForFunction(()=>!!window.lab,null,{timeout:120000});assert.match(await page.locator('#patientActive').innerText(),/P000017/);await page.goto('about:blank');
+ const separate=await browser.newContext({reducedMotion:'reduce'}),imported=await separate.newPage();await imported.goto(url,{waitUntil:'domcontentloaded',timeout:120000});await imported.waitForFunction(()=>!!window.oculid,null,{timeout:120000});
  await imported.setInputFiles('#patientImport',path.join(out,'patients.json'));await imported.waitForFunction(()=>oculid.patients.bank.library.patients.length===30);
  await imported.fill('#patientNumber','17');await imported.click('#patientApply');assert.deepEqual(await imported.evaluate(()=>oculid.sim.patient),patient);
  const bad=JSON.parse(JSON.stringify(library));bad.patients[0].capacity+=.000001;
  await imported.setInputFiles('#patientImport',{name:'conflict.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(bad))});await imported.waitForFunction(()=>document.getElementById('patientMessage').classList.contains('error'));
  assert.deepEqual(await imported.evaluate(()=>oculid.patients.bank.library),library);await separate.close();
+ await page.goto(url,{waitUntil:'domcontentloaded',timeout:120000});await page.waitForFunction(()=>!!window.oculid,null,{timeout:120000});await page.selectOption('#model','ideal');
  await page.selectOption('#source','auto');await page.selectOption('#traceView','horizontal');
  await page.evaluate(()=>{for(let i=0;i<1000;i++)oculid.sim.step([.4*Math.sin(i*.008),.15,.7]);});
  for(const [width,height]of [[390,844],[320,740],[844,390]]){

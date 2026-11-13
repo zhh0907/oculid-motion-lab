@@ -22,7 +22,7 @@ let browser;
   await page.click('#reviewPatients');assert.equal(await page.evaluate(()=>localStorage.getItem('oculid-motion-patients-v1')),null);
   await page.click('#applyMigration');assert.match(await page.locator('#migrationStatus').innerText(),/Imported/);
   assert.equal(await page.evaluate(()=>localStorage.getItem('binocular-motion-patients-v1')),legacy);
-  await page.goto(url);await page.waitForFunction(()=>!!window.oculid,null,{timeout:120000});
+  await page.goto(url,{waitUntil:'domcontentloaded',timeout:120000});await page.waitForFunction(()=>!!window.oculid,null,{timeout:120000});
   assert.equal(await page.evaluate(()=>oculid.sim.patient.id),'P000002');
   await page.evaluate(()=>{for(let i=0;i<100;i++)oculid.sim.step([.3,.1,.7]);});
   const snapshot=()=>page.evaluate(()=>JSON.stringify({run:oculid.sim.export(),time:oculid.sim.time,plant:oculid.sim.layer.snapshot(),previous:oculid.sim.previous,trace:oculid.sim.trace}));
