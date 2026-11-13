@@ -17,6 +17,7 @@ jobs:
     env:
       # Use the full browser's headless mode, as in the installed-Chrome checks.
       PW_CHANNEL: chromium
+      PW_SOFTWARE_GL: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

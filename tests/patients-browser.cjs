@@ -15,7 +15,7 @@ const report={checks:[],errors:[],physicalCameraTested:false};
 let browser;
 (async()=>{try{
   await new Promise(r=>server.listen(0,'127.0.0.1',r));const url=`http://127.0.0.1:${server.address().port}/workspace.html`;
-  browser=await pw.chromium.launch({channel:process.env.PW_CHANNEL==='bundled'?undefined:(process.env.PW_CHANNEL||'chrome'),headless:true});
+  browser=await pw.chromium.launch(require('./browser-options.cjs'));
   const context=await browser.newContext({viewport:{width:1440,height:1000},acceptDownloads:true});
   async function expand(page){await page.locator('details').evaluateAll(es=>es.forEach(e=>e.open=true));}
   const page=await context.newPage();page.on('pageerror',e=>report.errors.push(e.message));
