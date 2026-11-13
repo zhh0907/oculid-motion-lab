@@ -15,7 +15,7 @@ let browser;
 (async()=>{try{
   await new Promise(r=>server.listen(0,'127.0.0.1',r));
   const url=process.env.DEMO_URL||`http://127.0.0.1:${server.address().port}/demo.html`;
-  browser=await pw.chromium.launch({channel:'chrome',headless:true});
+  browser=await pw.chromium.launch({channel:process.env.PW_CHANNEL==='bundled'?undefined:(process.env.PW_CHANNEL||'chrome'),headless:true});
   const context=await browser.newContext({viewport:{width:1280,height:960}});
   await context.addInitScript(()=>localStorage.setItem('binocular-motion-patients-v1','existing library must not change'));
   const page=await context.newPage(),errors=[];

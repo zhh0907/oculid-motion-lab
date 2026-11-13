@@ -1,12 +1,12 @@
 // Integrated 3D geometry, inspection controls, presets and moving eyelid seams.
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),os=require('node:os'),http=require('node:http');
-let pw;try{pw=require('playwright');}catch{pw=require(path.join(os.homedir(),'.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright'));}
+let pw;try{pw=require('playwright');}catch{pw=require(process.env.PLAYWRIGHT_MODULE||path.join(os.homedir(),'.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright'));}
 const root=path.resolve(__dirname,'..'),out=process.env.QA_OUTPUT||path.join(root,'qa','faces-v8');fs.mkdirSync(out,{recursive:true});
 const server=http.createServer((req,res)=>{const name=decodeURIComponent(new URL(req.url,'http://localhost').pathname),file=path.resolve(root,'.'+(name.endsWith('/')?name+'index.html':name));if(!file.startsWith(root+path.sep)){res.writeHead(403).end();return;}fs.readFile(file,(e,b)=>{res.writeHead(e?404:200,{'Content-Type':{'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.json':'application/json','.css':'text/css','.jpg':'image/jpeg','.wasm':'application/wasm'}[path.extname(file)]||'application/octet-stream'});res.end(e?'Not found':b);});});
 let browser;
 (async()=>{try{
   await new Promise(r=>server.listen(0,'127.0.0.1',r));
-  browser=await pw.chromium.launch({channel:'chrome',headless:true});
+  browser=await pw.chromium.launch({channel:process.env.PW_CHANNEL==='bundled'?undefined:(process.env.PW_CHANNEL||'chrome'),headless:true});
   const page=await browser.newPage({viewport:{width:1440,height:1100},reducedMotion:'reduce'}),errors=[],requests=[];
   page.on('request',r=>requests.push(r.url()));
   page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});page.on('response',r=>{if(r.status()>=400)errors.push(r.url());});
@@ -74,5 +74,5 @@ let browser;
   await page.click('#frontView');assert.ok(await page.evaluate(()=>oculid.view.orbit.yaw===0&&oculid.view.orbit.distance===.43&&!oculid.view.orbit.enabled));
   for(const width of [320,390]){await page.setViewportSize({width,height:844});await page.waitForTimeout(150);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));await page.locator('#eyeFocus').screenshot({path:path.join(out,`mobile-${width}.png`)});}
   assert.ok(!requests.some(u=>/Map-COL|face-reference/.test(u)));assert.deepEqual(errors,[]);
-  const report={passed:true,version:'0.8.0',englishInterface:true,twoDistinct3DFaceShapes:true,reversibleShapeSwitch:true,shapeSwitchPreservesMotion:true,faceTimelineExport:true,fiveSkinPresets:true,noColourPicker:true,patientPreserved:true,finiteGeometry:true,wideGazeAndClosure:true,fixedSharedBoundaries:true,noPhotographicFaceRequests:true,orbitAndInspectionPreserveState:true,frontReset:true,anatomy,mobile:true,errors};fs.writeFileSync(path.join(out,'face-report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
+  const report={passed:true,version:'0.9.0',englishInterface:true,twoDistinct3DFaceShapes:true,reversibleShapeSwitch:true,shapeSwitchPreservesMotion:true,faceTimelineExport:true,fiveSkinPresets:true,noColourPicker:true,patientPreserved:true,finiteGeometry:true,wideGazeAndClosure:true,fixedSharedBoundaries:true,noPhotographicFaceRequests:true,orbitAndInspectionPreserveState:true,frontReset:true,anatomy,mobile:true,errors};fs.writeFileSync(path.join(out,'face-report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
 }finally{await browser?.close();await new Promise(r=>server.close(r));}})().catch(e=>{console.error(e);process.exitCode=1;});

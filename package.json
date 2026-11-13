@@ -1,6 +1,6 @@
 {
   "name": "oculid-motion-lab",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,9 +8,21 @@
     "test:browser": "node tests/oculid-browser.cjs && node tests/home-patients-browser.cjs",
     "test:face": "node tests/face-appearance-browser.cjs",
     "test:workspace": "node tests/patients-browser.cjs && node tests/demo-browser.cjs",
-    "serve": "python -m http.server 8000 --bind 127.0.0.1"
+    "serve": "python -m http.server 8000 --bind 127.0.0.1",
+    "test:unified": "node tests/unified-browser.cjs",
+    "test:all-browser": "npm run test:browser && npm run test:workspace && npm run test:face && npm run test:unified",
+    "research:reproduce": "node research/reproduce.mjs"
   },
   "devDependencies": {
     "playwright": "1.62.1"
+  },
+  "description": "Unified binocular motion, virtual patients and eyelid simulation",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./core": "./src/core/index.mjs",
+    "./eyelids": "./src/eyelid-model.mjs",
+    "./rendering": "./src/eye-rig.mjs",
+    "./inputs": "./src/inputs/index.mjs",
+    "./patients": "./src/patient-bank.mjs"
   }
 }

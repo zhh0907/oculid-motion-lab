@@ -1,27 +1,27 @@
-import {createEyeView} from './eye-rig.mjs?v=faces8';
-import {Simulation,FPS,targetAt} from './simulation.mjs?v=faces8';
+import {createEyeView} from './eye-rig.mjs?v=unified9';
+import {Simulation,FPS,targetAt} from './simulation.mjs?v=unified9';
 import {pointerTarget,normalizeRange} from './target-range.mjs?v=canthus3';
 import {FingerCamera} from '../camera.js?v=review7';
 import {angularError} from '../engine.js';
-import {mountPatientPanel} from './patient-panel.mjs?v=faces8';
-import {TrajectoryPlot} from './trajectory-plot.mjs?v=faces8';
-import {EyePositionRails} from './eye-position-rails.mjs?v=faces8';
+import {mountPatientPanel} from './patient-panel.mjs?v=unified9';
+import {TrajectoryPlot} from './trajectory-plot.mjs?v=unified9';
+import {EyePositionRails} from './eye-position-rails.mjs?v=unified9';
 const $=id=>document.getElementById(id);
 async function start(){
   const response=await fetch('./models-selected.json');if(!response.ok)throw Error('Model could not be loaded');
   const sim=new Simulation(await response.json());
-  const view=createEyeView($('eyeFocus')),bare=createEyeView($('bareEyes'),{bare:true,background:'#e2e7df'});
+  const view=createEyeView($('eyeFocus')),bare=createEyeView($('bareEyes'),{bare:true,background:'#192627'});
   const finger=new FingerCamera({enabled:false,ready:true,refresh(){},constraints(){return {};}});
   let playing=!matchMedia('(prefers-reduced-motion: reduce)').matches,acc=0,last=performance.now(),wasTracked=false,pointer=[0,0,.7],fpsStart=last,frames=0;
   function range(){return $('rangePreset').value==='legacy'?null:normalizeRange({horizontal:+$('horizontalRange').value,up:+$('upRange').value,down:+$('downRange').value});}
-  function settings(){return {targetRange:$('source').value==='camera'?null:range(),source:$('source').value,path:$('path').value,depth:+$('depth').value,cameraFov:+$('cameraFov').value,cameraY:+$('camY').value,depthAssumed:true,appearanceRenderer:'connected-head-v8'};}
+  function settings(){return {targetRange:$('source').value==='camera'?null:range(),source:$('source').value,path:$('path').value,depth:+$('depth').value,cameraFov:+$('cameraFov').value,cameraY:+$('camY').value,depthAssumed:true,appearanceRenderer:'connected-head-v8',displayMode:$('displayMode').value};}
   function changed(){acc=0;wasTracked=false;last=performance.now();}
   function reset(){sim.reset();changed();}
   const patients=mountPatientPanel(sim,changed);
   function orbitControls(enabled){view.setOrbit(enabled);$('orbitToggle').setAttribute('aria-pressed',String(enabled));$('viewHint').textContent=enabled?'Drag to rotate · Scroll to zoom':'Guide the gaze · Enable rotation to inspect';}
   $('orbitToggle').onclick=()=>orbitControls(!view.orbit.enabled);
   $('frontView').onclick=()=>{view.setView(0,0,.43);orbitControls(false);};
-  $('surfaceView').onchange=()=>view.setMode($('surfaceView').value);
+  $('surfaceView').onchange=()=>{view.setMode($('surfaceView').value);bare.setMode($('surfaceView').value);};
   $('faceType').onchange=()=>sim.setFaceType($('faceType').value);
   const trace=new TrajectoryPlot($('motionTrace'),$('traceView'),$('traceClear'),sim.trace);
   const rails=new EyePositionRails($('eyePositionRails'));
@@ -31,7 +31,9 @@ async function start(){
   $('blink').onclick=blink;
   window.addEventListener('keydown',e=>{if(e.key.toLowerCase()==='b'&&!/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)){e.preventDefault();blink();}});
   $('fullscreen').onclick=()=>{const p=document.fullscreenElement?document.exitFullscreen():$('eyeFocus').requestFullscreen();p?.catch(()=>{$('status').textContent='Fullscreen is unavailable. Use browser zoom instead.';});};
-  $('compare').onchange=()=>{$('comparison').hidden=!$('compare').checked;};
+  function displayMode(){const mode=$('displayMode').value;view.setAnatomy(mode==='eyes'?'eyes':'face');$('compare').checked=mode==='compare';$('comparison').hidden=mode!=='compare';$('displayPair').classList.toggle('single',mode!=='compare');$('anatomyLabel').textContent=mode==='eyes'?'Eye-only · Same motion core':'3D head · Layered eyes';}
+  $('displayMode').onchange=displayMode;
+  $('compare').onchange=()=>{$('displayMode').value=$('compare').checked?'compare':'face';displayMode();};displayMode();
   $('model').onchange=()=>{sim.select({model:$('model').value});changed();};
   $('path').onchange=reset;
   function rangeChanged(){
@@ -68,7 +70,7 @@ async function start(){
   function draw(now){
     const dt=Math.min((now-last)/1000,.08);last=now;
     if(playing){acc+=dt;while(acc>=1/FPS){tick();acc-=1/FPS;}}
-    const f=sim.frame();view.draw(f.angles,f.lids,sim.appearance);if($('compare').checked)bare.draw(f.angles,f.lids,sim.appearance);
+    const f=sim.frame();view.draw(f.angles,f.lids,sim.appearance);if($('compare').checked)bare.draw(f.angles,f.lids,sim.appearance,view.camera);
     trace.draw(sim.trace,now);$('traceTime').textContent=f.time.toFixed(2)+' s';
     const tracked=$('source').value!=='camera'||finger.tracked;
     rails.update(f,{playing,tracked});
@@ -78,7 +80,7 @@ async function start(){
     $('lidStatus').textContent=f.lids[0].closure>.05?({closing:'Closing · Upper lid descends',closed:'Closed · Eyes continue moving',opening:'Opening · Upper lid rises'}[f.lids[0].blinkPhase]||'Blinking'):'Lid follow '+Math.round(sim.appearance.follow*100)+'% · Opening '+Math.round(sim.appearance.openness*100)+'%';
     $('targetDot').style.left=Math.max(2,Math.min(98,50+Math.atan2(f.target[0],f.target[2])*180/Math.PI/(range()?.horizontal||35)*46))+'%';$('targetDepth').textContent=f.target[2].toFixed(2)+' m';
     const delta=Math.max(...view.rigs.flatMap((r,i)=>[Math.abs(r.yaw.rotation.y-bare.rigs[i].yaw.rotation.y),Math.abs(r.pitch.rotation.x-bare.rigs[i].pitch.rotation.x)]))*180/Math.PI;
-    $('angleDelta').textContent='Δ '+delta.toFixed(6)+'°';
+    $('angleDelta').textContent=$('compare').checked?'Δ '+delta.toFixed(6)+'°':'—';
     $('status').textContent=tracked?`t ${f.time.toFixed(2)} s · L (${f.angles[0].toFixed(1)}, ${f.angles[1].toFixed(1)})° · R (${f.angles[2].toFixed(1)}, ${f.angles[3].toFixed(1)})° · yaw / pitch`:'Waiting for fingertip · Gaze and simulation time are held';
     $('exportJson').disabled=$('exportCsv').disabled=!sim.rows.length;$('bufferStatus').textContent=sim.rows.length>=FPS*120?'120-second buffer full. Export or restart.':`${(sim.rows.length/FPS).toFixed(1)} / 120 s · Synchronized gaze and eyelids`;
     frames++;if(now-fpsStart>1000){$('renderFps').textContent=Math.round(frames*1000/(now-fpsStart))+' fps';frames=0;fpsStart=now;}

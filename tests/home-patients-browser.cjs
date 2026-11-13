@@ -9,7 +9,7 @@ const server=http.createServer((req,res)=>{
 let browser;
 (async()=>{try{
  await new Promise(r=>server.listen(0,'127.0.0.1',r));const url=process.env.OCULID_URL||`http://127.0.0.1:${server.address().port}/`;
- browser=await pw.chromium.launch({channel:process.env.PW_CHANNEL||'chrome',headless:true});
+ browser=await pw.chromium.launch({channel:process.env.PW_CHANNEL==='bundled'?undefined:(process.env.PW_CHANNEL||'chrome'),headless:true});
  const context=await browser.newContext({viewport:{width:1440,height:1100},reducedMotion:'reduce'}),page=await context.newPage(),errors=[];
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});page.on('response',r=>{if(r.status()>=400)errors.push(`${r.status()} ${r.url()}`);});
  await page.goto(url);await page.waitForFunction(()=>!!window.oculid);

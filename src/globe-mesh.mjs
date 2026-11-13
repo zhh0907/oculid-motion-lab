@@ -43,10 +43,10 @@ export function createGlobeRig(index=0,{bare=false,...initial}={}){
   // Radial caps point outward after reversing the ring winding.
   const ci=corneaGeometry.index.array;for(let i=0;i<ci.length;i+=3)[ci[i+1],ci[i+2]]=[ci[i+2],ci[i+1]];corneaGeometry.computeVertexNormals();
   const cornea=new T.Mesh(corneaGeometry,new T.MeshPhysicalMaterial({color:'#ffffff',transmission:1,thickness:.00045,ior:1.376,roughness:.025,envMapIntensity:1,depthWrite:false}));pitch.add(cornea);
-  let lastPupil=-1,mode='skin';
+  let lastPupil=-1,mode='skin',eyeOnly=bare;
   function update(angles,state,appearance={}){
     const o={...options,...appearance};yaw.rotation.set(0,angles[0]*Math.PI/180,0);pitch.rotation.set(-angles[1]*Math.PI/180,0,0);
-    updateSocket(socket,root,state,bare);
+    updateSocket(socket,root,state,eyeOnly);
     const pupil=Math.max(2,Math.min(8,o.pupilMm))/2000;
     if(pupil!==lastPupil){
       lastPupil=pupil;const pos=irisGeometry.attributes.position,uv=irisGeometry.attributes.uv;
@@ -60,5 +60,5 @@ export function createGlobeRig(index=0,{bare=false,...initial}={}){
     iris.material.color.set(mode==='skin'?o.iris:'#8f989a');
   }
   function setMode(value){mode=value;for(const mesh of [sclera,iris,cavity])mesh.material.wireframe=value==='wire';iris.material.map=value==='skin'?sharedIris:null;iris.material.needsUpdate=true;cornea.visible=value==='skin';}
-  return {root,yaw,pitch,update,setMode,sclera,iris,cornea,cavity,skinGeometry:new T.BufferGeometry().setAttribute('position',new T.Float32BufferAttribute([],3)),cornerGeometries:[],setBare(){},get inspection(){return {irisDepth:IRIS_DEPTH,pupilRadius:lastPupil,corneaTip:CORNEA_CENTRE+CORNEA_RADIUS,irisVertices:irisGeometry.attributes.position.count};}};
+  return {root,yaw,pitch,update,setMode,sclera,iris,cornea,cavity,skinGeometry:new T.BufferGeometry().setAttribute('position',new T.Float32BufferAttribute([],3)),cornerGeometries:[],setBare(value){eyeOnly=Boolean(value);},get inspection(){return {irisDepth:IRIS_DEPTH,pupilRadius:lastPupil,corneaTip:CORNEA_CENTRE+CORNEA_RADIUS,irisVertices:irisGeometry.attributes.position.count};}};
 }

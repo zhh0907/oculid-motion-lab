@@ -1,4 +1,4 @@
-name: Motion and eyelid checks
+name: Unified motion and browser checks
 on: [push, pull_request]
 permissions:
   contents: read
@@ -11,3 +11,17 @@ jobs:
         with:
           node-version: '22'
       - run: npm test
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PW_CHANNEL: bundled
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:all-browser

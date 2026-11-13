@@ -1,0 +1,80 @@
+{
+  "protocol": "unification-regression-v1",
+  "samples": 3600,
+  "allExact": true,
+  "runs": [
+    {
+      "model": "gru_expanded_520",
+      "pattern": "normal",
+      "samples": 300,
+      "maxAbsoluteDifferenceDegrees": 0
+    },
+    {
+      "model": "gru_expanded_520",
+      "pattern": "conjugate",
+      "samples": 300,
+      "maxAbsoluteDifferenceDegrees": 0
+    },
+    {
+      "model": "gru_expanded_520",
+      "pattern": "adduction",
+      "samples": 300,
+      "maxAbsoluteDifferenceDegrees": 0
+    },
+    {
+      "model": "gru_expanded_520",
+      "pattern": "abduction",
+      "samples": 300,
+      "maxAbsoluteDifferenceDegrees": 0
+    },
+    {
+      "model": "gru_dynamics_long",
+      "pattern": "normal",
+      "samples": 300,
+      "maxAbsoluteDifferenceDegrees": 0
+    },
+    {
+      "model": "gru_dynamics_long",
+      "pattern": "conjugate",
+      "samples": 300,
+      "maxAbsoluteDifferenceDegrees": 0
+    },
+    {
+      "model": "gru_dynamics_long",
+      "pattern": "adduction",
+      "samples": 300,
+      "maxAbsoluteDifferenceDegrees": 0
+    },
+    {
+      "model": "gru_dynamics_long",
+      "pattern": "abduction",
+      "samples": 300,
+      "maxAbsoluteDifferenceDegrees": 0
+    },
+    {
+      "model": "ideal",
+      "pattern": "normal",
+      "samples": 300,
+      "maxAbsoluteDifferenceDegrees": 0
+    },
+    {
+      "model": "ideal",
+      "pattern": "conjugate",
+      "samples": 300,
+      "maxAbsoluteDifferenceDegrees": 0
+    },
+    {
+      "model": "ideal",
+      "pattern": "adduction",
+      "samples": 300,
+      "maxAbsoluteDifferenceDegrees": 0
+    },
+    {
+      "model": "ideal",
+      "pattern": "abduction",
+      "samples": 300,
+      "maxAbsoluteDifferenceDegrees": 0
+    }
+  ],
+  "scope": "Software equivalence only. No physical-camera or clinical validation."
+}

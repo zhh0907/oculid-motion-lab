@@ -1,13 +1,14 @@
-import {createEyeRig,createHeadSkin} from './src/eye-rig.mjs?v=faces8';
-import {appearanceFrame,EyelidDynamics} from './src/eyelid-model.mjs?v=faces8';
+import {createEyeRig,createHeadSkin} from './src/eye-rig.mjs?v=unified9';
+import {appearanceFrame,EyelidDynamics} from './src/eyelid-model.mjs?v=unified9';
 import {simplifyUI} from './simplify-ui.js?v=simple2';
-import {mountPatientControls,downloadJSON} from './patient-ui.mjs?v=simple2';
+import {mountPatientControls,downloadJSON} from './patient-ui.mjs?v=unified9';
 import {MODEL_VERSION,PLANT} from './patient-model.mjs';
 import {FingerCamera} from './camera.js?v=review7';
 import {ScreenCalibration} from './calibration.js';
 import {rotateCameraRay} from './calibration-math.js';
 import * as T from './vendor/three.module.js';
-import {LearnedModel,desired,ray,angularError,rad} from './engine.js';
+import {motionStep} from './src/core/motion.mjs';
+import {LearnedModel,ray,angularError,rad} from './engine.js';
 const $=id=>document.getElementById(id);
 const lidDynamics=new EyelidDynamics();
 const calibration=new ScreenCalibration();
@@ -108,7 +109,7 @@ function step(advance=true){let p,e,a,ideal,human=null,t;const mode=$('mode').va
  }else if(!wasTracked){prevTarget=null;Object.values(learned).forEach(m=>m.reset());wasTracked=true;}}
  if(isData()&&frame===0&&current&&current.t>0){patients.layer.reset();history=[];exportRows=[];runInfo=null;}
  if(isData()){const r=record();frame=Math.min(frame,r.time.length-1);p=r.target[frame];e=r.eyes;ideal=r.ideal[frame];human=r.gaze[frame];a=r[mode==='ideal'?'ideal':mode][frame];t=r.time[frame]-r.time[0];if(advance)frame=(frame+1)%r.time.length;
- }else{t=elapsed;p=isCamera()?finger.target():synthetic(t);if(!p){if(current)return;p=[0,0,1];}e=[[-.032,0,0],[.032,0,0]];ideal=desired(p,e);const x=ideal.map(v=>v/30).concat(ideal.map((v,i)=>Math.max(-600,Math.min(600,prevTarget?(v-prevTarget[i])*fps:0))/300));prevTarget=ideal;a=mode.endsWith('_new')?learned[mode.slice(0,-4)].step(x):ideal;if(advance)elapsed+=1/fps;}
+ }else{t=elapsed;p=isCamera()?finger.target():synthetic(t);if(!p){if(current)return;p=[0,0,1];}e=[[-.032,0,0],[.032,0,0]];const prediction=motionStep(p,{model:mode.endsWith('_new')?learned[mode.slice(0,-4)]:null,previous:prevTarget,fps,eyes:e});ideal=prediction.ideal;prevTarget=ideal;a=prediction.baseline;if(advance)elapsed+=1/fps;}
  const baseline=[...a];
  if(!runInfo)runInfo={...patients.provenance,source:$('source').value,controller:mode,fps,
    layerInitialState:patients.layer.snapshot(),plant:{...PLANT},
@@ -119,6 +120,7 @@ function step(advance=true){let p,e,a,ideal,human=null,t;const mode=$('mode').va
  const lids=lidDynamics.sample(a,t);
  current={p,e,a,baseline,ideal,human,t,lids,patientId:patients.active?.id||null};history.push([t,ideal[0],a[0],human?.[0]]);if(history.length>fps*6)history.shift();if(exportRows.length<fps*120)exportRows.push([t,...p,...a,...ideal,...baseline]);}
 function render(){if(!current)step(false);$('patientRunExport').disabled=!exportRows.length;$('export').disabled=!exportRows.length;const {p,e,a,ideal,t}=current;const lids=current.lids||appearanceFrame(a,t);target.position.set(...p);target.visible=!isCamera()||!!finger.tracked;
+ const eyeOnly=$('displayMode').value==='eyes';head.group.visible=!eyeOnly;eyes.forEach(r=>r.setBare(eyeOnly));
  head.group.position.set(...e[0].map((v,j)=>(v+e[1][j])/2));head.group.scale.x=(e[1][0]-e[0][0])/.064;head.update(lids,{faceType:$('faceType').value});
  for(let i=0;i<2;i++){eyes[i].root.position.set(...e[i]);eyes[i].yaw.rotation.set(0,rad(a[2*i]),0);eyes[i].pitch.rotation.set(-rad(a[2*i+1]),0,0);eyes[i].update(a.slice(2*i,2*i+2),lids[i]);const d=ray(a.slice(2*i,2*i+2)),len=Math.hypot(...p.map((v,j)=>v-e[i][j]))+.08;const points=[new T.Vector3(...e[i]),new T.Vector3(...e[i].map((v,j)=>v+d[j]*len))];lines[i].geometry.setFromPoints(points);}
  chestCamera.position.set(0,-+$('camY').value,0);chestCamera.up.set(0,1,0);chestCamera.lookAt(0,chestCamera.position.y,1);

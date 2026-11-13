@@ -5,7 +5,7 @@ const server=http.createServer((req,res)=>{const name=decodeURIComponent(new URL
 let browser;
 (async()=>{try{
   await new Promise(r=>server.listen(0,'127.0.0.1',r));const url=process.env.OCULID_URL||`http://127.0.0.1:${server.address().port}/`;
-  browser=await pw.chromium.launch({channel:process.env.PW_CHANNEL||'chrome',headless:true});
+  browser=await pw.chromium.launch({channel:process.env.PW_CHANNEL==='bundled'?undefined:(process.env.PW_CHANNEL||'chrome'),headless:true});
   const page=await browser.newPage({viewport:{width:1440,height:1100}}),errors=[];
   page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});page.on('response',r=>{if(r.status()>=400)errors.push(`${r.status()} ${r.url()}`);});
   await page.goto(url);await page.waitForFunction(()=>!!window.oculid);await page.selectOption('#path','static');await page.uncheck('#autoBlink');
@@ -61,5 +61,5 @@ let browser;
   await page.selectOption('#source','auto');await page.selectOption('#model','gru_expanded_520');
   for(const [width,height]of [[390,844],[320,740],[844,390]]){await page.setViewportSize({width,height});await page.waitForTimeout(80);assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));await page.screenshot({path:path.join(out,`mobile-${width}.png`),fullPage:true});}
   const reduced=await browser.newContext({reducedMotion:'reduce'}),rp=await reduced.newPage();await rp.goto(url);await rp.waitForFunction(()=>!!window.oculid);assert.equal(await rp.evaluate(()=>oculid.playing),false);await reduced.close();
-  assert.deepEqual(errors,[]);const report={passed:true,version:'0.8.0',angleDeltaDegrees:0,desktopAndMobile:true,renderedIris:true,fullClosure:true,wideGazeAndClosure:true,rangeControlsAndLegacyMode:true,cameraMappingUnaffectedByRange:true,threeCases:true,syntheticPointerAndInjectedCamera:true,trackingLossHold:true,exportJSONCSV:true,reducedMotion:true,physicalCameraTested:false,errors};fs.writeFileSync(path.join(out,'browser-report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
+  assert.deepEqual(errors,[]);const report={passed:true,version:'0.9.0',angleDeltaDegrees:0,desktopAndMobile:true,renderedIris:true,fullClosure:true,wideGazeAndClosure:true,rangeControlsAndLegacyMode:true,cameraMappingUnaffectedByRange:true,threeCases:true,syntheticPointerAndInjectedCamera:true,trackingLossHold:true,exportJSONCSV:true,reducedMotion:true,physicalCameraTested:false,errors};fs.writeFileSync(path.join(out,'browser-report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
 }finally{await browser?.close();await new Promise(r=>server.close(r));}})().catch(e=>{console.error(e);process.exitCode=1;});

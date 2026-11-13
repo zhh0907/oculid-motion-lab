@@ -1,5 +1,6 @@
 import {PatientLayer,validatePatient,MODEL_VERSION} from './patient-model.mjs';
-import {LearnedModel,desired} from './engine.js';
+import {motionStep} from './src/core/motion.mjs';
+import {LearnedModel} from './engine.js';
 
 export const DEMO_VERSION='three-patterns-v1';
 export const DEMO_FPS=250;
@@ -40,9 +41,7 @@ export class DemoSimulation{
   reset(){this.reference.reset();this.layer.reset();this.previous=null;this.time=0;this.current=null;}
   step(target){
     if(!Array.isArray(target)||target.length!==3||!target.every(Number.isFinite)||target[2]<=0)throw Error('Expected a finite target in front of the eyes.');
-    const ideal=desired(target,DEMO_EYES);
-    const x=ideal.map(v=>v/30).concat(ideal.map((v,i)=>Math.max(-600,Math.min(600,this.previous?(v-this.previous[i])*DEMO_FPS:0))/300));
-    const baseline=this.reference.step(x);this.previous=ideal;
+    const {ideal,baseline}=motionStep(target,{model:this.reference,previous:this.previous,fps:DEMO_FPS,eyes:DEMO_EYES});this.previous=ideal;
     this.current={time:this.time,target:[...target],ideal,baseline,output:this.layer.step(baseline,1/DEMO_FPS),caseKey:this.case.key};
     this.time+=1/DEMO_FPS;return this.current;
   }

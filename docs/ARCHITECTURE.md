@@ -1,5 +1,7 @@
 # Oculid architecture and reproducibility
 
+Version 0.9 consolidates Binocular and Oculid into one library. See [the consolidation record and API](UNIFICATION.zh-CN.md). `src/core/engine.js` and `src/core/patient-model.mjs` hold the canonical unchanged numerical code; old root paths only re-export it. `motionStep` is shared by all three interfaces. `src/patient-bank.mjs` is the single storage implementation for both patient UIs.
+
 ```mermaid
 flowchart LR
   A[Target: automatic / pointer / fingertip] --> B[Upstream geometry + GRU]

@@ -11,9 +11,9 @@ const bundle=JSON.parse(fs.readFileSync(new URL('../models-selected.json',import
 
 test('all motion, camera, calibration and weight files match upstream SHA256',()=>{
   const manifest=JSON.parse(fs.readFileSync(new URL('../docs/upstream-manifest.json',import.meta.url)));
-  for(const [name,hash]of Object.entries(manifest.sha256))assert.equal(crypto.createHash('sha256').update(fs.readFileSync(new URL('../'+name,import.meta.url))).digest('hex'),hash,name);
+  for(const [name,hash]of Object.entries(manifest.sha256))assert.equal(crypto.createHash('sha256').update(fs.readFileSync(new URL('../'+(manifest.canonicalPaths?.[name]||name),import.meta.url))).digest('hex'),hash,name);
   for(const [name,change]of Object.entries(manifest.storageNamespaceOnly)){
-    const bytes=fs.readFileSync(new URL('../'+name,import.meta.url)).toString().replaceAll(change.to,change.from);
+    const bytes=fs.readFileSync(new URL('../'+(manifest.canonicalPaths?.[name]||name),import.meta.url)).toString().replaceAll(change.to,change.from);
     assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'),change.upstreamSha256,name+' changes only its storage namespace');
   }
 });

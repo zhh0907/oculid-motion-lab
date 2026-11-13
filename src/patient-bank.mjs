@@ -18,7 +18,7 @@ export class PatientBank {
       if(this.storage.getItem(PATIENT_STORAGE_KEY)!==this.saved){this.warning='Another tab changed the library. Export the patients from this tab, then reload to synchronize. Saved data was not overwritten.';return;}
       const value=JSON.stringify({library:this.library,activeId:this.active?.id||null});
       this.storage.setItem(PATIENT_STORAGE_KEY,value);this.saved=value;this.warning='';
-    }catch{this.warning='Patients are available in this tab, but saving failed. Export the library before closing.';}
+    }catch{this.warning='Browser storage is unavailable or full. Patients work in this tab; export the library before closing.';}
   }
   activate(id){
     const patient=id===null?null:findPatient(this.library,id);

@@ -1,4 +1,15 @@
-# Verification record — 2026-10-29
+# Verification record
+
+## Consolidation — 2026-11-13 / 0.9.0
+
+- 47 Node checks pass, including the public headless API against all 3,600 original samples, exact angle equality, original class compatibility, migration identity/corruption/conflict checks and calibration rebinding.
+- Six browser suites cover the existing homepage, patient bank, workspace, demo, face appearance, and new consolidation flow.
+- The consolidation browser check verifies reviewed migration into both interfaces, no motion or recording changes across all display modes, exact paired camera/angle equality, mobile layout, and stale migration protection.
+- [Consolidation browser report](unification-browser-report.json) · [Reproducible angular comparison](unification-regression.json).
+- The legacy camera, worker, projection math and weights retain their audited bytes. Numerical engine/plant bytes are unchanged at their new canonical paths. Adapted UI/demo files are explicitly listed in the provenance manifest rather than claimed to be byte-identical.
+- Physical camera accuracy, clinical accuracy and eyelid physiology were not newly measured.
+
+## Historical verification — 2026-10-29 / 0.8.0
 
 Environment: Version 0.8.0. Windows, Node 24.15.0, installed Google Chrome through Playwright 1.62.1. Browser input is synthetic or injected at the existing fingertip boundary. No person/camera was recorded.
 

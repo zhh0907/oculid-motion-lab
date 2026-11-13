@@ -1,10 +1,21 @@
 # Oculid Motion Lab
 
-**A binocular motion simulator with animated eyelids, built on Binocular Motion Lab.**
+**One shared library for binocular motion, virtual patients, fingertip input and animated eyelids.**
 
 [Live demo](https://zhh0907.github.io/oculid-motion-lab/) · [Complete workspace](https://zhh0907.github.io/oculid-motion-lab/workspace.html) · [中文调研与设计](docs/RESEARCH.zh-CN.md) · [Architecture](docs/ARCHITECTURE.md)
 
 ![一体化三维头部与动态眼球](docs/volume-head.png)
+
+## 0.9: Unified Binocular + Oculid library
+
+Oculid is now the canonical repository. Binocular remains a historical demo with a migration link.
+
+- One numerical core and patient store, shared by the homepage, full workspace and three-case demo.
+- **Display → Full eye region / Eyes only / Paired comparison** preserves the patient, simulation clock, trajectory and recording. Paired views share angles and camera projection.
+- [Import existing patients and calibration](https://zhh0907.github.io/oculid-motion-lab/migration.html) with explicit review, identity checks and protection against overwriting newer data.
+- `src/index.mjs` is a browser-independent library entry; `MotionSession` supports headless simulation. Existing import paths and run formats remain compatible.
+- `node research/reproduce.mjs` compares the headless and eyelid-enabled sessions against all 3,600 upstream samples.
+- [合并架构、迁移说明及 API 示例](docs/UNIFICATION.zh-CN.md).
 
 ## 0.8: English interface and two face shapes
 
@@ -76,7 +87,7 @@ This is a research prototype combining a licensed reference face scan with proce
 | Check | Result |
 | --- | --- |
 | Upstream-generated golden fixture | **3,600 samples, exact angle equality** across 2 GRUs + ideal geometry and 4 patterns |
-| Node tests | **40 passed**, including upstream patient/demo tests, lid closure/bounds, invariance and audited file hashes |
+| Node tests | **47 passed**, including upstream patient/demo tests, lid closure/bounds, migration, headless equivalence and audited file hashes |
 | Homepage browser tests | Rendered iris, exact same-pose comparison, full closure, cases, pointer/camera boundary, tracking loss/recovery, JSON/CSV, reduced motion |
 | Complete workspace and demo | Patient persistence/import/export, all replay controllers, seeking, injected live input and mobile tools passed |
 | Layout | 1440 px desktop and 320/390/844 px mobile viewports checked |
@@ -92,9 +103,9 @@ python -m http.server 8000 --bind 127.0.0.1
 
 Open `http://localhost:8000/`. No npm build, API key, runtime CDN, or backend is required. Keep `vendor/`, `recordings/` and all model JSON files in place. Camera access needs localhost or HTTPS.
 
-The homepage uses English controls. `workspace.html` provides the inherited English research workspace; `demo.html` provides the three fixed cases with eyelids. Changing homepage options begins a new recording. The manual blink button or **B** key starts a blink; pause stops simulation time. Disabling comparison hides only its view.
+The homepage uses English controls. `workspace.html` provides the inherited English research workspace; `demo.html` provides the three fixed cases with eyelids. Changing motion or eyelid parameters begins a new recording; face shape, observation camera and display mode preserve it. The manual blink button or **B** key starts a blink; pause stops simulation time. Display modes share the same simulation state.
 
-The homepage uses the original assumed-plane camera mapping. Use the complete workspace when measured camera/screen calibration or human-data replay is needed. Patient and calibration storage have independent Oculid keys, so this project does not overwrite the original site's saved settings. Transfer them explicitly via JSON export/import.
+The homepage uses the original assumed-plane camera mapping. Use the complete workspace when measured camera/screen calibration or human-data replay is needed. Patient and calibration storage have independent Oculid keys, so this project does not overwrite the original site's saved settings. Transfer them explicitly through [the migration page](migration.html) or JSON import; original data is retained.
 
 ## Tests
 
@@ -105,6 +116,8 @@ npm ci
 npm run test:browser
 npm run test:workspace
 npm run test:face
+npm run test:unified
+node research/reproduce.mjs
 ```
 
 Node 22+ is recommended. Browser tests use Playwright; the homepage test can select an installed channel through `PW_CHANNEL`. Generated screenshots/downloads are ignored under `qa/`; the checked-in preview and compact report are under `docs/`.
@@ -113,21 +126,26 @@ Node 22+ is recommended. Browser tests use Playwright; the homepage test can sel
 
 | Path | Purpose |
 | --- | --- |
-| `src/simulation.mjs` | Target and controller orchestration, synchronized export |
+| `src/core/`, `src/index.mjs` | Shared numerical implementation and headless public entry |
+| `src/simulation.mjs` | Eyelid/trace adapter over the shared motion step |
+| `src/patient-bank.mjs` | Shared patient storage for both interfaces |
+| `src/inputs/index.mjs`, `migration.html` | Browser inputs and reviewed legacy-data transfer |
+| `research/` | Reproducible equivalence protocol |
 | `src/eyelid-model.mjs` | Pure deterministic eyelid/blink/visibility math |
 | `src/target-range.mjs` | Angular target excursions; original camera mapping is unchanged |
 | `src/head-topology.mjs`, `src/head-mesh.mjs`, `src/lid-volume.mjs` | Connected head/lid topology, deformation and hair |
 | `src/globe-mesh.mjs`, `src/eye-anatomy.mjs`, `src/eye-rig.mjs` | Layered eyes, dimensions, lighting and orbit camera |
 | `src/main.mjs`, `index.html`, `oculid.css` | New interface |
 | `workspace.html`, `app.js` | Complete inherited workspace with new eye meshes |
-| `engine.js`, `models-selected.json`, `patient-model.mjs` | Audited upstream motion code and weights |
-| `docs/upstream-manifest.json` | Original commit, file hashes and storage-only adaptations |
+| `engine.js`, `patient-model.mjs` | Compatibility exports to the canonical core |
+| `models-selected.json` | Unchanged trained weights |
+| `docs/upstream-manifest.json` | Original hashes, canonical paths and explicitly recorded adapter changes |
 | `tests/fixtures/upstream-golden.json` | Independent outputs generated from the original project |
 
 ## Research and attribution
 
 The [research review](docs/RESEARCH.zh-CN.md) compares SynthesEyes, UnityEyes, UnityEyes 2, U2Eyes, RIT-Eyes, Temporal RIT-Eyes, OpenEyeSim, PyEtSimul, AniEyelid and Pupilla. It is a focused public-source review dated 2026-10-27, not a claim to have exhaustively tested every simulator online. Their research assets are not bundled here.
 
-Built from Honghao Zhao's [Binocular Motion Lab](https://github.com/zhh0907/binocular-motion-lab), including its current local three-case demo. The original checkout was not edited. Existing Three.js, MediaPipe and GazeBaseVR attributions remain in [THIRD_PARTY_NOTICES.txt](THIRD_PARTY_NOTICES.txt). New Oculid source files use the scoped [MIT license](LICENSE); inherited assets retain their existing terms.
+Built from Honghao Zhao's [Binocular Motion Lab](https://github.com/zhh0907/binocular-motion-lab), including its three-case demo. The original repository retains its executable demo and gains a migration notice; future development uses this repository. Existing Three.js, MediaPipe and GazeBaseVR attributions remain in [THIRD_PARTY_NOTICES.txt](THIRD_PARTY_NOTICES.txt). New Oculid source files use the scoped [MIT license](LICENSE); inherited assets retain their existing terms.
 
 No new human-eye training, physiological validation, or medical grading was performed. GazeBaseVR model metrics do not establish the accuracy of the added eyelids or a camera system. Future high-fidelity eye-region assets can replace the renderer while retaining the same motion contract.

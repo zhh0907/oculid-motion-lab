@@ -1,7 +1,8 @@
-import {LearnedModel,desired} from '../engine.js';
+import {motionStep} from './core/motion.mjs';
+import {LearnedModel} from '../engine.js';
 import {PatientLayer,validatePatient,MODEL_VERSION} from '../patient-model.mjs';
 import {DEMO_CASES,DEMO_EYES,demoTarget} from '../demo-presets.mjs';
-import {appearanceFrame,EyelidDynamics,DEFAULT_APPEARANCE,LID_VERSION} from './eyelid-model.mjs?v=faces8';
+import {appearanceFrame,EyelidDynamics,DEFAULT_APPEARANCE,LID_VERSION} from './eyelid-model.mjs?v=unified9';
 import {normalizeRange,angularTarget} from './target-range.mjs?v=canthus3';
 import {TrajectoryHistory} from './trajectory-data.mjs?v=patients4';
 import {FACE_TYPES,FACE_PROFILE_VERSION} from './face-profiles.mjs';
@@ -54,8 +55,7 @@ export class Simulation{
   blink(){this.manualTime=this.current?.time??this.time;this.manualBlinks.push(this.manualTime);}
   step(target){
     if(!Array.isArray(target)||target.length!==3||!target.every(Number.isFinite)||target[2]<=0)throw Error('Invalid target');
-    const ideal=desired(target,DEMO_EYES),x=ideal.map(v=>v/30).concat(ideal.map((v,i)=>Math.max(-600,Math.min(600,this.previous?(v-this.previous[i])*FPS:0))/300));
-    const baseline=this.model?this.model.step(x):[...ideal];this.previous=ideal;
+    const {ideal,baseline}=motionStep(target,{model:this.model,previous:this.previous,fps:FPS,eyes:DEMO_EYES});this.previous=ideal;
     const angles=this.layer.step(baseline,1/FPS),lids=this.lidDynamics.sample(angles,this.time,this.appearance,this.manualTime);
     this.current={time:this.time,target:[...target],ideal,baseline,angles,lids};if(this.rows.length<FPS*120)this.rows.push(this.current);this.trace.push(this.current);this.time+=1/FPS;return this.current;
   }

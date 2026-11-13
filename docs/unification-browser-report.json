@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "version": "0.9.0",
+  "sharedLibrary": true,
+  "migrationReviewedAndLossless": true,
+  "staleMigrationProtected": true,
+  "displayStateInvariant": true,
+  "pairedAnglesAndCameraExact": true,
+  "workspaceSharedPatient": true,
+  "mobileLayout": true,
+  "errors": []
+}
