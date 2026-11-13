@@ -15,7 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      PW_CHANNEL: bundled
+      # Use the full browser's headless mode, as in the installed-Chrome checks.
+      PW_CHANNEL: chromium
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -23,5 +24,5 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
+      - run: npx playwright install --with-deps --no-shell chromium
       - run: npm run test:all-browser
